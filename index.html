@@ -15,7 +15,6 @@
         @keyframes slideIn { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         @keyframes pulseGlow { 0% { box-shadow: 0 0 5px var(--neon-red); } 50% { box-shadow: 0 0 20px var(--neon-red), inset 0 0 10px var(--neon-red); } 100% { box-shadow: 0 0 5px var(--neon-red); } }
         @keyframes scrollText { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
-        @keyframes girarRuleta { 100% { transform: rotate(360deg); } }
         @keyframes jackpotPulse { 0% { color: #fff; text-shadow: 0 0 5px var(--neon-gold); } 50% { color: var(--neon-gold); text-shadow: 0 0 20px var(--neon-gold); } 100% { color: #fff; text-shadow: 0 0 5px var(--neon-gold); } }
 
         .promo { padding: 15px; border-radius: 12px; margin-bottom: 20px; animation: slideIn 0.5s ease-out; position: relative; overflow: hidden; }
@@ -38,9 +37,9 @@
         .btn-reservar { background: var(--btn-whatsapp); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.3s; font-size: 0.85em; display: flex; align-items: center; gap: 5px; }
         .btn-reservar:hover { background: #1ebe57; transform: scale(1.05); }
 
-        .ruleta-animada { width: 24px; height: 24px; border-radius: 50%; background: conic-gradient(#e0241b 0 45deg, #111 45deg 90deg, #e0241b 90deg 135deg, #111 135deg 180deg, #e0241b 180deg 225deg, #111 225deg 270deg, #e0241b 270deg 315deg, #111 315deg 360deg); border: 2px solid var(--neon-gold); animation: girarRuleta 2.5s linear infinite; box-shadow: 0 0 10px rgba(212, 175, 55, 0.5); }
+        /* Estilo para tu nuevo GIF */
+        .gif-ruleta { width: 32px; height: 32px; filter: drop-shadow(0 0 8px rgba(212, 175, 55, 0.6)); }
 
-        /* Controles Flotantes */
         .flotantes-container { position: fixed; bottom: 20px; right: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 1000; }
         .btn-flotante { background-color: #1f2833; color: white; border: 1px solid var(--neon-cyan); border-radius: 50px; padding: 12px 20px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.5); transition: 0.3s; }
         .btn-flotante.wa { background-color: var(--btn-whatsapp); border: none; box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4); }
@@ -95,7 +94,8 @@
             const { data: mesas } = await client.from('mesas').select('*').order('juego').order('nombre');
             if (mesas && mesas.length > 0) {
                 document.getElementById('mesas-container').innerHTML = mesas.map(m => {
-                    const iconoRuleta = m.juego === 'Ruleta' ? `<div class="ruleta-animada"></div>` : '';
+                    // Aquí llamamos a tu GIF
+                    const iconoRuleta = m.juego === 'Ruleta' ? `<img src="ruleta.gif" class="gif-ruleta" alt="Ruleta" onerror="this.style.display='none'">` : '';
                     const botonReservar = m.estatus === 'Abierta' ? `<button class="btn-reservar" onclick="reservarMesa('${m.nombre}')">🟢 Reservar Lugar</button>` : '';
                     const infoCrupier = m.crupier ? `<span style="color:var(--neon-cyan);">🃏 Crupier: <strong>${m.crupier}</strong></span>` : '<span></span>';
                     
