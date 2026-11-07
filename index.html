@@ -67,11 +67,16 @@
         /* Modal de Instrucciones de Instalación */
         #modal-instalar { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 9999; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; backdrop-filter: blur(5px); }
         .modal-content { background: #151722; border: 2px solid var(--neon-cyan); border-radius: 12px; padding: 25px; text-align: center; max-width: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
+
+        /* MAGIA CSS: OCULTAR BOTÓN SI LA APP YA ESTÁ INSTALADA */
+        @media (display-mode: standalone) {
+            .btn-instalar-top { display: none !important; }
+        }
     </style>
 </head>
 <body>
     
-    <!-- Botón de instalación que nunca desaparece -->
+    <!-- Botón de instalación que nunca desaparece (a menos que ya esté instalada) -->
     <button class="btn-instalar-top" onclick="abrirModalInstalacion()">📲 Instalar App del Casino</button>
 
     <!-- Modal de Instalación (Pop-up) -->
@@ -79,7 +84,7 @@
         <div class="modal-content">
             <h3 style="color: var(--neon-cyan); margin-top: 0; font-size: 1.5em;">Instalar Aplicación</h3>
             <p id="texto-modal-instalar" style="color: white; line-height: 1.6; font-size: 1.1em;"></p>
-            <button onclick="procederInstalacion()" style="background: var(--neon-cyan); color: black; border: none; padding: 12px 25px; border-radius: 25px; font-weight: bold; cursor: pointer; margin-top: 15px; font-size: 1.1em;">Entendido</button>
+            <button onclick="procederInstalacion()" style="background: var(--neon-cyan); color: black; border: none; padding: 12px 25px; border-radius: 25px; font-weight: bold; cursor: pointer; margin-top: 15px; font-size: 1.1em;">Instalar Ahora</button>
             <button onclick="document.getElementById('modal-instalar').style.display='none'" style="background: transparent; color: #8892b0; border: none; padding: 10px; cursor: pointer; display: block; width: 100%; margin-top: 10px;">Cerrar</button>
         </div>
     </div>
@@ -88,6 +93,7 @@
 
     <div id="promos-container"></div>
 
+    <!-- BANNER DE COMUNIDAD VIP -->
     <div style="background: linear-gradient(90deg, #0d1a10, #142b18); border: 1px solid #25D366; border-radius: 12px; padding: 15px; margin-bottom: 25px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 15px rgba(37, 211, 102, 0.2); flex-wrap: wrap; gap: 10px;">
         <div style="display: flex; align-items: center; gap: 15px; flex: 1; min-width: 200px;">
             <div style="background: #25D366; color: white; width: 45px; height: 45px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 1.5em; flex-shrink: 0;">💬</div>
@@ -114,7 +120,6 @@
         let deferredPrompt;
         const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 
-        // Captura el evento automático de Android
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
@@ -125,15 +130,14 @@
             const texto = document.getElementById('texto-modal-instalar');
             
             if (isIOS) {
-                texto.innerHTML = "Para instalar la App en tu iPhone:<br><br>1. Toca el ícono de <b>Compartir</b> (el cuadrado con la flecha hacia arriba abajo en tu pantalla).<br><br>2. Baja en el menú y selecciona <b>'Agregar a Inicio'</b>.<br><br>¡Listo! La App aparecerá junto a tus demás aplicaciones.";
+                texto.innerHTML = "Para instalar la App en tu iPhone:<br><br>1. Toca el ícono de <b>Compartir</b> abajo en tu pantalla.<br><br>2. Selecciona <b>'Agregar a Inicio'</b>.<br><br>¡Listo! La App aparecerá junto a tus demás aplicaciones.";
             } else {
-                texto.innerHTML = "Se abrirá el instalador de Android.<br><br>Al terminar, ve a la pantalla de inicio de tu celular para abrir la aplicación.<br><br><b>¡Activa las notificaciones cuando te lo pida para recibir alertas de mesas!</b>";
+                texto.innerHTML = "Presiona 'Instalar Ahora' para agregar la aplicación directamente a la pantalla principal de tu celular.<br><br>Es rápido, seguro y no ocupa espacio.";
             }
         }
 
         function procederInstalacion() {
             document.getElementById('modal-instalar').style.display = 'none';
-            // Solo Android puede lanzar el prompt desde un botón
             if (!isIOS && deferredPrompt) {
                 deferredPrompt.prompt();
                 deferredPrompt.userChoice.then((choiceResult) => {
@@ -142,6 +146,9 @@
                     }
                     deferredPrompt = null;
                 });
+            } else if (isIOS) {
+                // En iOS no podemos forzar la descarga, así que solo cerramos el modal porque ya leyeron las instrucciones
+                alert("Sigue las instrucciones tocando el botón de Compartir en tu navegador.");
             }
         }
 
