@@ -6,94 +6,97 @@
     <title>Casino - Estatus en Vivo</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        body { 
-            background-color: #121212; 
-            color: white; 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            padding: 20px; 
-            max-width: 600px;
-            margin: 0 auto;
-        }
-        .promo { 
-            background: linear-gradient(45deg, #FFD700, #FDB931); 
-            color: black; 
-            padding: 15px; 
-            border-radius: 8px; 
-            margin-bottom: 20px; 
-            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.2);
-        }
-        .mesa { 
-            background: #1e1e1e; 
-            padding: 15px; 
-            margin-bottom: 12px; 
-            border-radius: 8px; 
-            border-left: 5px solid #4CAF50;
-        }
-        .cerrada { 
-            border-left-color: #f44336; 
-            opacity: 0.6; 
-        }
-        .caliente { 
-            border: 2px solid #ff9800; 
-            box-shadow: 0 0 15px rgba(255, 152, 0, 0.4); 
-        }
-        h2 { border-bottom: 1px solid #333; padding-bottom: 10px; }
-        .stats { display: flex; justify-content: space-between; color: #aaa; font-size: 0.9em; }
+        :root { --bg-color: #0b0c10; --card-bg: #151722; --neon-cyan: #00f0ff; --neon-red: #ff003c; --neon-gold: #d4af37; }
+        body { background-color: var(--bg-color); color: white; font-family: 'Segoe UI', Tahoma, sans-serif; padding: 20px; max-width: 600px; margin: 0 auto; overflow-x: hidden; }
+        
+        /* Contenedor del Logo */
+        .header-logo { text-align: center; margin-bottom: 20px; }
+        .header-logo img { width: 120px; filter: drop-shadow(0 0 15px rgba(0, 240, 255, 0.4)); }
+
+        /* Animaciones para Promociones */
+        @keyframes slideIn { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes pulseGlow { 0% { box-shadow: 0 0 5px var(--neon-red); } 50% { box-shadow: 0 0 20px var(--neon-red), inset 0 0 10px var(--neon-red); } 100% { box-shadow: 0 0 5px var(--neon-red); } }
+        @keyframes scrollText { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+
+        .promo { padding: 15px; border-radius: 12px; margin-bottom: 20px; animation: slideIn 0.5s ease-out; position: relative; overflow: hidden; }
+        
+        /* Promo General (Elegante/Dorado) */
+        .promo-general { background: linear-gradient(135deg, #1a1500, #332900); border: 1px solid var(--neon-gold); box-shadow: 0 0 15px rgba(212, 175, 55, 0.2); }
+        .promo-general strong { color: var(--neon-gold); font-size: 1.1em; }
+        
+        /* Promo Flash (Urgencia/Rojo Neón/Texto Móvil) */
+        .promo-flash { background: linear-gradient(135deg, #2a0006, #1a0000); border: 2px solid var(--neon-red); animation: pulseGlow 1.5s infinite alternate, slideIn 0.5s ease-out; }
+        .promo-flash .flash-title { color: white; background: var(--neon-red); padding: 2px 10px; border-radius: 4px; font-weight: bold; font-size: 0.9em; display: inline-block; margin-bottom: 10px; }
+        .flash-marquee { white-space: nowrap; overflow: hidden; box-sizing: border-box; }
+        .flash-marquee p { display: inline-block; padding-left: 100%; animation: scrollText 10s linear infinite; margin: 0; color: #ff9999; font-weight: bold; font-size: 1.1em; }
+
+        /* Mesas */
+        h2 { color: var(--neon-cyan); border-bottom: 1px solid rgba(0,240,255,0.3); padding-bottom: 10px; text-transform: uppercase; font-size: 1.2em; letter-spacing: 1px; }
+        .mesa { background: var(--card-bg); padding: 15px; margin-bottom: 15px; border-radius: 10px; border-left: 5px solid #4CAF50; transition: 0.3s; }
+        .cerrada { border-left-color: #e0241b; opacity: 0.7; }
+        .caliente { border: 2px solid var(--neon-gold); box-shadow: 0 0 15px rgba(212, 175, 55, 0.4); }
+        .stats { display: flex; justify-content: space-between; color: #8892b0; font-size: 0.9em; margin-top: 8px; }
+        .badge { background: rgba(0,240,255,0.1); color: var(--neon-cyan); padding: 3px 8px; border-radius: 4px; font-size: 0.8em; border: 1px solid rgba(0,240,255,0.3); }
     </style>
 </head>
 <body>
+    <div class="header-logo">
+        <img src="logo.png" alt="Casino" onerror="this.src='https://via.placeholder.com/120?text=LOGO'">
+    </div>
+
     <div id="promos-container"></div>
-    <h2>Mesas de Juego</h2>
-    <div id="mesas-container"><p>Conectando con el piso del casino...</p></div>
+    
+    <h2>En el Piso Hoy</h2>
+    <div id="mesas-container"><p style="text-align:center; color:#8892b0;">Conectando con las mesas...</p></div>
 
     <script>
-        // Credenciales inyectadas
-        const supabaseUrl = 'https://kqgtyzsxwrkomdtuktkk.supabase.co';
-        const supabaseKey = 'sb_publishable_on1rkqvAIhSQonTODdk5fA_qTpEo_8H';
-        
-        // Cambiamos el nombre de la variable a "client" para evitar el error de sintaxis
-        const client = supabase.createClient(supabaseUrl, supabaseKey);
+        const client = supabase.createClient('https://kqgtyzsxwrkomdtuktkk.supabase.co', 'sb_publishable_on1rkqvAIhSQonTODdk5fA_qTpEo_8H');
 
         async function cargarDatos() {
-            const { data: promos } = await client.from('promociones').select('*').eq('activa', true).order('orden');
-            
+            // Promociones
+            const { data: promos } = await client.from('promociones').select('*').eq('activa', true).order('fecha_creacion', { ascending: false });
             if (promos && promos.length > 0) {
-                document.getElementById('promos-container').innerHTML = promos.map(p => `
-                    <div class="promo">
-                        <strong>📢 ${p.titulo}</strong><br>
-                        ${p.descripcion}
-                    </div>
-                `).join('');
-            } else {
-                document.getElementById('promos-container').innerHTML = '';
-            }
+                document.getElementById('promos-container').innerHTML = promos.map(p => {
+                    if(p.tipo === 'Flash') {
+                        return `
+                        <div class="promo promo-flash">
+                            <div class="flash-title">⚡ OFERTA FLASH</div>
+                            <strong style="color: white; font-size: 1.2em; display:block; margin-bottom:5px;">${p.titulo}</strong>
+                            <div class="flash-marquee"><p>${p.descripcion} 🎰 ${p.descripcion}</p></div>
+                        </div>`;
+                    } else {
+                        return `
+                        <div class="promo promo-general">
+                            <strong>📢 ${p.titulo}</strong><br>
+                            <span style="color: #ccc;">${p.descripcion}</span>
+                        </div>`;
+                    }
+                }).join('');
+            } else { document.getElementById('promos-container').innerHTML = ''; }
 
-            const { data: mesas } = await client.from('mesas').select('*').order('nombre');
-            
+            // Mesas
+            const { data: mesas } = await client.from('mesas').select('*').order('juego').order('nombre');
             if (mesas && mesas.length > 0) {
                 document.getElementById('mesas-container').innerHTML = mesas.map(m => `
-                    <div class="mesa ${m.estatus === 'Cerrada' ? 'cerrada' : ''} ${m.mesa_caliente ? 'caliente' : ''}">
-                        <h3 style="margin-top:0;">${m.nombre} ${m.mesa_caliente ? '🔥' : ''}</h3>
-                        <div class="stats">
-                            <span><strong>Estatus:</strong> ${m.estatus}</span>
-                            <span><strong>Mínimo:</strong> $${m.apuesta_minima}</span>
+                    <div class="mesa ${m.estatus === 'Cerrada' ? 'cerrada' : ''}">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <h3 style="margin:0; color:white;">${m.nombre}</h3>
+                            <span class="badge">${m.juego}</span>
                         </div>
-                        <div class="stats" style="margin-top: 8px;">
-                            <span><strong>Juego:</strong> ${m.juego}</span>
-                            <span><strong>Ocupación:</strong> ${m.jugadores_actuales} / ${m.capacidad_maxima} lugares</span>
+                        <div class="stats">
+                            <span>Estatus: <strong style="color:${m.estatus === 'Cerrada' ? '#e0241b' : '#4CAF50'}">${m.estatus}</strong></span>
+                            <span>Mínimo: <strong style="color:white;">$${m.apuesta_minima}</strong></span>
+                        </div>
+                        <div class="stats">
+                            <span>Ocupación:</span>
+                            <strong style="color:white;">${m.jugadores_actuales} / ${m.capacidad_maxima} lugares</strong>
                         </div>
                     </div>
                 `).join('');
             }
         }
 
-        // Suscripción en tiempo real usando "client"
-        client.channel('schema-db-changes')
-            .on('postgres_changes', { event: '*', schema: 'public', table: 'mesas' }, cargarDatos)
-            .on('postgres_changes', { event: '*', schema: 'public', table: 'promociones' }, cargarDatos)
-            .subscribe();
-
-        // Cargar datos iniciales
+        client.channel('public-changes').on('postgres_changes', { event: '*', schema: 'public' }, cargarDatos).subscribe();
         cargarDatos();
     </script>
 </body>
