@@ -29,7 +29,7 @@
         .btn-naranja { background: var(--btn-orange); color: black; font-weight: bold; border: none; padding: 12px 25px; border-radius: 20px; cursor: pointer; }
         .btn-morado { background: var(--neon-purple); color: white; font-weight: bold; border: none; padding: 12px 25px; border-radius: 20px; cursor: pointer; }
         .mesa-admin, .promo-admin { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; border-left: 5px solid #4CAF50; }
-        .controles { display: flex; gap: 10px; align-items: center; }
+        .controles { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
         .btn-accion { background: transparent; border: 1px solid var(--neon-cyan); color: var(--neon-cyan); border-radius: 4px; padding: 8px 15px; cursor: pointer;}
         .btn-peligro { border-color: #e0241b; color: #e0241b; }
     </style>
@@ -38,10 +38,7 @@
     <nav class="navbar"><h2>CASINO EN VIVO</h2></nav>
 
     <div id="login-section">
-        <div class="logo-container">
-            <div class="logo-glow"></div>
-            <img src="logo.png" id="login-logo" alt="Logo Casino" onerror="this.src='https://via.placeholder.com/120?text=LOGO'">
-        </div>
+        <div class="logo-container"><div class="logo-glow"></div><img src="logo.png" id="login-logo" alt="Logo" onerror="this.src='https://via.placeholder.com/120?text=LOGO'"></div>
         <div class="login-box">
             <h1>INICIAR SESIÓN</h1>
             <div class="input-group"><label>👤 Usuario</label><input type="text" id="user-input"></div>
@@ -58,13 +55,10 @@
         </div>
 
         <div class="panel-creacion panel-promo">
-            <h3 style="margin-top: 0; color: var(--neon-purple);">📢 Lanzar Promoción</h3>
+            <h3 style="margin-top: 0; color: var(--neon-purple);">📢 Promoción General del Casino</h3>
             <div class="form-group">
                 <input type="text" id="promo-titulo" placeholder="Título (ej. ¡Bono 10% Extra!)" style="flex: 2;">
-                <select id="promo-tipo" style="flex: 1;">
-                    <option value="General">Promoción General</option>
-                    <option value="Flash">⚡ Promo Flash (Urgencia)</option>
-                </select>
+                <select id="promo-tipo" style="flex: 1;"><option value="General">Promoción General</option><option value="Flash">⚡ Promo Flash (Urgencia)</option></select>
             </div>
             <div class="form-group"><input type="text" id="promo-desc" placeholder="Descripción de la oferta..."></div>
             <button class="btn-morado" onclick="agregarPromocion()">Activar Promoción</button>
@@ -76,24 +70,17 @@
             <div class="form-group">
                 <div style="display:flex; flex:1; gap:10px;">
                     <select id="nuevo-juego" onchange="verificarNuevoJuego()" style="flex:1;">
-                        <option value="Ruleta">Ruleta</option>
-                        <option value="Blackjack">Blackjack</option>
-                        <option value="Bacará">Bacará</option>
-                        <option value="Texas Bonus">Texas Bonus</option>
-                        <option value="Dados">Dados (Craps)</option>
-                        <option value="OTRO">+ Agregar otro...</option>
+                        <option value="Ruleta">Ruleta</option><option value="Blackjack">Blackjack</option><option value="Bacará">Bacará</option><option value="Texas Bonus">Texas Bonus</option><option value="Dados">Dados (Craps)</option><option value="OTRO">+ Agregar otro...</option>
                     </select>
                     <input type="text" id="juego-personalizado" placeholder="¿Qué juego?" style="display:none; flex:1;">
                 </div>
                 <input type="text" id="nuevo-nombre" placeholder="Nombre (ej. VIP)">
             </div>
             <div class="form-group">
-                <input type="number" id="nuevo-minimo" placeholder="Apuesta Mínima ($)">
-                <input type="number" id="nueva-capacidad" placeholder="Capacidad Total">
+                <input type="number" id="nuevo-minimo" placeholder="Apuesta Mínima ($)"><input type="number" id="nueva-capacidad" placeholder="Capacidad Total">
             </div>
             <div class="form-group">
-                <input type="text" id="nuevo-crupier" placeholder="Nombre del Crupier (Opcional)">
-                <input type="number" id="nuevo-jackpot" placeholder="Jackpot Acumulado $ (Opcional)">
+                <input type="text" id="nuevo-crupier" placeholder="Nombre del Crupier (Opcional)"><input type="number" id="nuevo-jackpot" placeholder="Jackpot Acumulado $ (Opcional)">
             </div>
             <button class="btn-naranja" onclick="agregarMesa()">Aperturar Mesa</button>
         </div>
@@ -110,10 +97,7 @@
         }
 
         function compartirWhatsApp() { window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(`🎰 ¡Checa las mesas abiertas y promos en vivo! ${window.location.origin}`)}`, '_blank'); }
-
-        function verificarNuevoJuego() {
-            document.getElementById('juego-personalizado').style.display = document.getElementById('nuevo-juego').value === 'OTRO' ? 'block' : 'none';
-        }
+        function verificarNuevoJuego() { document.getElementById('juego-personalizado').style.display = document.getElementById('nuevo-juego').value === 'OTRO' ? 'block' : 'none'; }
 
         const client = supabase.createClient('https://kqgtyzsxwrkomdtuktkk.supabase.co', 'sb_publishable_on1rkqvAIhSQonTODdk5fA_qTpEo_8H');
 
@@ -125,15 +109,16 @@
                         <strong style="font-size: 1.2em;">${m.nombre}</strong><br>
                         <small style="color: var(--text-muted);">${m.juego} | Mín: $${m.apuesta_minima} ${m.crupier ? '| 🃏 '+m.crupier : ''}</small>
                         ${m.jackpot > 0 ? `<br><small style="color: var(--btn-orange); font-weight:bold;">💰 Jackpot: $${m.jackpot}</small>` : ''}
+                        ${m.promo_especial ? `<br><small style="color: var(--neon-purple); font-weight:bold;">🎁 Promo Mesa: ${m.promo_especial}</small>` : ''}
                     </div>
                     <div class="controles">
                         <div style="background: #0d0e15; padding: 5px 15px; border-radius: 20px; border: 1px solid #333; display: flex; gap: 15px; align-items: center;">
                             <button class="btn-accion" style="border:none; padding:0;" onclick="actualizarCampo('mesas', '${m.id}', 'jugadores_actuales', ${m.jugadores_actuales - 1})">-</button>
-                            <span>${m.jugadores_actuales} / ${m.capacidad_maxima} Jug.</span>
+                            <span>${m.jugadores_actuales} / ${m.capacidad_maxima}</span>
                             <button class="btn-accion" style="border:none; padding:0;" onclick="actualizarCampo('mesas', '${m.id}', 'jugadores_actuales', ${m.jugadores_actuales + 1})">+</button>
                         </div>
-                        <button class="btn-accion" style="color: ${m.estatus === 'Abierta' ? '#e0241b' : '#00f0ff'}; border-color: ${m.estatus === 'Abierta' ? '#e0241b' : '#00f0ff'};" 
-                                onclick="actualizarCampo('mesas', '${m.id}', 'estatus', '${m.estatus === 'Abierta' ? 'Cerrada' : 'Abierta'}')">${m.estatus === 'Abierta' ? 'Cerrar Mesa' : 'Abrir Mesa'}</button>
+                        <button class="btn-accion" style="color: var(--neon-purple); border-color: var(--neon-purple);" onclick="setPromoMesa('${m.id}')">🎁 Promo</button>
+                        <button class="btn-accion" style="color: ${m.estatus === 'Abierta' ? '#e0241b' : '#00f0ff'}; border-color: ${m.estatus === 'Abierta' ? '#e0241b' : '#00f0ff'};" onclick="actualizarCampo('mesas', '${m.id}', 'estatus', '${m.estatus === 'Abierta' ? 'Cerrada' : 'Abierta'}')">${m.estatus === 'Abierta' ? 'Cerrar' : 'Abrir'}</button>
                         <button class="btn-accion btn-peligro" onclick="borrarRegistro('mesas', '${m.id}')">🗑️</button>
                     </div>
                 </div>`).join('');
@@ -143,34 +128,33 @@
                 <div class="promo-admin" style="border-left-color: ${p.tipo === 'Flash' ? '#e0241b' : '#b026ff'}">
                     <div><strong style="color:${p.tipo === 'Flash' ? '#e0241b' : '#b026ff'}">${p.tipo === 'Flash' ? '⚡ FLASH:' : '📢 GENERAL:'} ${p.titulo}</strong><br><small>${p.descripcion}</small></div>
                     <div class="controles">
-                        <button class="btn-accion" style="color: ${p.activa ? '#e0241b' : '#4CAF50'}; border-color: ${p.activa ? '#e0241b' : '#4CAF50'};" 
-                                onclick="actualizarCampo('promociones', '${p.id}', 'activa', ${!p.activa})">${p.activa ? 'Desactivar' : 'Activar'}</button>
+                        <button class="btn-accion" style="color: ${p.activa ? '#e0241b' : '#4CAF50'}; border-color: ${p.activa ? '#e0241b' : '#4CAF50'};" onclick="actualizarCampo('promociones', '${p.id}', 'activa', ${!p.activa})">${p.activa ? 'Desactivar' : 'Activar'}</button>
                         <button class="btn-accion btn-peligro" onclick="borrarRegistro('promociones', '${p.id}')">🗑️</button>
                     </div>
                 </div>`).join('');
+        }
+
+        async function setPromoMesa(id) {
+            const nuevaPromo = prompt("Escribe la promoción exclusiva para esta mesa (ej. 'Happy Hour: Pagos 2 a 1 de 6pm a 8pm'). \n\nPara borrar la promoción actual, deja este espacio en blanco y dale Aceptar.");
+            if (nuevaPromo !== null) { await actualizarCampo('mesas', id, 'promo_especial', nuevaPromo); }
         }
 
         async function agregarMesa() {
             let juego = document.getElementById('nuevo-juego').value;
             if (juego === 'OTRO') juego = document.getElementById('juego-personalizado').value;
             const nombre = document.getElementById('nuevo-nombre').value, min = document.getElementById('nuevo-minimo').value, cap = document.getElementById('nueva-capacidad').value;
-            const crupier = document.getElementById('nuevo-crupier').value || '';
-            const jackpot = document.getElementById('nuevo-jackpot').value || 0;
-            
+            const crupier = document.getElementById('nuevo-crupier').value || '', jackpot = document.getElementById('nuevo-jackpot').value || 0;
             if(!nombre || !min || !cap || !juego) return alert("Llena todos los campos obligatorios");
             await client.from('mesas').insert([{ juego: juego, nombre: nombre, apuesta_minima: min, capacidad_maxima: cap, estatus: 'Abierta', crupier: crupier, jackpot: jackpot }]);
-            
             ['nuevo-nombre','nuevo-minimo','nueva-capacidad','juego-personalizado','nuevo-crupier','nuevo-jackpot'].forEach(id => document.getElementById(id).value = '');
-            document.getElementById('nuevo-juego').value = 'Ruleta'; verificarNuevoJuego();
-            cargarDatosAdmin();
+            document.getElementById('nuevo-juego').value = 'Ruleta'; verificarNuevoJuego(); cargarDatosAdmin();
         }
 
         async function agregarPromocion() {
             const titulo = document.getElementById('promo-titulo').value, desc = document.getElementById('promo-desc').value, tipo = document.getElementById('promo-tipo').value;
             if(!titulo) return alert("Ponle un título a la promoción");
             await client.from('promociones').insert([{ titulo: titulo, descripcion: desc, tipo: tipo, activa: true }]);
-            document.getElementById('promo-titulo').value = ''; document.getElementById('promo-desc').value = '';
-            cargarDatosAdmin();
+            document.getElementById('promo-titulo').value = ''; document.getElementById('promo-desc').value = ''; cargarDatosAdmin();
         }
 
         async function actualizarCampo(tabla, id, campo, valor) { await client.from(tabla).update({ [campo]: valor }).eq('id', id); cargarDatosAdmin(); }
