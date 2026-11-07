@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VIP Admin - Casino</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body { 
+            background-color: #0b0c10; color: #c5c6c7; font-family: 'Segoe UI', Tahoma, sans-serif; 
+            padding: 20px; max-width: 800px; margin: 0 auto; 
+        }
+        h1, h2 { color: #d4af37; /* Dorado Casino */ border-bottom: 1px solid #333; padding-bottom: 10px; }
+        
+        /* Formulario Premium */
+        .panel-creacion {
+            background: #1f2833; padding: 20px; border-radius: 12px; margin-bottom: 30px;
+            border: 1px solid #d4af37; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.1);
+        }
+        .form-group { display: flex; gap: 15px; margin-bottom: 15px; flex-wrap: wrap; }
+        input, select { 
+            background: #0b0c10; color: white; border: 1px solid #45a29e; 
+            padding: 10px; border-radius: 6px; flex: 1; min-width: 150px;
+        }
+        button {
+            background: #d4af37; color: black; font-weight: bold; border: none;
+            padding: 10px 20px; border-radius: 6px; cursor: pointer; transition: 0.3s;
+        }
+        button:hover { background: #b5952f; }
+        
+        /* Lista de Mesas Activas */
+        .mesa-admin {
+            background: #1f2833; padding: 15px; border-radius: 8px; margin-bottom: 15px;
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;
+        }
+        .controles { display: flex; gap: 10px; align-items: center; }
+        .btn-accion { background: #45a29e; color: white; border-radius: 4px; padding: 6px 12px; }
+        .btn-peligro { background: #e0241b; color: white; }
+    </style>
+</head>
+<body>
+
+    <h1>Panel de Control - Mesas</h1>
+
+    <!-- Creador de Mesas -->
+    <div class="panel-creacion">
+        <h3 style="margin-top: 0; color: white;">➕ Abrir Nueva Mesa</h3>
+        <div class="form-group">
+            <select id="nuevo-juego">
+                <option value="Ruleta">Ruleta</option>
+                <option value="Blackjack">Blackjack</option>
+                <option value="Bacará">Bacará</option>
+                <option value="Texas Bonus">Texas Bonus</option>
+            </select>
+            <input type="text" id="nuevo-nombre" placeholder="Nombre (ej. Ruleta VIP 1)">
+        </div>
+        <div class="form-group">
+            <input type="number" id="nuevo-minimo" placeholder="Apuesta Mínima ($)">
+            <input type="number" id="nueva-capacidad" placeholder="Capacidad (Lugares)">
+        </div>
+        <button onclick="agregarMesa()">Agregar al Piso</button>
+    </div>
+
+    <h2>Mesas en el Piso</h2>
+    <div id="admin-mesas-container"><p>Cargando mesas...</p></div>
+
+    <script>
+        // Conexión a Supabase
+        const supabaseUrl = 'https://kqgtyzsxwrkomdtuktkk.supabase.co';
+        const supabaseKey = 'sb_publishable_on1rkqvAIhSQonTODdk5fA_qTpEo_8H';
+        const client = supabase.createClient(supabaseUrl, supabaseKey);
+
+        // Cargar las mesas para administrarlas
+        async function cargarMesasAdmin() {
+            const { data: mesas } = await client.from('mesas').select('*').order('nombre');
+            
+            document.getElementById('admin-mesas-container').innerHTML = mesas.map(m => `
+                <div class="mesa-admin" style="border-left: 5px solid ${m.estatus === 'Abierta' ? '#4CAF50' : '#e0241b'}">
+                    <div>
+                        <strong style="font-size: 1.2em; color: #d4af37;">${m.nombre}</strong> <br>
+                        <small>${m.juego} | Mín: $${m.apuesta_minima}</small>
+                    </div>
+                    
+                    <div class="controles">
+                        <!-- Control de Jugadores -->
+                        <div style="background: #0b0c10; padding: 5px 10px; border-radius: 6px; display: flex; gap: 10px; align-items: center;">
+                            <button class="btn-accion" onclick="cambiarJugadores('${m.id}', ${m.jugadores_actuales - 1})">-</button>
+                            <span>${m.jugadores_actuales} / ${m.capacidad_maxima} Jugadores</span>
+                            <button class="btn-accion" onclick="cambiarJugadores('${m.id}', ${m.jugadores_actuales + 1}, ${m.capacidad_maxima})">+</button>
+                        </div>
+
+                        <!-- Botón de Estatus -->
+                        <button class="btn-accion" style="background: ${m.estatus === 'Abierta' ? '#e0241b' : '#4CAF50'};" 
+                                onclick="cambiarEstatus('${m.id}', '${m.estatus === 'Abierta' ? 'Cerrada' : 'Abierta'}')">
+                            ${m.estatus === 'Abierta' ? 'Cerrar Mesa' : 'Abrir Mesa'}
+                        </button>
+                        
+                        <!-- Botón Borrar -->
+                        <button class="btn-accion btn-peligro" onclick="borrarMesa('${m.id}')">🗑️</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // FUNCIONES DE CONTROL
+        async function agregarMesa() {
+            const juego = document.getElementById('nuevo-juego').value;
+            const nombre = document.getElementById('nuevo-nombre').value;
+            const minimo = document.getElementById('nuevo-minimo').value;
+            const capacidad = document.getElementById('nueva-capacidad').value;
+
+            if(!nombre || !minimo || !capacidad) return alert("Llena todos los campos");
+
+            await client.from('mesas').insert([{
+                juego: juego, nombre: nombre, apuesta_minima: minimo, capacidad_maxima: capacidad, estatus: 'Abierta'
+            }]);
+            
+            // Limpiar campos
+            document.getElementById('nuevo-nombre').value = '';
+            document.getElementById('nuevo-minimo').value = '';
+            document.getElementById('nueva-capacidad').value = '';
+            cargarMesasAdmin();
+        }
+
+        async function cambiarJugadores(id, nuevosJugadores, maxima) {
+            if(nuevosJugadores < 0 || nuevosJugadores > maxima) return;
+            await client.from('mesas').update({ jugadores_actuales: nuevosJugadores }).eq('id', id);
+            cargarMesasAdmin();
+        }
+
+        async function cambiarEstatus(id, nuevoEstatus) {
+            await client.from('mesas').update({ estatus: nuevoEstatus }).eq('id', id);
+            cargarMesasAdmin();
+        }
+
+        async function borrarMesa(id) {
+            if(confirm("¿Seguro que quieres borrar esta mesa?")) {
+                await client.from('mesas').delete().eq('id', id);
+                cargarMesasAdmin();
+            }
+        }
+
+        // Suscripción para que el admin también se actualice solo
+        client.channel('admin-changes')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'mesas' }, cargarMesasAdmin)
+            .subscribe();
+
+        cargarMesasAdmin();
+    </script>
+</body>
+</html>
