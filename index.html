@@ -18,9 +18,7 @@
         @keyframes jackpotPulse { 0% { color: #fff; text-shadow: 0 0 5px var(--neon-gold); } 50% { color: var(--neon-gold); text-shadow: 0 0 20px var(--neon-gold); } 100% { color: #fff; text-shadow: 0 0 5px var(--neon-gold); } }
         @keyframes pulsePromoMesa { 0% { border-color: var(--neon-purple); } 50% { border-color: rgba(176,38,255,0.3); } 100% { border-color: var(--neon-purple); } }
 
-        /* NUEVO DISEÑO PARA LA PROMO GENERAL */
         .promo { padding: 15px 20px; border-radius: 12px; margin-bottom: 25px; animation: slideIn 0.5s ease-out; position: relative; overflow: hidden; }
-        
         .promo-general { background: var(--card-bg); border: 1px solid #2a2d3d; border-left: 5px solid var(--neon-purple); box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
         .promo-general strong { color: var(--neon-purple); font-size: 1.1em; letter-spacing: 1px; text-transform: uppercase; }
         
@@ -37,15 +35,20 @@
         .badge { background: rgba(0,240,255,0.1); color: var(--neon-cyan); padding: 4px 10px; border-radius: 4px; font-size: 0.85em; border: 1px solid rgba(0,240,255,0.3); align-self: flex-start; }
         
         .jackpot-texto { font-size: 1.1em; font-weight: bold; text-align: center; margin-top: 15px; background: rgba(212,175,55,0.1); padding: 10px; border-radius: 6px; animation: jackpotPulse 1.5s infinite; border: 1px dashed var(--neon-gold); }
-        
-        /* DISEÑO DE LA PROMO ESPECÍFICA POR MESA */
         .promo-mesa-activa { margin-top: 15px; padding: 12px; background: rgba(176, 38, 255, 0.05); border: 1px dashed var(--neon-purple); border-radius: 8px; color: #dfb3ff; font-size: 0.9em; text-align: center; animation: pulsePromoMesa 2s infinite; }
         .promo-mesa-activa strong { color: var(--neon-purple); }
 
         .btn-reservar { background: var(--btn-whatsapp); color: white; border: none; padding: 8px 15px; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.3s; font-size: 0.9em; display: flex; align-items: center; gap: 5px; }
         .btn-reservar:hover { background: #1ebe57; transform: scale(1.05); }
 
-        .gif-ruleta { width: 75px; height: 75px; object-fit: contain; filter: drop-shadow(0 0 12px rgba(212, 175, 55, 0.8)); }
+        /* Estilo universal para los íconos de las mesas */
+        .icono-juego { 
+            width: 75px; 
+            height: 75px; 
+            object-fit: contain; 
+            filter: drop-shadow(0 0 12px rgba(212, 175, 55, 0.8)); 
+        }
+        
         .mesa-header { display: flex; align-items: center; gap: 15px; }
         .mesa-titulo { margin: 0; color: white; font-size: 1.4em; text-transform: uppercase; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
 
@@ -80,6 +83,15 @@
 
         const client = supabase.createClient('https://kqgtyzsxwrkomdtuktkk.supabase.co', 'sb_publishable_on1rkqvAIhSQonTODdk5fA_qTpEo_8H');
 
+        // Diccionario de imágenes por juego
+        const imagenesJuegos = {
+            'Ruleta': 'ruleta.gif',
+            'Blackjack': 'blackjack.png',
+            'Bacará': 'bacara.png',
+            'Texas Bonus': 'texas.png',
+            'Dados': 'dados.png'
+        };
+
         async function cargarDatos() {
             const { data: promos } = await client.from('promociones').select('*').eq('activa', true).order('fecha_creacion', { ascending: false });
             if (promos && promos.length > 0) {
@@ -95,7 +107,10 @@
             const { data: mesas } = await client.from('mesas').select('*').order('juego').order('nombre');
             if (mesas && mesas.length > 0) {
                 document.getElementById('mesas-container').innerHTML = mesas.map(m => {
-                    const iconoRuleta = m.juego === 'Ruleta' ? `<img src="ruleta.gif" class="gif-ruleta" alt="Ruleta" onerror="this.style.display='none'">` : '';
+                    // Detecta la imagen correcta según el juego
+                    const archivoImagen = imagenesJuegos[m.juego];
+                    const iconoHTML = archivoImagen ? `<img src="${archivoImagen}" class="icono-juego" alt="${m.juego}" onerror="this.style.display='none'">` : '';
+                    
                     const botonReservar = m.estatus === 'Abierta' ? `<button class="btn-reservar" onclick="reservarMesa('${m.nombre}')">🟢 Reservar Lugar</button>` : '';
                     const infoCrupier = m.crupier ? `<span style="color:var(--neon-cyan);">🃏 Crupier: <strong>${m.crupier}</strong></span>` : '<span></span>';
                     const promoExclusiva = m.promo_especial ? `<div class="promo-mesa-activa"><strong>🎁 PROMO:</strong> ${m.promo_especial}</div>` : '';
@@ -103,7 +118,7 @@
                     return `
                     <div class="mesa ${m.estatus === 'Cerrada' ? 'cerrada' : ''}">
                         <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-                            <div class="mesa-header">${iconoRuleta}<h3 class="mesa-titulo">${m.nombre}</h3></div>
+                            <div class="mesa-header">${iconoHTML}<h3 class="mesa-titulo">${m.nombre}</h3></div>
                             <span class="badge">${m.juego}</span>
                         </div>
                         
