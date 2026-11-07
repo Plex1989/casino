@@ -34,47 +34,30 @@
         .cerrada { border-left-color: #e0241b; opacity: 0.7; }
         .stats { display: flex; justify-content: space-between; align-items: center; color: #8892b0; font-size: 0.95em; margin-top: 10px; flex-wrap: wrap; gap: 5px;}
         
-        /* Ajuste de los badges y botones */
-        .badge { background: rgba(0,240,255,0.1); color: var(--neon-cyan); padding: 4px 8px; border-radius: 4px; font-size: 0.8em; border: 1px solid rgba(0,240,255,0.3); flex-shrink: 0; }
+        /* Badge esquina superior */
+        .badge { background: rgba(0,240,255,0.1); color: var(--neon-cyan); padding: 4px 10px; border-radius: 4px; font-size: 0.85em; border: 1px solid rgba(0,240,255,0.3); align-self: flex-start; flex-shrink: 0; }
+        
         .jackpot-texto { font-size: 1.1em; font-weight: bold; text-align: center; margin-top: 15px; background: rgba(212,175,55,0.1); padding: 10px; border-radius: 6px; animation: jackpotPulse 1.5s infinite; border: 1px dashed var(--neon-gold); }
         .promo-mesa-activa { margin-top: 15px; padding: 12px; background: rgba(176, 38, 255, 0.05); border: 1px dashed var(--neon-purple); border-radius: 8px; color: #dfb3ff; font-size: 0.9em; text-align: center; animation: pulsePromoMesa 2s infinite; }
         .promo-mesa-activa strong { color: var(--neon-purple); }
         .btn-reservar { background: var(--btn-whatsapp); color: white; border: none; padding: 8px 15px; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.3s; font-size: 0.9em; display: flex; align-items: center; gap: 5px; }
         .btn-reservar:hover { background: #1ebe57; transform: scale(1.05); }
 
-        /* IMÁGENES MÁS GRANDES (de 75px a 90px) */
+        /* IMÁGENES AÚN MÁS GRANDES (95px) Y BLINDADAS CONTRA COMPRESIÓN */
         .icono-juego { 
-            width: 90px; 
-            height: 90px; 
+            width: 95px; 
+            height: 95px; 
             object-fit: contain; 
             filter: drop-shadow(0 0 12px rgba(212, 175, 55, 0.8));
-            flex-shrink: 0; /* Evita que el celular la aplaste */
+            flex-shrink: 0; 
         }
         
-        /* SISTEMA DE ALINEACIÓN RESTRINGIDA PARA QUE NO SE SALGA DE CUADRO */
-        .mesa-header-container { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
-        .mesa-header-left { display: flex; align-items: center; gap: 15px; flex: 1; min-width: 0; }
-        .titulo-box { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; }
+        /* DISEÑO DE TEXTO AMPLIO (REGRESAMOS AL ANTERIOR) */
+        .mesa-header { display: flex; align-items: center; gap: 15px; flex-wrap: wrap; }
+        .mesa-titulo { margin: 0; color: white; font-size: 1.4em; text-transform: uppercase; text-shadow: 0 2px 4px rgba(0,0,0,0.5); display: flex; align-items: center; gap: 10px; flex-wrap: wrap;}
         
-        /* Restricción del texto: si es muy largo, pone "..." */
-        .mesa-titulo { 
-            margin: 0; 
-            color: white; 
-            font-size: 1.3em; 
-            text-transform: uppercase; 
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-            white-space: nowrap; 
-            overflow: hidden; 
-            text-overflow: ellipsis; 
-        }
-        
-        /* El botón de EN VIVO protegido de achicarse */
-        .live-badge { 
-            display: flex; align-items: center; gap: 6px; color: var(--neon-red); 
-            font-size: 0.55em; font-weight: bold; letter-spacing: 1px; 
-            border: 1px solid var(--neon-red); padding: 3px 8px; border-radius: 12px; 
-            background: rgba(255, 0, 60, 0.1); flex-shrink: 0; 
-        }
+        /* Indicador EN VIVO (Mantiene su forma rígida) */
+        .live-badge { display: flex; align-items: center; gap: 6px; color: var(--neon-red); font-size: 0.55em; font-weight: bold; letter-spacing: 1px; border: 1px solid var(--neon-red); padding: 3px 8px; border-radius: 12px; background: rgba(255, 0, 60, 0.1); text-shadow: none; margin-top: 2px; flex-shrink: 0; }
         .live-dot { width: 8px; height: 8px; background-color: var(--neon-red); border-radius: 50%; animation: blinkDot 1s infinite; box-shadow: 0 0 5px var(--neon-red); }
 
         .flotantes-container { position: fixed; bottom: 20px; right: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 1000; }
@@ -142,14 +125,14 @@
                     return `
                     <div class="mesa ${m.estatus === 'Cerrada' ? 'cerrada' : ''}">
                         
-                        <!-- Contenedor blindado para que no se descuadre en celulares -->
-                        <div class="mesa-header-container">
-                            <div class="mesa-header-left">
+                        <!-- Contenedor superior con alineación flexible original -->
+                        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                            <div class="mesa-header">
                                 ${iconoHTML}
-                                <div class="titulo-box">
-                                    <h3 class="mesa-titulo" title="${m.nombre}">${m.nombre}</h3>
+                                <h3 class="mesa-titulo">
+                                    ${m.nombre} 
                                     ${indicadorEnVivo}
-                                </div>
+                                </h3>
                             </div>
                             <span class="badge">${m.juego}</span>
                         </div>
