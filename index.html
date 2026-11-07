@@ -4,6 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Casino - Estatus en Vivo</title>
+    
+    <!-- Configuración para PWA (App Instalable) -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0b0c10">
+    <link rel="apple-touch-icon" href="logo.png">
+
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root { --bg-color: #0b0c10; --card-bg: #151722; --neon-cyan: #00f0ff; --neon-red: #ff003c; --neon-gold: #d4af37; --neon-purple: #b026ff; --btn-whatsapp: #25D366; }
@@ -34,7 +40,6 @@
         .cerrada { border-left-color: #e0241b; opacity: 0.7; }
         .stats { display: flex; justify-content: space-between; align-items: center; color: #8892b0; font-size: 0.95em; margin-top: 10px; flex-wrap: wrap; gap: 5px;}
         
-        /* Badge esquina superior */
         .badge { background: rgba(0,240,255,0.1); color: var(--neon-cyan); padding: 4px 10px; border-radius: 4px; font-size: 0.85em; border: 1px solid rgba(0,240,255,0.3); align-self: flex-start; flex-shrink: 0; }
         
         .jackpot-texto { font-size: 1.1em; font-weight: bold; text-align: center; margin-top: 15px; background: rgba(212,175,55,0.1); padding: 10px; border-radius: 6px; animation: jackpotPulse 1.5s infinite; border: 1px dashed var(--neon-gold); }
@@ -43,20 +48,11 @@
         .btn-reservar { background: var(--btn-whatsapp); color: white; border: none; padding: 8px 15px; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.3s; font-size: 0.9em; display: flex; align-items: center; gap: 5px; }
         .btn-reservar:hover { background: #1ebe57; transform: scale(1.05); }
 
-        /* IMÁGENES AÚN MÁS GRANDES (95px) Y BLINDADAS CONTRA COMPRESIÓN */
-        .icono-juego { 
-            width: 95px; 
-            height: 95px; 
-            object-fit: contain; 
-            filter: drop-shadow(0 0 12px rgba(212, 175, 55, 0.8));
-            flex-shrink: 0; 
-        }
+        .icono-juego { width: 95px; height: 95px; object-fit: contain; filter: drop-shadow(0 0 12px rgba(212, 175, 55, 0.8)); flex-shrink: 0; }
         
-        /* DISEÑO DE TEXTO AMPLIO (REGRESAMOS AL ANTERIOR) */
         .mesa-header { display: flex; align-items: center; gap: 15px; flex-wrap: wrap; }
         .mesa-titulo { margin: 0; color: white; font-size: 1.4em; text-transform: uppercase; text-shadow: 0 2px 4px rgba(0,0,0,0.5); display: flex; align-items: center; gap: 10px; flex-wrap: wrap;}
         
-        /* Indicador EN VIVO (Mantiene su forma rígida) */
         .live-badge { display: flex; align-items: center; gap: 6px; color: var(--neon-red); font-size: 0.55em; font-weight: bold; letter-spacing: 1px; border: 1px solid var(--neon-red); padding: 3px 8px; border-radius: 12px; background: rgba(255, 0, 60, 0.1); text-shadow: none; margin-top: 2px; flex-shrink: 0; }
         .live-dot { width: 8px; height: 8px; background-color: var(--neon-red); border-radius: 50%; animation: blinkDot 1s infinite; box-shadow: 0 0 5px var(--neon-red); }
 
@@ -70,6 +66,22 @@
     <div class="header-logo"><img src="logo.png" alt="Casino" onerror="this.src='https://via.placeholder.com/120?text=LOGO'"></div>
 
     <div id="promos-container"></div>
+
+    <!-- BANNER DE COMUNIDAD VIP -->
+    <div style="background: linear-gradient(90deg, #0d1a10, #142b18); border: 1px solid #25D366; border-radius: 12px; padding: 15px; margin-bottom: 25px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 15px rgba(37, 211, 102, 0.2); flex-wrap: wrap; gap: 10px;">
+        <div style="display: flex; align-items: center; gap: 15px; flex: 1; min-width: 200px;">
+            <div style="background: #25D366; color: white; width: 45px; height: 45px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 1.5em; flex-shrink: 0;">
+                💬
+            </div>
+            <div>
+                <strong style="color: #25D366; font-size: 1.1em; display: block;">Radar VIP Casino</strong>
+                <span style="color: #bbb; font-size: 0.85em;">Recibe alertas de mesas calientes y bonos exclusivos.</span>
+            </div>
+        </div>
+        <button onclick="window.open('https://api.whatsapp.com/send?phone=522282311773&text=Hola,%20me%20gustar%C3%ADa%20unirme%20al%20grupo%20VIP%20del%20casino.', '_blank')" style="background: #25D366; color: black; border: none; padding: 10px 15px; border-radius: 8px; font-weight: bold; cursor: pointer; flex-shrink: 0;">
+            Unirme
+        </button>
+    </div>
     
     <h2>EN EL PISO HOY</h2>
     <div id="mesas-container"><p style="text-align:center; color:#8892b0;">Conectando con las mesas...</p></div>
@@ -125,7 +137,6 @@
                     return `
                     <div class="mesa ${m.estatus === 'Cerrada' ? 'cerrada' : ''}">
                         
-                        <!-- Contenedor superior con alineación flexible original -->
                         <div style="display:flex; justify-content:space-between; align-items:flex-start;">
                             <div class="mesa-header">
                                 ${iconoHTML}
@@ -157,6 +168,15 @@
 
         client.channel('public-changes').on('postgres_changes', { event: '*', schema: 'public' }, cargarDatos).subscribe();
         cargarDatos();
+
+        // REGISTRO DEL SERVICE WORKER PARA LA PWA (Permite instalación)
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => console.log('PWA Lista para instalar'))
+                    .catch(err => console.log('Error PWA:', err));
+            });
+        }
     </script>
 </body>
 </html>
