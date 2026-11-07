@@ -6,182 +6,31 @@
     <title>Casino - Portal Administrativo</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        /* Paleta de colores Neón y Oscura */
-        :root {
-            --bg-color: #0d0e15;
-            --panel-bg: #151722;
-            --neon-cyan: #00f0ff;
-            --neon-purple: #b026ff;
-            --text-main: #ffffff;
-            --text-muted: #8892b0;
-            --btn-orange: #ff9900;
-            --btn-whatsapp: #25D366;
-        }
-
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 0;
-            min-height: 100vh;
-        }
-
-        /* Barra de Navegación Superior */
-        .navbar {
-            background-color: #0a0b10;
-            padding: 15px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid rgba(0, 240, 255, 0.2);
-        }
+        :root { --bg-color: #0d0e15; --panel-bg: #151722; --neon-cyan: #00f0ff; --neon-purple: #b026ff; --text-main: #ffffff; --text-muted: #8892b0; --btn-orange: #ff9900; --btn-whatsapp: #25D366; }
+        body { background-color: var(--bg-color); color: var(--text-main); font-family: 'Segoe UI', Tahoma, sans-serif; margin: 0; padding: 0; min-height: 100vh; }
+        .navbar { background-color: #0a0b10; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(0, 240, 255, 0.2); }
         .navbar h2 { margin: 0; font-size: 1.2rem; letter-spacing: 2px; }
-        .nav-links { display: flex; gap: 15px; }
-        .nav-pill {
-            background: transparent;
-            color: var(--text-muted);
-            border: 1px solid #333;
-            padding: 8px 20px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: bold;
-            text-transform: uppercase;
-        }
-        .nav-pill.active {
-            color: var(--neon-cyan);
-            border-color: var(--neon-cyan);
-            box-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
-        }
-
-        /* Pantalla de Login */
-        #login-section {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: calc(100vh - 70px);
-        }
-        .logo-container {
-            position: relative;
-            margin-bottom: 30px;
-        }
-        .logo-glow {
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            width: 150px; height: 150px;
-            background: radial-gradient(circle, rgba(0,240,255,0.4) 0%, rgba(0,0,0,0) 70%);
-            z-index: 1;
-        }
-        #login-logo {
-            position: relative;
-            z-index: 2;
-            width: 120px; /* Ajusta según el tamaño de tu logo */
-            filter: drop-shadow(0 0 10px rgba(0, 240, 255, 0.5));
-        }
-        .login-box {
-            width: 100%;
-            max-width: 350px;
-            text-align: center;
-        }
-        .login-box h1 { font-size: 1.5rem; margin-bottom: 5px; }
-        .login-box p { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 30px; }
-        
+        #login-section { display: flex; flex-direction: column; align-items: center; justify-content: center; height: calc(100vh - 70px); }
+        .logo-glow { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 150px; height: 150px; background: radial-gradient(circle, rgba(0,240,255,0.4) 0%, rgba(0,0,0,0) 70%); z-index: 1; }
+        #login-logo { position: relative; z-index: 2; width: 120px; filter: drop-shadow(0 0 10px rgba(0, 240, 255, 0.5)); }
+        .login-box { width: 100%; max-width: 350px; text-align: center; margin-top: 30px;}
         .input-group { margin-bottom: 20px; text-align: left; }
         .input-group label { color: var(--text-muted); font-size: 0.8rem; display: block; margin-bottom: 5px; }
-        .input-group input {
-            width: 100%;
-            background: var(--panel-bg);
-            border: none;
-            border-bottom: 2px solid #333;
-            color: white;
-            padding: 12px;
-            box-sizing: border-box;
-            font-size: 1rem;
-            transition: 0.3s;
-        }
-        .input-group input:focus {
-            outline: none;
-            border-bottom-color: var(--neon-cyan);
-            background: rgba(0, 240, 255, 0.05);
-        }
-        
-        .btn-ingresar {
-            width: 100%;
-            background: transparent;
-            border: 1px solid var(--neon-cyan);
-            color: var(--neon-cyan);
-            padding: 12px;
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
-            border-radius: 4px;
-            transition: 0.3s;
-            margin-top: 10px;
-        }
-        .btn-ingresar:hover {
-            background: var(--neon-cyan);
-            color: black;
-            box-shadow: 0 0 15px rgba(0, 240, 255, 0.5);
-        }
-
-        /* Panel de Administración (Oculto al inicio) */
-        #admin-section {
-            display: none; /* Se activa con JS */
-            padding: 30px;
-            max-width: 900px;
-            margin: 0 auto;
-        }
-        
-        .header-admin {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-        }
-        
-        .btn-whatsapp {
-            background: var(--btn-whatsapp);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            font-weight: bold;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .panel-creacion, .mesa-admin {
-            background: var(--panel-bg);
-            padding: 20px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            border: 1px solid rgba(0, 240, 255, 0.3);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-        }
-        
-        /* Formularios del Admin */
+        .input-group input { width: 100%; background: var(--panel-bg); border: none; border-bottom: 2px solid #333; color: white; padding: 12px; box-sizing: border-box; font-size: 1rem; transition: 0.3s; }
+        .input-group input:focus { outline: none; border-bottom-color: var(--neon-cyan); background: rgba(0, 240, 255, 0.05); }
+        .btn-ingresar { width: 100%; background: transparent; border: 1px solid var(--neon-cyan); color: var(--neon-cyan); padding: 12px; font-size: 1rem; font-weight: bold; cursor: pointer; border-radius: 4px; transition: 0.3s; margin-top: 10px; }
+        .btn-ingresar:hover { background: var(--neon-cyan); color: black; box-shadow: 0 0 15px rgba(0, 240, 255, 0.5); }
+        #admin-section { display: none; padding: 30px; max-width: 900px; margin: 0 auto; }
+        .header-admin { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .btn-whatsapp { background: var(--btn-whatsapp); color: white; border: none; padding: 10px 20px; border-radius: 5px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 10px; }
+        .panel-creacion, .mesa-admin, .promo-admin { background: var(--panel-bg); padding: 20px; border-radius: 12px; margin-bottom: 20px; border: 1px solid rgba(0, 240, 255, 0.3); box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5); }
+        .panel-promo { border-color: var(--neon-purple); box-shadow: 0 4px 20px rgba(176, 38, 255, 0.15); }
         .form-group { display: flex; gap: 15px; margin-bottom: 15px; flex-wrap: wrap; }
-        .form-group input, .form-group select {
-            background: #0d0e15; border: 1px solid #333; color: white;
-            padding: 12px; border-radius: 6px; flex: 1; min-width: 150px;
-        }
-        .form-group input:focus, .form-group select:focus {
-            border-color: var(--btn-orange); outline: none;
-        }
-        
-        .btn-naranja {
-            background: var(--btn-orange); color: black; font-weight: bold; border: none;
-            padding: 12px 25px; border-radius: 20px; cursor: pointer;
-        }
-
-        .mesa-admin {
-            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;
-            border-left: 5px solid #4CAF50;
-        }
+        .form-group input, .form-group select { background: #0d0e15; border: 1px solid #333; color: white; padding: 12px; border-radius: 6px; flex: 1; min-width: 150px; }
+        .form-group input:focus, .form-group select:focus { border-color: var(--neon-cyan); outline: none; }
+        .btn-naranja { background: var(--btn-orange); color: black; font-weight: bold; border: none; padding: 12px 25px; border-radius: 20px; cursor: pointer; }
+        .btn-morado { background: var(--neon-purple); color: white; font-weight: bold; border: none; padding: 12px 25px; border-radius: 20px; cursor: pointer; }
+        .mesa-admin, .promo-admin { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; border-left: 5px solid #4CAF50; }
         .controles { display: flex; gap: 10px; align-items: center; }
         .btn-accion { background: transparent; border: 1px solid var(--neon-cyan); color: var(--neon-cyan); border-radius: 4px; padding: 8px 15px; cursor: pointer;}
         .btn-accion:hover { background: rgba(0,240,255,0.1); }
@@ -190,61 +39,64 @@
     </style>
 </head>
 <body>
-
-    <!-- NAVBAR -->
     <nav class="navbar">
         <h2>CASINO EN VIVO</h2>
-        <div class="nav-links">
-            <div class="nav-pill active">Administrador</div>
-        </div>
     </nav>
 
-    <!-- PANTALLA DE LOGIN -->
     <div id="login-section">
         <div class="logo-container">
             <div class="logo-glow"></div>
-            <!-- Tu logo.png debe estar en la raíz de tu repositorio -->
             <img src="logo.png" id="login-logo" alt="Logo Casino" onerror="this.src='https://via.placeholder.com/120?text=LOGO'">
         </div>
-        
         <div class="login-box">
             <h1>INICIAR SESIÓN</h1>
-            <p>Portal Administrativo de Mesas</p>
-            
-            <div class="input-group">
-                <label>👤 Usuario</label>
-                <input type="text" id="user-input" placeholder="Ingresa tu usuario">
-            </div>
-            
-            <div class="input-group">
-                <label>🔒 Contraseña</label>
-                <input type="password" id="pass-input" placeholder="••••••••">
-            </div>
-            
+            <p>Portal Administrativo</p>
+            <div class="input-group"><label>👤 Usuario</label><input type="text" id="user-input"></div>
+            <div class="input-group"><label>🔒 Contraseña</label><input type="password" id="pass-input"></div>
             <button class="btn-ingresar" onclick="verificarLogin()">INGRESAR ➔</button>
-            <p id="login-error" style="color: #e0241b; display: none; margin-top: 15px;">Usuario o contraseña incorrectos</p>
+            <p id="login-error" style="color: #e0241b; display: none;">Datos incorrectos</p>
         </div>
     </div>
 
-    <!-- PANEL DE ADMINISTRACIÓN (Se muestra tras el login) -->
     <div id="admin-section">
         <div class="header-admin">
-            <h2 style="color: var(--neon-cyan); margin: 0;">Gestión de Mesas</h2>
-            <button class="btn-whatsapp" onclick="compartirWhatsApp()">
-                📱 Compartir Portal Público
-            </button>
+            <h2 style="color: var(--neon-cyan); margin: 0;">Gestión de Mesas y Promos</h2>
+            <button class="btn-whatsapp" onclick="compartirWhatsApp()">📱 Compartir Portal</button>
         </div>
 
-        <div class="panel-creacion">
-            <h3 style="margin-top: 0; color: var(--btn-orange);">+ Crear Nueva Mesa</h3>
+        <!-- PANEL DE PROMOCIONES -->
+        <div class="panel-creacion panel-promo">
+            <h3 style="margin-top: 0; color: var(--neon-purple);">📢 Lanzar Promoción</h3>
             <div class="form-group">
-                <select id="nuevo-juego">
-                    <option value="Ruleta">Ruleta</option>
-                    <option value="Blackjack">Blackjack</option>
-                    <option value="Bacará">Bacará</option>
-                    <option value="Texas Bonus">Texas Bonus</option>
+                <input type="text" id="promo-titulo" placeholder="Título (ej. ¡Bono 10% Extra!)" style="flex: 2;">
+                <select id="promo-tipo" style="flex: 1;">
+                    <option value="General">Promoción General</option>
+                    <option value="Flash">⚡ Promo Flash (Urgencia)</option>
                 </select>
-                <input type="text" id="nuevo-nombre" placeholder="Nombre (ej. Ruleta VIP)">
+            </div>
+            <div class="form-group">
+                <input type="text" id="promo-desc" placeholder="Descripción de la oferta...">
+            </div>
+            <button class="btn-morado" onclick="agregarPromocion()">Activar Promoción</button>
+        </div>
+        <div id="admin-promos-container" style="margin-bottom: 40px;"></div>
+
+        <!-- PANEL DE MESAS -->
+        <div class="panel-creacion">
+            <h3 style="margin-top: 0; color: var(--btn-orange);">+ Abrir Nueva Mesa</h3>
+            <div class="form-group">
+                <div style="display:flex; flex:1; gap:10px;">
+                    <select id="nuevo-juego" onchange="verificarNuevoJuego()" style="flex:1;">
+                        <option value="Ruleta">Ruleta</option>
+                        <option value="Blackjack">Blackjack</option>
+                        <option value="Bacará">Bacará</option>
+                        <option value="Texas Bonus">Texas Bonus</option>
+                        <option value="Dados">Dados (Craps)</option>
+                        <option value="OTRO">+ Agregar otro...</option>
+                    </select>
+                    <input type="text" id="juego-personalizado" placeholder="¿Qué juego?" style="display:none; flex:1;">
+                </div>
+                <input type="text" id="nuevo-nombre" placeholder="Nombre (ej. VIP)">
             </div>
             <div class="form-group">
                 <input type="number" id="nuevo-minimo" placeholder="Apuesta Mínima ($)">
@@ -252,106 +104,88 @@
             </div>
             <button class="btn-naranja" onclick="agregarMesa()">Aperturar Mesa</button>
         </div>
-
-        <div id="admin-mesas-container"><p>Cargando mesas activas...</p></div>
+        <div id="admin-mesas-container"></div>
     </div>
 
     <script>
-        // 1. SISTEMA BÁSICO DE LOGIN (Usuario: admin / Pass: casino123)
         function verificarLogin() {
-            const user = document.getElementById('user-input').value;
-            const pass = document.getElementById('pass-input').value;
-            
-            if(user === 'admin' && pass === 'casino123') {
+            if(document.getElementById('user-input').value === 'admin' && document.getElementById('pass-input').value === 'casino123') {
                 document.getElementById('login-section').style.display = 'none';
                 document.getElementById('admin-section').style.display = 'block';
-                cargarMesasAdmin(); // Carga la base de datos solo si entra
-            } else {
-                document.getElementById('login-error').style.display = 'block';
-            }
+                cargarDatosAdmin(); 
+            } else { document.getElementById('login-error').style.display = 'block'; }
         }
 
-        // 2. FUNCIÓN PARA COMPARTIR EN WHATSAPP
         function compartirWhatsApp() {
-            // Toma la URL base actual (ej. https://casino-three-rho.vercel.app/) y la manda a WhatsApp
-            const urlPublica = window.location.origin;
-            const mensaje = encodeURIComponent(`🎰 ¡Checa las mesas abiertas y promociones de nuestro Casino en vivo! Entra aquí: ${urlPublica}`);
-            window.open(`https://api.whatsapp.com/send?text=${mensaje}`, '_blank');
+            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(`🎰 ¡Checa las mesas abiertas y promos en vivo! ${window.location.origin}`)}`, '_blank');
         }
 
-        // 3. CONEXIÓN A SUPABASE (Reutilizando tu configuración correcta)
-        const supabaseUrl = 'https://kqgtyzsxwrkomdtuktkk.supabase.co';
-        const supabaseKey = 'sb_publishable_on1rkqvAIhSQonTODdk5fA_qTpEo_8H';
-        const client = supabase.createClient(supabaseUrl, supabaseKey);
+        function verificarNuevoJuego() {
+            const select = document.getElementById('nuevo-juego');
+            const inputPersonalizado = document.getElementById('juego-personalizado');
+            inputPersonalizado.style.display = select.value === 'OTRO' ? 'block' : 'none';
+        }
 
-        async function cargarMesasAdmin() {
+        const client = supabase.createClient('https://kqgtyzsxwrkomdtuktkk.supabase.co', 'sb_publishable_on1rkqvAIhSQonTODdk5fA_qTpEo_8H');
+
+        async function cargarDatosAdmin() {
+            // Cargar Mesas
             const { data: mesas } = await client.from('mesas').select('*').order('nombre');
-            
             document.getElementById('admin-mesas-container').innerHTML = mesas.map(m => `
                 <div class="mesa-admin" style="border-left-color: ${m.estatus === 'Abierta' ? '#00f0ff' : '#e0241b'}">
-                    <div>
-                        <strong style="font-size: 1.2em; color: white;">${m.nombre}</strong> <br>
-                        <small style="color: var(--text-muted);">${m.juego} | Mín: $${m.apuesta_minima}</small>
-                    </div>
-                    
+                    <div><strong style="font-size: 1.2em;">${m.nombre}</strong><br><small style="color: var(--text-muted);">${m.juego} | Mín: $${m.apuesta_minima}</small></div>
                     <div class="controles">
                         <div style="background: #0d0e15; padding: 5px 15px; border-radius: 20px; border: 1px solid #333; display: flex; gap: 15px; align-items: center;">
-                            <button class="btn-accion" style="border:none; font-size:1.2rem; padding:0;" onclick="cambiarJugadores('${m.id}', ${m.jugadores_actuales - 1})">-</button>
-                            <span style="font-weight: bold;">${m.jugadores_actuales} / ${m.capacidad_maxima} Jug.</span>
-                            <button class="btn-accion" style="border:none; font-size:1.2rem; padding:0;" onclick="cambiarJugadores('${m.id}', ${m.jugadores_actuales + 1}, ${m.capacidad_maxima})">+</button>
+                            <button class="btn-accion" style="border:none; padding:0;" onclick="actualizarCampo('mesas', '${m.id}', 'jugadores_actuales', ${m.jugadores_actuales - 1})">-</button>
+                            <span>${m.jugadores_actuales} / ${m.capacidad_maxima} Jug.</span>
+                            <button class="btn-accion" style="border:none; padding:0;" onclick="actualizarCampo('mesas', '${m.id}', 'jugadores_actuales', ${m.jugadores_actuales + 1})">+</button>
                         </div>
-
                         <button class="btn-accion" style="color: ${m.estatus === 'Abierta' ? '#e0241b' : '#00f0ff'}; border-color: ${m.estatus === 'Abierta' ? '#e0241b' : '#00f0ff'};" 
-                                onclick="cambiarEstatus('${m.id}', '${m.estatus === 'Abierta' ? 'Cerrada' : 'Abierta'}')">
-                            ${m.estatus === 'Abierta' ? 'Cerrar Mesa' : 'Abrir Mesa'}
-                        </button>
-                        
-                        <button class="btn-accion btn-peligro" onclick="borrarMesa('${m.id}')">🗑️</button>
+                                onclick="actualizarCampo('mesas', '${m.id}', 'estatus', '${m.estatus === 'Abierta' ? 'Cerrada' : 'Abierta'}')">${m.estatus === 'Abierta' ? 'Cerrar Mesa' : 'Abrir Mesa'}</button>
+                        <button class="btn-accion btn-peligro" onclick="borrarRegistro('mesas', '${m.id}')">🗑️</button>
                     </div>
-                </div>
-            `).join('');
+                </div>`).join('');
+
+            // Cargar Promos
+            const { data: promos } = await client.from('promociones').select('*').order('fecha_creacion', { ascending: false });
+            document.getElementById('admin-promos-container').innerHTML = promos.map(p => `
+                <div class="promo-admin" style="border-left-color: ${p.tipo === 'Flash' ? '#e0241b' : '#b026ff'}">
+                    <div><strong style="color:${p.tipo === 'Flash' ? '#e0241b' : '#b026ff'}">${p.tipo === 'Flash' ? '⚡ FLASH:' : '📢 GENERAL:'} ${p.titulo}</strong><br><small>${p.descripcion}</small></div>
+                    <div class="controles">
+                        <button class="btn-accion" style="color: ${p.activa ? '#e0241b' : '#4CAF50'}; border-color: ${p.activa ? '#e0241b' : '#4CAF50'};" 
+                                onclick="actualizarCampo('promociones', '${p.id}', 'activa', ${!p.activa})">${p.activa ? 'Desactivar' : 'Activar'}</button>
+                        <button class="btn-accion btn-peligro" onclick="borrarRegistro('promociones', '${p.id}')">🗑️</button>
+                    </div>
+                </div>`).join('');
         }
 
         async function agregarMesa() {
-            const juego = document.getElementById('nuevo-juego').value;
-            const nombre = document.getElementById('nuevo-nombre').value;
-            const minimo = document.getElementById('nuevo-minimo').value;
-            const capacidad = document.getElementById('nueva-capacidad').value;
-
-            if(!nombre || !minimo || !capacidad) return alert("Llena todos los campos");
-
-            await client.from('mesas').insert([{
-                juego: juego, nombre: nombre, apuesta_minima: minimo, capacidad_maxima: capacidad, estatus: 'Abierta'
-            }]);
-            
-            document.getElementById('nuevo-nombre').value = '';
-            document.getElementById('nuevo-minimo').value = '';
-            document.getElementById('nueva-capacidad').value = '';
-            cargarMesasAdmin();
+            let juego = document.getElementById('nuevo-juego').value;
+            if (juego === 'OTRO') juego = document.getElementById('juego-personalizado').value;
+            const nombre = document.getElementById('nuevo-nombre').value, min = document.getElementById('nuevo-minimo').value, cap = document.getElementById('nueva-capacidad').value;
+            if(!nombre || !min || !cap || !juego) return alert("Llena todos los campos");
+            await client.from('mesas').insert([{ juego: juego, nombre: nombre, apuesta_minima: min, capacidad_maxima: cap, estatus: 'Abierta' }]);
+            ['nuevo-nombre','nuevo-minimo','nueva-capacidad','juego-personalizado'].forEach(id => document.getElementById(id).value = '');
+            document.getElementById('nuevo-juego').value = 'Ruleta'; verificarNuevoJuego();
+            cargarDatosAdmin();
         }
 
-        async function cambiarJugadores(id, nuevosJugadores, maxima) {
-            if(nuevosJugadores < 0 || (maxima && nuevosJugadores > maxima)) return;
-            await client.from('mesas').update({ jugadores_actuales: nuevosJugadores }).eq('id', id);
-            cargarMesasAdmin();
+        async function agregarPromocion() {
+            const titulo = document.getElementById('promo-titulo').value, desc = document.getElementById('promo-desc').value, tipo = document.getElementById('promo-tipo').value;
+            if(!titulo) return alert("Ponle un título a la promoción");
+            await client.from('promociones').insert([{ titulo: titulo, descripcion: desc, tipo: tipo, activa: true }]);
+            document.getElementById('promo-titulo').value = ''; document.getElementById('promo-desc').value = '';
+            cargarDatosAdmin();
         }
 
-        async function cambiarEstatus(id, nuevoEstatus) {
-            await client.from('mesas').update({ estatus: nuevoEstatus }).eq('id', id);
-            cargarMesasAdmin();
+        async function actualizarCampo(tabla, id, campo, valor) {
+            await client.from(tabla).update({ [campo]: valor }).eq('id', id); cargarDatosAdmin();
+        }
+        async function borrarRegistro(tabla, id) {
+            if(confirm("¿Seguro que quieres borrar esto?")) { await client.from(tabla).delete().eq('id', id); cargarDatosAdmin(); }
         }
 
-        async function borrarMesa(id) {
-            if(confirm("¿Seguro que quieres borrar esta mesa?")) {
-                await client.from('mesas').delete().eq('id', id);
-                cargarMesasAdmin();
-            }
-        }
-
-        // Mantener actualizado en tiempo real
-        client.channel('admin-changes')
-            .on('postgres_changes', { event: '*', schema: 'public', table: 'mesas' }, cargarMesasAdmin)
-            .subscribe();
+        client.channel('admin-updates').on('postgres_changes', { event: '*', schema: 'public' }, cargarDatosAdmin).subscribe();
     </script>
 </body>
 </html>
