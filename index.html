@@ -17,6 +17,7 @@
         @keyframes scrollText { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
         @keyframes jackpotPulse { 0% { color: #fff; text-shadow: 0 0 5px var(--neon-gold); } 50% { color: var(--neon-gold); text-shadow: 0 0 20px var(--neon-gold); } 100% { color: #fff; text-shadow: 0 0 5px var(--neon-gold); } }
         @keyframes pulsePromoMesa { 0% { border-color: var(--neon-purple); } 50% { border-color: rgba(176,38,255,0.3); } 100% { border-color: var(--neon-purple); } }
+        @keyframes blinkDot { 0% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(1.2); } 100% { opacity: 1; transform: scale(1); } }
 
         .promo { padding: 15px 20px; border-radius: 12px; margin-bottom: 25px; animation: slideIn 0.5s ease-out; position: relative; overflow: hidden; }
         .promo-general { background: var(--card-bg); border: 1px solid #2a2d3d; border-left: 5px solid var(--neon-purple); box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
@@ -41,16 +42,14 @@
         .btn-reservar { background: var(--btn-whatsapp); color: white; border: none; padding: 8px 15px; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.3s; font-size: 0.9em; display: flex; align-items: center; gap: 5px; }
         .btn-reservar:hover { background: #1ebe57; transform: scale(1.05); }
 
-        /* Estilo universal para los íconos de las mesas */
-        .icono-juego { 
-            width: 75px; 
-            height: 75px; 
-            object-fit: contain; 
-            filter: drop-shadow(0 0 12px rgba(212, 175, 55, 0.8)); 
-        }
+        .icono-juego { width: 75px; height: 75px; object-fit: contain; filter: drop-shadow(0 0 12px rgba(212, 175, 55, 0.8)); }
         
-        .mesa-header { display: flex; align-items: center; gap: 15px; }
-        .mesa-titulo { margin: 0; color: white; font-size: 1.4em; text-transform: uppercase; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+        .mesa-header { display: flex; align-items: center; gap: 15px; flex-wrap: wrap; }
+        .mesa-titulo { margin: 0; color: white; font-size: 1.4em; text-transform: uppercase; text-shadow: 0 2px 4px rgba(0,0,0,0.5); display: flex; align-items: center; gap: 10px; flex-wrap: wrap;}
+        
+        /* Indicador EN VIVO */
+        .live-badge { display: flex; align-items: center; gap: 6px; color: var(--neon-red); font-size: 0.55em; font-weight: bold; letter-spacing: 1px; border: 1px solid var(--neon-red); padding: 3px 8px; border-radius: 12px; background: rgba(255, 0, 60, 0.1); text-shadow: none; margin-top: 2px; }
+        .live-dot { width: 8px; height: 8px; background-color: var(--neon-red); border-radius: 50%; animation: blinkDot 1s infinite; box-shadow: 0 0 5px var(--neon-red); }
 
         .flotantes-container { position: fixed; bottom: 20px; right: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 1000; }
         .btn-flotante { background-color: #1f2833; color: white; border: 1px solid var(--neon-cyan); border-radius: 50px; padding: 12px 20px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.5); transition: 0.3s; }
@@ -83,7 +82,6 @@
 
         const client = supabase.createClient('https://kqgtyzsxwrkomdtuktkk.supabase.co', 'sb_publishable_on1rkqvAIhSQonTODdk5fA_qTpEo_8H');
 
-        // Diccionario de imágenes por juego
         const imagenesJuegos = {
             'Ruleta': 'ruleta.gif',
             'Blackjack': 'blackjack.png',
@@ -107,7 +105,6 @@
             const { data: mesas } = await client.from('mesas').select('*').order('juego').order('nombre');
             if (mesas && mesas.length > 0) {
                 document.getElementById('mesas-container').innerHTML = mesas.map(m => {
-                    // Detecta la imagen correcta según el juego
                     const archivoImagen = imagenesJuegos[m.juego];
                     const iconoHTML = archivoImagen ? `<img src="${archivoImagen}" class="icono-juego" alt="${m.juego}" onerror="this.style.display='none'">` : '';
                     
@@ -115,10 +112,19 @@
                     const infoCrupier = m.crupier ? `<span style="color:var(--neon-cyan);">🃏 Crupier: <strong>${m.crupier}</strong></span>` : '<span></span>';
                     const promoExclusiva = m.promo_especial ? `<div class="promo-mesa-activa"><strong>🎁 PROMO:</strong> ${m.promo_especial}</div>` : '';
                     
+                    // Indicador EN VIVO (Solo si está abierta)
+                    const indicadorEnVivo = m.estatus === 'Abierta' ? `<div class="live-badge"><div class="live-dot"></div>EN VIVO</div>` : '';
+                    
                     return `
                     <div class="mesa ${m.estatus === 'Cerrada' ? 'cerrada' : ''}">
                         <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-                            <div class="mesa-header">${iconoHTML}<h3 class="mesa-titulo">${m.nombre}</h3></div>
+                            <div class="mesa-header">
+                                ${iconoHTML}
+                                <h3 class="mesa-titulo">
+                                    ${m.nombre} 
+                                    ${indicadorEnVivo}
+                                </h3>
+                            </div>
                             <span class="badge">${m.juego}</span>
                         </div>
                         
