@@ -13,7 +13,7 @@
     <!-- Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <!-- OneSignal SDK para Notificaciones Push -->
+    <!-- OneSignal SDK para Notificaciones Push (BOTÓN INTELIGENTE) -->
     <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
     <script>
       window.OneSignalDeferred = window.OneSignalDeferred || [];
@@ -21,7 +21,49 @@
         await OneSignal.init({
           appId: "15bf381f-0de7-4e12-918b-57db8e55be92",
         });
+
+        // Actualiza el botón al cargar la página
+        actualizarEstadoBoton();
+
+        // Escucha en tiempo real si el cliente acepta los permisos
+        OneSignal.User.PushSubscription.addEventListener("change", function(e) {
+            actualizarEstadoBoton();
+            if(OneSignal.User.PushSubscription.optedIn) {
+                alert("¡Notificaciones activadas exitosamente!");
+            }
+        });
       });
+
+      // Lógica de encendido/apagado al tocar el botón
+      function toggleAlertas() {
+        window.OneSignalDeferred.push(function(OneSignal) {
+            const isSubscribed = OneSignal.User.PushSubscription.optedIn;
+            if (isSubscribed) {
+                // Cancela la suscripción
+                OneSignal.User.PushSubscription.optOut();
+                alert("Notificaciones canceladas. Ya no recibirás alertas.");
+            } else {
+                // Pide los permisos
+                OneSignal.Slidedown.promptPush();
+            }
+            // Forzamos un pequeño retraso visual para que la interfaz se actualice
+            setTimeout(actualizarEstadoBoton, 500);
+        });
+      }
+
+      function actualizarEstadoBoton() {
+        window.OneSignalDeferred.push(function(OneSignal) {
+            const btn = document.getElementById('btn-alertas');
+            if (!btn) return;
+            if (OneSignal.User.PushSubscription.optedIn) {
+                btn.className = "btn-alertas-activo";
+                btn.innerHTML = "✅ Alertas Activas (Toca para cancelar)";
+            } else {
+                btn.className = "btn-alertas-inactivo";
+                btn.innerHTML = "🔔 Activar Alertas";
+            }
+        });
+      }
     </script>
 
     <style>
@@ -37,6 +79,12 @@
         @keyframes jackpotPulse { 0% { color: #fff; text-shadow: 0 0 5px var(--neon-gold); } 50% { color: var(--neon-gold); text-shadow: 0 0 20px var(--neon-gold); } 100% { color: #fff; text-shadow: 0 0 5px var(--neon-gold); } }
         @keyframes pulsePromoMesa { 0% { border-color: var(--neon-purple); } 50% { border-color: rgba(176,38,255,0.3); } 100% { border-color: var(--neon-purple); } }
         @keyframes blinkDot { 0% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(1.2); } 100% { opacity: 1; transform: scale(1); } }
+        @keyframes pulseGlowPurple { 0% { box-shadow: 0 0 5px rgba(176,38,255,0.5); } 100% { box-shadow: 0 0 20px rgba(176,38,255,0.8); } }
+
+        /* Estilos del nuevo botón superior de alertas */
+        #btn-alertas { display: block; width: 100%; padding: 12px; border-radius: 8px; font-weight: bold; font-size: 1.1em; margin-bottom: 25px; cursor: pointer; transition: 0.3s; text-align: center; }
+        .btn-alertas-inactivo { background-color: var(--neon-purple); color: white; border: none; animation: pulseGlowPurple 2s infinite alternate; }
+        .btn-alertas-activo { background-color: rgba(76, 175, 80, 0.1); color: #4CAF50; border: 1px solid #4CAF50; animation: none; box-shadow: none; }
 
         .promo { padding: 15px 20px; border-radius: 12px; margin-bottom: 25px; animation: slideIn 0.5s ease-out; position: relative; overflow: hidden; }
         .promo-general { background: var(--card-bg); border: 1px solid #2a2d3d; border-left: 5px solid var(--neon-purple); box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
@@ -78,7 +126,6 @@
         .btn-instalar-top { background: linear-gradient(90deg, #00f0ff, #0088ff); color: black; border: none; width: 100%; padding: 12px; font-weight: bold; font-size: 1.1em; border-radius: 8px; margin-bottom: 20px; cursor: pointer; box-shadow: 0 4px 15px rgba(0, 240, 255, 0.3); animation: pulseGlow 2s infinite alternate; }
         @keyframes pulseGlow { 0% { box-shadow: 0 0 5px rgba(0,240,255,0.5); } 100% { box-shadow: 0 0 20px rgba(0,240,255,0.8); } }
         
-        /* Modal de Instrucciones de Instalación */
         #modal-instalar { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 9999; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; backdrop-filter: blur(5px); }
         .modal-content { background: #151722; border: 2px solid var(--neon-cyan); border-radius: 12px; padding: 25px; text-align: center; max-width: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
 
@@ -90,10 +137,8 @@
 </head>
 <body>
     
-    <!-- Botón de instalación que nunca desaparece (a menos que ya esté instalada) -->
     <button class="btn-instalar-top" onclick="abrirModalInstalacion()">📲 Instalar App del Casino</button>
 
-    <!-- Modal de Instalación (Pop-up) -->
     <div id="modal-instalar">
         <div class="modal-content">
             <h3 style="color: var(--neon-cyan); margin-top: 0; font-size: 1.5em;">Instalar Aplicación</h3>
@@ -105,9 +150,13 @@
 
     <div class="header-logo"><img src="logo.png" alt="Casino" onerror="this.src='https://via.placeholder.com/120?text=LOGO'"></div>
 
+    <!-- EL NUEVO BOTÓN SUPERIOR E INTELIGENTE -->
+    <button id="btn-alertas" class="btn-alertas-inactivo" onclick="toggleAlertas()">
+        🔔 Activar Alertas
+    </button>
+
     <div id="promos-container"></div>
 
-    <!-- BANNER DE COMUNIDAD VIP -->
     <div style="background: linear-gradient(90deg, #0d1a10, #142b18); border: 1px solid #25D366; border-radius: 12px; padding: 15px; margin-bottom: 25px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 15px rgba(37, 211, 102, 0.2); flex-wrap: wrap; gap: 10px;">
         <div style="display: flex; align-items: center; gap: 15px; flex: 1; min-width: 200px;">
             <div style="background: #25D366; color: white; width: 45px; height: 45px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 1.5em; flex-shrink: 0;">💬</div>
@@ -123,23 +172,13 @@
     <div id="mesas-container"><p style="text-align:center; color:#8892b0;">Conectando con las mesas...</p></div>
 
     <div class="flotantes-container">
-        <!-- Nuevo botón para activar notificaciones manualmente -->
-        <button class="btn-flotante" onclick="pedirPermisoNotificaciones()" style="background-color: var(--neon-purple); border: none; box-shadow: 0 4px 15px rgba(176, 38, 255, 0.4);">🔔 Activar Alertas</button>
+        <!-- El botón morado inferior fue removido -->
         <button class="btn-flotante" onclick="pedirMenu()">🍸 Menú Bar</button>
         <button class="btn-flotante wa" onclick="compartirAppCliente()">📱 Compartir</button>
     </div>
 
     <script>
         const numeroCasino = "522282311773";
-
-        // Función para despertar el aviso de OneSignal al hacer clic
-        function pedirPermisoNotificaciones() {
-            window.OneSignalDeferred.push(function(OneSignal) {
-                OneSignal.Slidedown.promptPush();
-            });
-        }
-
-        // Lógica de Instalación de la PWA
         let deferredPrompt;
         const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 
@@ -164,9 +203,7 @@
             if (!isIOS && deferredPrompt) {
                 deferredPrompt.prompt();
                 deferredPrompt.userChoice.then((choiceResult) => {
-                    if (choiceResult.outcome === 'accepted') {
-                        console.log('Usuario instaló la App');
-                    }
+                    if (choiceResult.outcome === 'accepted') console.log('Usuario instaló la App');
                     deferredPrompt = null;
                 });
             } else if (isIOS) {
@@ -182,7 +219,6 @@
         function reservarMesa(nombreMesa) { window.open(`https://api.whatsapp.com/send?phone=${numeroCasino}&text=${encodeURIComponent(`Hola, voy en camino. ¿Me pueden confirmar si hay lugar en la mesa de ${nombreMesa}?`)}`, '_blank'); }
 
         const client = supabase.createClient('https://kqgtyzsxwrkomdtuktkk.supabase.co', 'sb_publishable_on1rkqvAIhSQonTODdk5fA_qTpEo_8H');
-
         const imagenesJuegos = { 'Ruleta': 'ruleta.gif', 'Blackjack': 'blackjack.png', 'Bacará': 'bacara.png', 'Texas Bonus': 'texas.png', 'Dados': 'dados.png' };
 
         async function cargarDatos() {
@@ -240,7 +276,6 @@
         client.channel('public-changes').on('postgres_changes', { event: '*', schema: 'public' }, cargarDatos).subscribe();
         cargarDatos();
 
-        // REGISTRO DEL SERVICE WORKER PARA LA PWA Y NOTIFICACIONES
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => { 
                 navigator.serviceWorker.register('sw.js')
