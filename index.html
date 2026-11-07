@@ -50,39 +50,50 @@
         // Credenciales inyectadas
         const supabaseUrl = 'https://kqgtyzsxwrkomdtuktkk.supabase.co';
         const supabaseKey = 'sb_publishable_on1rkqvAIhSQonTODdk5fA_qTpEo_8H';
-        const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+        
+        // Cambiamos el nombre de la variable a "client" para evitar el error de sintaxis
+        const client = supabase.createClient(supabaseUrl, supabaseKey);
 
         async function cargarDatos() {
-            const { data: promos } = await supabase.from('promociones').select('*').eq('activa', true).order('orden');
-            document.getElementById('promos-container').innerHTML = promos.map(p => `
-                <div class="promo">
-                    <strong>📢 ${p.titulo}</strong><br>
-                    ${p.descripcion}
-                </div>
-            `).join('');
+            const { data: promos } = await client.from('promociones').select('*').eq('activa', true).order('orden');
+            
+            if (promos && promos.length > 0) {
+                document.getElementById('promos-container').innerHTML = promos.map(p => `
+                    <div class="promo">
+                        <strong>📢 ${p.titulo}</strong><br>
+                        ${p.descripcion}
+                    </div>
+                `).join('');
+            } else {
+                document.getElementById('promos-container').innerHTML = '';
+            }
 
-            const { data: mesas } = await supabase.from('mesas').select('*').order('nombre');
-            document.getElementById('mesas-container').innerHTML = mesas.map(m => `
-                <div class="mesa ${m.estatus === 'Cerrada' ? 'cerrada' : ''} ${m.mesa_caliente ? 'caliente' : ''}">
-                    <h3 style="margin-top:0;">${m.nombre} ${m.mesa_caliente ? '🔥' : ''}</h3>
-                    <div class="stats">
-                        <span><strong>Estatus:</strong> ${m.estatus}</span>
-                        <span><strong>Mínimo:</strong> $${m.apuesta_minima}</span>
+            const { data: mesas } = await client.from('mesas').select('*').order('nombre');
+            
+            if (mesas && mesas.length > 0) {
+                document.getElementById('mesas-container').innerHTML = mesas.map(m => `
+                    <div class="mesa ${m.estatus === 'Cerrada' ? 'cerrada' : ''} ${m.mesa_caliente ? 'caliente' : ''}">
+                        <h3 style="margin-top:0;">${m.nombre} ${m.mesa_caliente ? '🔥' : ''}</h3>
+                        <div class="stats">
+                            <span><strong>Estatus:</strong> ${m.estatus}</span>
+                            <span><strong>Mínimo:</strong> $${m.apuesta_minima}</span>
+                        </div>
+                        <div class="stats" style="margin-top: 8px;">
+                            <span><strong>Juego:</strong> ${m.juego}</span>
+                            <span><strong>Ocupación:</strong> ${m.jugadores_actuales} / ${m.capacidad_maxima} lugares</span>
+                        </div>
                     </div>
-                    <div class="stats" style="margin-top: 8px;">
-                        <span><strong>Juego:</strong> ${m.juego}</span>
-                        <span><strong>Ocupación:</strong> ${m.jugadores_actuales} / ${m.capacidad_maxima} lugares</span>
-                    </div>
-                </div>
-            `).join('');
+                `).join('');
+            }
         }
 
-        // Suscripción en tiempo real
-        supabase.channel('schema-db-changes')
+        // Suscripción en tiempo real usando "client"
+        client.channel('schema-db-changes')
             .on('postgres_changes', { event: '*', schema: 'public', table: 'mesas' }, cargarDatos)
             .on('postgres_changes', { event: '*', schema: 'public', table: 'promociones' }, cargarDatos)
             .subscribe();
 
+        // Cargar datos iniciales
         cargarDatos();
     </script>
 </body>
