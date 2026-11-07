@@ -13,7 +13,7 @@
     <!-- Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <!-- OneSignal SDK para Notificaciones Push (Modificado para forzar el aviso) -->
+    <!-- OneSignal SDK para Notificaciones Push -->
     <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
     <script>
       window.OneSignalDeferred = window.OneSignalDeferred || [];
@@ -21,8 +21,6 @@
         await OneSignal.init({
           appId: "15bf381f-0de7-4e12-918b-57db8e55be92",
         });
-        // Esta línea fuerza a que salga el aviso de permisos de inmediato
-        OneSignal.Slidedown.promptPush();
       });
     </script>
 
@@ -125,12 +123,21 @@
     <div id="mesas-container"><p style="text-align:center; color:#8892b0;">Conectando con las mesas...</p></div>
 
     <div class="flotantes-container">
+        <!-- Nuevo botón para activar notificaciones manualmente -->
+        <button class="btn-flotante" onclick="pedirPermisoNotificaciones()" style="background-color: var(--neon-purple); border: none; box-shadow: 0 4px 15px rgba(176, 38, 255, 0.4);">🔔 Activar Alertas</button>
         <button class="btn-flotante" onclick="pedirMenu()">🍸 Menú Bar</button>
         <button class="btn-flotante wa" onclick="compartirAppCliente()">📱 Compartir</button>
     </div>
 
     <script>
         const numeroCasino = "522282311773";
+
+        // Función para despertar el aviso de OneSignal al hacer clic
+        function pedirPermisoNotificaciones() {
+            window.OneSignalDeferred.push(function(OneSignal) {
+                OneSignal.Slidedown.promptPush();
+            });
+        }
 
         // Lógica de Instalación de la PWA
         let deferredPrompt;
