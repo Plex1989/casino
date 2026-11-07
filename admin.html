@@ -3,106 +3,315 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VIP Admin - Casino</title>
+    <title>Casino - Portal Administrativo</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        body { 
-            background-color: #0b0c10; color: #c5c6c7; font-family: 'Segoe UI', Tahoma, sans-serif; 
-            padding: 20px; max-width: 800px; margin: 0 auto; 
+        /* Paleta de colores Neón y Oscura */
+        :root {
+            --bg-color: #0d0e15;
+            --panel-bg: #151722;
+            --neon-cyan: #00f0ff;
+            --neon-purple: #b026ff;
+            --text-main: #ffffff;
+            --text-muted: #8892b0;
+            --btn-orange: #ff9900;
+            --btn-whatsapp: #25D366;
         }
-        h1, h2 { color: #d4af37; /* Dorado Casino */ border-bottom: 1px solid #333; padding-bottom: 10px; }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+
+        /* Barra de Navegación Superior */
+        .navbar {
+            background-color: #0a0b10;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(0, 240, 255, 0.2);
+        }
+        .navbar h2 { margin: 0; font-size: 1.2rem; letter-spacing: 2px; }
+        .nav-links { display: flex; gap: 15px; }
+        .nav-pill {
+            background: transparent;
+            color: var(--text-muted);
+            border: 1px solid #333;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .nav-pill.active {
+            color: var(--neon-cyan);
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
+        }
+
+        /* Pantalla de Login */
+        #login-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: calc(100vh - 70px);
+        }
+        .logo-container {
+            position: relative;
+            margin-bottom: 30px;
+        }
+        .logo-glow {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 150px; height: 150px;
+            background: radial-gradient(circle, rgba(0,240,255,0.4) 0%, rgba(0,0,0,0) 70%);
+            z-index: 1;
+        }
+        #login-logo {
+            position: relative;
+            z-index: 2;
+            width: 120px; /* Ajusta según el tamaño de tu logo */
+            filter: drop-shadow(0 0 10px rgba(0, 240, 255, 0.5));
+        }
+        .login-box {
+            width: 100%;
+            max-width: 350px;
+            text-align: center;
+        }
+        .login-box h1 { font-size: 1.5rem; margin-bottom: 5px; }
+        .login-box p { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 30px; }
         
-        /* Formulario Premium */
-        .panel-creacion {
-            background: #1f2833; padding: 20px; border-radius: 12px; margin-bottom: 30px;
-            border: 1px solid #d4af37; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.1);
+        .input-group { margin-bottom: 20px; text-align: left; }
+        .input-group label { color: var(--text-muted); font-size: 0.8rem; display: block; margin-bottom: 5px; }
+        .input-group input {
+            width: 100%;
+            background: var(--panel-bg);
+            border: none;
+            border-bottom: 2px solid #333;
+            color: white;
+            padding: 12px;
+            box-sizing: border-box;
+            font-size: 1rem;
+            transition: 0.3s;
         }
+        .input-group input:focus {
+            outline: none;
+            border-bottom-color: var(--neon-cyan);
+            background: rgba(0, 240, 255, 0.05);
+        }
+        
+        .btn-ingresar {
+            width: 100%;
+            background: transparent;
+            border: 1px solid var(--neon-cyan);
+            color: var(--neon-cyan);
+            padding: 12px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: 0.3s;
+            margin-top: 10px;
+        }
+        .btn-ingresar:hover {
+            background: var(--neon-cyan);
+            color: black;
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.5);
+        }
+
+        /* Panel de Administración (Oculto al inicio) */
+        #admin-section {
+            display: none; /* Se activa con JS */
+            padding: 30px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .header-admin {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .btn-whatsapp {
+            background: var(--btn-whatsapp);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .panel-creacion, .mesa-admin {
+            background: var(--panel-bg);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+        
+        /* Formularios del Admin */
         .form-group { display: flex; gap: 15px; margin-bottom: 15px; flex-wrap: wrap; }
-        input, select { 
-            background: #0b0c10; color: white; border: 1px solid #45a29e; 
-            padding: 10px; border-radius: 6px; flex: 1; min-width: 150px;
+        .form-group input, .form-group select {
+            background: #0d0e15; border: 1px solid #333; color: white;
+            padding: 12px; border-radius: 6px; flex: 1; min-width: 150px;
         }
-        button {
-            background: #d4af37; color: black; font-weight: bold; border: none;
-            padding: 10px 20px; border-radius: 6px; cursor: pointer; transition: 0.3s;
+        .form-group input:focus, .form-group select:focus {
+            border-color: var(--btn-orange); outline: none;
         }
-        button:hover { background: #b5952f; }
         
-        /* Lista de Mesas Activas */
+        .btn-naranja {
+            background: var(--btn-orange); color: black; font-weight: bold; border: none;
+            padding: 12px 25px; border-radius: 20px; cursor: pointer;
+        }
+
         .mesa-admin {
-            background: #1f2833; padding: 15px; border-radius: 8px; margin-bottom: 15px;
-            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;
+            border-left: 5px solid #4CAF50;
         }
         .controles { display: flex; gap: 10px; align-items: center; }
-        .btn-accion { background: #45a29e; color: white; border-radius: 4px; padding: 6px 12px; }
-        .btn-peligro { background: #e0241b; color: white; }
+        .btn-accion { background: transparent; border: 1px solid var(--neon-cyan); color: var(--neon-cyan); border-radius: 4px; padding: 8px 15px; cursor: pointer;}
+        .btn-accion:hover { background: rgba(0,240,255,0.1); }
+        .btn-peligro { border-color: #e0241b; color: #e0241b; }
+        .btn-peligro:hover { background: rgba(224, 36, 27, 0.1); }
     </style>
 </head>
 <body>
 
-    <h1>Panel de Control - Mesas</h1>
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <h2>CASINO EN VIVO</h2>
+        <div class="nav-links">
+            <div class="nav-pill active">Administrador</div>
+        </div>
+    </nav>
 
-    <!-- Creador de Mesas -->
-    <div class="panel-creacion">
-        <h3 style="margin-top: 0; color: white;">➕ Abrir Nueva Mesa</h3>
-        <div class="form-group">
-            <select id="nuevo-juego">
-                <option value="Ruleta">Ruleta</option>
-                <option value="Blackjack">Blackjack</option>
-                <option value="Bacará">Bacará</option>
-                <option value="Texas Bonus">Texas Bonus</option>
-            </select>
-            <input type="text" id="nuevo-nombre" placeholder="Nombre (ej. Ruleta VIP 1)">
+    <!-- PANTALLA DE LOGIN -->
+    <div id="login-section">
+        <div class="logo-container">
+            <div class="logo-glow"></div>
+            <!-- Tu logo.png debe estar en la raíz de tu repositorio -->
+            <img src="logo.png" id="login-logo" alt="Logo Casino" onerror="this.src='https://via.placeholder.com/120?text=LOGO'">
         </div>
-        <div class="form-group">
-            <input type="number" id="nuevo-minimo" placeholder="Apuesta Mínima ($)">
-            <input type="number" id="nueva-capacidad" placeholder="Capacidad (Lugares)">
+        
+        <div class="login-box">
+            <h1>INICIAR SESIÓN</h1>
+            <p>Portal Administrativo de Mesas</p>
+            
+            <div class="input-group">
+                <label>👤 Usuario</label>
+                <input type="text" id="user-input" placeholder="Ingresa tu usuario">
+            </div>
+            
+            <div class="input-group">
+                <label>🔒 Contraseña</label>
+                <input type="password" id="pass-input" placeholder="••••••••">
+            </div>
+            
+            <button class="btn-ingresar" onclick="verificarLogin()">INGRESAR ➔</button>
+            <p id="login-error" style="color: #e0241b; display: none; margin-top: 15px;">Usuario o contraseña incorrectos</p>
         </div>
-        <button onclick="agregarMesa()">Agregar al Piso</button>
     </div>
 
-    <h2>Mesas en el Piso</h2>
-    <div id="admin-mesas-container"><p>Cargando mesas...</p></div>
+    <!-- PANEL DE ADMINISTRACIÓN (Se muestra tras el login) -->
+    <div id="admin-section">
+        <div class="header-admin">
+            <h2 style="color: var(--neon-cyan); margin: 0;">Gestión de Mesas</h2>
+            <button class="btn-whatsapp" onclick="compartirWhatsApp()">
+                📱 Compartir Portal Público
+            </button>
+        </div>
+
+        <div class="panel-creacion">
+            <h3 style="margin-top: 0; color: var(--btn-orange);">+ Crear Nueva Mesa</h3>
+            <div class="form-group">
+                <select id="nuevo-juego">
+                    <option value="Ruleta">Ruleta</option>
+                    <option value="Blackjack">Blackjack</option>
+                    <option value="Bacará">Bacará</option>
+                    <option value="Texas Bonus">Texas Bonus</option>
+                </select>
+                <input type="text" id="nuevo-nombre" placeholder="Nombre (ej. Ruleta VIP)">
+            </div>
+            <div class="form-group">
+                <input type="number" id="nuevo-minimo" placeholder="Apuesta Mínima ($)">
+                <input type="number" id="nueva-capacidad" placeholder="Capacidad Total">
+            </div>
+            <button class="btn-naranja" onclick="agregarMesa()">Aperturar Mesa</button>
+        </div>
+
+        <div id="admin-mesas-container"><p>Cargando mesas activas...</p></div>
+    </div>
 
     <script>
-        // Conexión a Supabase
+        // 1. SISTEMA BÁSICO DE LOGIN (Usuario: admin / Pass: casino123)
+        function verificarLogin() {
+            const user = document.getElementById('user-input').value;
+            const pass = document.getElementById('pass-input').value;
+            
+            if(user === 'admin' && pass === 'casino123') {
+                document.getElementById('login-section').style.display = 'none';
+                document.getElementById('admin-section').style.display = 'block';
+                cargarMesasAdmin(); // Carga la base de datos solo si entra
+            } else {
+                document.getElementById('login-error').style.display = 'block';
+            }
+        }
+
+        // 2. FUNCIÓN PARA COMPARTIR EN WHATSAPP
+        function compartirWhatsApp() {
+            // Toma la URL base actual (ej. https://casino-three-rho.vercel.app/) y la manda a WhatsApp
+            const urlPublica = window.location.origin;
+            const mensaje = encodeURIComponent(`🎰 ¡Checa las mesas abiertas y promociones de nuestro Casino en vivo! Entra aquí: ${urlPublica}`);
+            window.open(`https://api.whatsapp.com/send?text=${mensaje}`, '_blank');
+        }
+
+        // 3. CONEXIÓN A SUPABASE (Reutilizando tu configuración correcta)
         const supabaseUrl = 'https://kqgtyzsxwrkomdtuktkk.supabase.co';
         const supabaseKey = 'sb_publishable_on1rkqvAIhSQonTODdk5fA_qTpEo_8H';
         const client = supabase.createClient(supabaseUrl, supabaseKey);
 
-        // Cargar las mesas para administrarlas
         async function cargarMesasAdmin() {
             const { data: mesas } = await client.from('mesas').select('*').order('nombre');
             
             document.getElementById('admin-mesas-container').innerHTML = mesas.map(m => `
-                <div class="mesa-admin" style="border-left: 5px solid ${m.estatus === 'Abierta' ? '#4CAF50' : '#e0241b'}">
+                <div class="mesa-admin" style="border-left-color: ${m.estatus === 'Abierta' ? '#00f0ff' : '#e0241b'}">
                     <div>
-                        <strong style="font-size: 1.2em; color: #d4af37;">${m.nombre}</strong> <br>
-                        <small>${m.juego} | Mín: $${m.apuesta_minima}</small>
+                        <strong style="font-size: 1.2em; color: white;">${m.nombre}</strong> <br>
+                        <small style="color: var(--text-muted);">${m.juego} | Mín: $${m.apuesta_minima}</small>
                     </div>
                     
                     <div class="controles">
-                        <!-- Control de Jugadores -->
-                        <div style="background: #0b0c10; padding: 5px 10px; border-radius: 6px; display: flex; gap: 10px; align-items: center;">
-                            <button class="btn-accion" onclick="cambiarJugadores('${m.id}', ${m.jugadores_actuales - 1})">-</button>
-                            <span>${m.jugadores_actuales} / ${m.capacidad_maxima} Jugadores</span>
-                            <button class="btn-accion" onclick="cambiarJugadores('${m.id}', ${m.jugadores_actuales + 1}, ${m.capacidad_maxima})">+</button>
+                        <div style="background: #0d0e15; padding: 5px 15px; border-radius: 20px; border: 1px solid #333; display: flex; gap: 15px; align-items: center;">
+                            <button class="btn-accion" style="border:none; font-size:1.2rem; padding:0;" onclick="cambiarJugadores('${m.id}', ${m.jugadores_actuales - 1})">-</button>
+                            <span style="font-weight: bold;">${m.jugadores_actuales} / ${m.capacidad_maxima} Jug.</span>
+                            <button class="btn-accion" style="border:none; font-size:1.2rem; padding:0;" onclick="cambiarJugadores('${m.id}', ${m.jugadores_actuales + 1}, ${m.capacidad_maxima})">+</button>
                         </div>
 
-                        <!-- Botón de Estatus -->
-                        <button class="btn-accion" style="background: ${m.estatus === 'Abierta' ? '#e0241b' : '#4CAF50'};" 
+                        <button class="btn-accion" style="color: ${m.estatus === 'Abierta' ? '#e0241b' : '#00f0ff'}; border-color: ${m.estatus === 'Abierta' ? '#e0241b' : '#00f0ff'};" 
                                 onclick="cambiarEstatus('${m.id}', '${m.estatus === 'Abierta' ? 'Cerrada' : 'Abierta'}')">
                             ${m.estatus === 'Abierta' ? 'Cerrar Mesa' : 'Abrir Mesa'}
                         </button>
                         
-                        <!-- Botón Borrar -->
                         <button class="btn-accion btn-peligro" onclick="borrarMesa('${m.id}')">🗑️</button>
                     </div>
                 </div>
             `).join('');
         }
 
-        // FUNCIONES DE CONTROL
         async function agregarMesa() {
             const juego = document.getElementById('nuevo-juego').value;
             const nombre = document.getElementById('nuevo-nombre').value;
@@ -115,7 +324,6 @@
                 juego: juego, nombre: nombre, apuesta_minima: minimo, capacidad_maxima: capacidad, estatus: 'Abierta'
             }]);
             
-            // Limpiar campos
             document.getElementById('nuevo-nombre').value = '';
             document.getElementById('nuevo-minimo').value = '';
             document.getElementById('nueva-capacidad').value = '';
@@ -123,7 +331,7 @@
         }
 
         async function cambiarJugadores(id, nuevosJugadores, maxima) {
-            if(nuevosJugadores < 0 || nuevosJugadores > maxima) return;
+            if(nuevosJugadores < 0 || (maxima && nuevosJugadores > maxima)) return;
             await client.from('mesas').update({ jugadores_actuales: nuevosJugadores }).eq('id', id);
             cargarMesasAdmin();
         }
@@ -140,12 +348,10 @@
             }
         }
 
-        // Suscripción para que el admin también se actualice solo
+        // Mantener actualizado en tiempo real
         client.channel('admin-changes')
             .on('postgres_changes', { event: '*', schema: 'public', table: 'mesas' }, cargarMesasAdmin)
             .subscribe();
-
-        cargarMesasAdmin();
     </script>
 </body>
 </html>
