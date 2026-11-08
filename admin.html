@@ -165,13 +165,26 @@
             color: black;
         }
 
+        .btn-add-table {
+            background: linear-gradient(90deg, var(--neon-gold), #ff8800);
+            color: black;
+        }
+
         /* Mesas */
+        .form-crear-mesa {
+            background: #0e1017;
+            border: 1px dashed var(--neon-cyan);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+
         .mesa-item {
             background: #0e1017;
             border: 1px solid var(--border-color);
             border-radius: 10px;
             padding: 14px;
-            margin-bottom: 12px;
+            margin-bottom: 14px;
         }
 
         .mesa-item-top {
@@ -209,6 +222,23 @@
             background: rgba(255, 0, 60, 0.15);
             color: var(--neon-red);
             border: 1px solid var(--neon-red);
+        }
+
+        .mesa-botones {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .btn-del-mesa {
+            background: rgba(255, 0, 60, 0.15);
+            color: var(--neon-red);
+            border: 1px solid var(--neon-red);
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -271,16 +301,71 @@
             <div id="lista-promos" style="margin-top: 20px;"></div>
         </section>
 
-        <!-- 3. GESTOR DE MESAS EN VIVO -->
+        <!-- 3. GESTOR DE MESAS (CREAR Y EDITAR) -->
         <section class="admin-card">
             <div class="card-header">
                 <span style="font-size: 1.4em;">🎲</span>
-                <h2>Estatus de Mesas</h2>
+                <h2>Gestión de Mesas</h2>
             </div>
-            <p style="color: #8892b0; font-size: 0.85em; margin-top: 0; margin-bottom: 15px;">
-                Actualiza el estado y los jugadores en tiempo real.
-            </p>
 
+            <!-- FORMULARIO: AGREGAR NUEVA MESA -->
+            <div class="form-crear-mesa">
+                <h3 style="color: var(--neon-gold); margin: 0 0 10px 0; font-size: 1.05em; display: flex; align-items: center; gap: 6px;">
+                    <span>➕</span> Agregar Nueva Mesa
+                </h3>
+
+                <div class="mesa-grid">
+                    <div>
+                        <label>Nombre de la Mesa</label>
+                        <input type="text" id="nueva-mesa-nombre" placeholder="Ej. Mesa VIP 1">
+                    </div>
+                    <div>
+                        <label>Juego</label>
+                        <select id="nueva-mesa-juego">
+                            <option value="Blackjack">Blackjack</option>
+                            <option value="Ruleta">Ruleta</option>
+                            <option value="Texas Hold'em">Texas Hold'em</option>
+                            <option value="Bacará">Bacará</option>
+                            <option value="Craps">Craps</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mesa-grid" style="margin-top: 6px;">
+                    <div>
+                        <label>Capacidad Máx.</label>
+                        <input type="number" id="nueva-mesa-capacidad" value="7" min="1" max="50">
+                    </div>
+                    <div>
+                        <label>Estatus Inicial</label>
+                        <select id="nueva-mesa-estatus">
+                            <option value="Abierta">🟢 Abierta</option>
+                            <option value="Cerrada" selected>🔴 Cerrada</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mesa-grid" style="margin-top: 6px;">
+                    <div>
+                        <label>Crupier</label>
+                        <input type="text" id="nueva-mesa-crupier" placeholder="Ej. Carlos M.">
+                    </div>
+                    <div>
+                        <label>Jackpot Inicial ($)</label>
+                        <input type="number" id="nueva-mesa-jackpot" value="0">
+                    </div>
+                </div>
+
+                <label>Promo Especial (Opcional)</label>
+                <input type="text" id="nueva-mesa-promo" placeholder="Ej. Bono de $500 al primer Blackjack">
+
+                <button class="btn-action btn-add-table" onclick="crearMesa()">
+                    ➕ Registrar Mesa
+                </button>
+            </div>
+
+            <!-- LISTADO DE MESAS EXISTENTES -->
+            <h3 style="color: var(--neon-cyan); font-size: 1em; margin-bottom: 12px;">Mesas en Operación</h3>
             <div id="contenedor-mesas-admin">
                 <p style="text-align: center; color: #8892b0;">Cargando mesas...</p>
             </div>
@@ -405,7 +490,47 @@
             }
         }
 
-        // GESTIÓN DE MESAS
+        // ================= CREAR Y ADMINISTRAR MESAS =================
+
+        // 1. CREAR NUEVA MESA
+        async function crearMesa() {
+            const nombre = document.getElementById('nueva-mesa-nombre').value.trim();
+            const juego = document.getElementById('nueva-mesa-juego').value;
+            const capacidad = parseInt(document.getElementById('nueva-mesa-capacidad').value) || 7;
+            const estatus = document.getElementById('nueva-mesa-estatus').value;
+            const crupier = document.getElementById('nueva-mesa-crupier').value.trim();
+            const jackpot = parseInt(document.getElementById('nueva-mesa-jackpot').value) || 0;
+            const promo = document.getElementById('nueva-mesa-promo').value.trim();
+
+            if (!nombre) {
+                alert("Por favor escribe el nombre de la mesa (Ej: Mesa 1, Mesa VIP).");
+                return;
+            }
+
+            const { error } = await client.from('mesas').insert([{
+                nombre,
+                juego,
+                capacidad_maxima: capacidad,
+                jugadores_actuales: 0,
+                estatus,
+                crupier,
+                jackpot,
+                promo_especial: promo
+            }]);
+
+            if (error) {
+                alert("Error al crear mesa: " + error.message);
+            } else {
+                alert("¡Mesa agregada correctamente!");
+                document.getElementById('nueva-mesa-nombre').value = '';
+                document.getElementById('nueva-mesa-crupier').value = '';
+                document.getElementById('nueva-mesa-jackpot').value = '0';
+                document.getElementById('nueva-mesa-promo').value = '';
+                cargarMesas();
+            }
+        }
+
+        // 2. ACTUALIZAR MESA EXISTENTE
         async function actualizarMesa(id) {
             const estatus = document.getElementById(`estatus-${id}`).value;
             const crupier = document.getElementById(`crupier-${id}`).value.trim();
@@ -430,9 +555,27 @@
             }
         }
 
+        // 3. ELIMINAR MESA
+        async function eliminarMesa(id, nombre) {
+            if (confirm(`¿Seguro que deseas eliminar la ${nombre}?`)) {
+                const { error } = await client.from('mesas').delete().eq('id', id);
+                if (error) {
+                    alert("Error al eliminar: " + error.message);
+                } else {
+                    cargarMesas();
+                }
+            }
+        }
+
+        // 4. CARGAR LISTA DE MESAS
         async function cargarMesas() {
-            const { data: mesas } = await client.from('mesas').select('*').order('juego').order('nombre');
+            const { data: mesas, error } = await client.from('mesas').select('*').order('juego').order('nombre');
             const cont = document.getElementById('contenedor-mesas-admin');
+
+            if (error) {
+                cont.innerHTML = `<p style="color: var(--neon-red); text-align: center;">Error al cargar mesas: ${error.message}</p>`;
+                return;
+            }
 
             if (mesas && mesas.length > 0) {
                 cont.innerHTML = mesas.map(m => `
@@ -470,17 +613,22 @@
                         <label>Promo Mesa</label>
                         <input type="text" id="promo-${m.id}" value="${m.promo_especial || ''}" placeholder="Ej. Paga 3 a 2 en Blackjack">
 
-                        <button class="btn-action btn-save" onclick="actualizarMesa(${m.id})" style="padding: 10px; font-size: 0.9em; margin-top: 10px;">
-                            💾 Guardar Mesa
-                        </button>
+                        <div class="mesa-botones">
+                            <button class="btn-action btn-save" onclick="actualizarMesa(${m.id})" style="margin-top: 0; padding: 10px; font-size: 0.9em;">
+                                💾 Guardar Mesa
+                            </button>
+                            <button class="btn-del-mesa" onclick="eliminarMesa(${m.id}, '${m.nombre}')" title="Eliminar mesa">
+                                🗑️
+                            </button>
+                        </div>
                     </div>
                 `).join('');
             } else {
-                cont.innerHTML = '<p style="text-align: center; color: #8892b0;">No hay mesas registradas.</p>';
+                cont.innerHTML = '<p style="text-align: center; color: #8892b0;">No hay mesas registradas. ¡Agrega la primera arriba!</p>';
             }
         }
 
-        // Carga inmediata de datos al abrir la página
+        // Carga inicial
         window.addEventListener('DOMContentLoaded', () => {
             cargarPromociones();
             cargarMesas();
