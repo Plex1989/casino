@@ -73,7 +73,7 @@
             cursor: pointer;
         }
 
-        /* Tarjetas modulares */
+        /* Tarjetas */
         .admin-card {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
@@ -332,16 +332,12 @@
     </div>
 
     <script>
-        // CONFIGURACIÓN DE CONEXIÓN
+        // CONFIGURACIÓN DE BASE DE DATOS
         const SUPABASE_URL = "https://kqgtyzsxwrkomdtuktkk.supabase.co";
         const SUPABASE_ANON_KEY = "sb_publishable_on1rkqvAIhSQonTODdk5fA_qTpEo_8H";
         const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        const ONESIGNAL_APP_ID = "15bf381f-0de7-4e12-918b-57db8e55be92";
-        const ONESIGNAL_REST_KEY = "os_v2_app_cw7tqhyn45hbfemlk7ny4vn6sjgkrqfztlku3mfyxdsrlsyalbctaur1td5t17q3owurepbcgsmvdacb7h3iayhdkm5z5yjauboor4a";
-        const URL_APP_CASINO = "https://casino-three-rho.vercel.app";
-
-        // AUTENTICACIÓN PERSISTENTE
+        // AUTENTICACIÓN LOCAL
         function verificarSesion() {
             if (localStorage.getItem('admin_autenticado') === 'true') {
                 document.getElementById('seccion-login').style.display = 'none';
@@ -375,7 +371,7 @@
             }
         }
 
-        // ENVÍO DE NOTIFICACIONES PUSH
+        // ENVÍO DE NOTIFICACIONES PUSH A TRAVÉS DE TU SERVIDOR EN VERCEL
         async function enviarPush() {
             const inputTitulo = document.getElementById('push-titulo');
             const inputMensaje = document.getElementById('push-mensaje');
@@ -397,18 +393,14 @@
             btn.innerHTML = "⏳ Enviando notificación...";
 
             try {
-                const response = await fetch("https://onesignal.com/api/v1/notifications", {
+                const response = await fetch("/api/push", {
                     method: "POST",
                     headers: {
-                        "Content-Type": "application/json; charset=utf-8",
-                        "Authorization": `Basic ${ONESIGNAL_REST_KEY}`
+                        "Content-Type": "application/json"
                     },
                     body: JSON.stringify({
-                        app_id: ONESIGNAL_APP_ID,
-                        included_segments: ["Total Subscriptions"],
-                        headings: { "es": titulo, "en": titulo },
-                        contents: { "es": mensaje, "en": mensaje },
-                        url: URL_APP_CASINO
+                        titulo: titulo,
+                        mensaje: mensaje
                     })
                 });
 
@@ -419,7 +411,7 @@
                     inputTitulo.value = '';
                     inputMensaje.value = '';
                 } else {
-                    alert("Error al enviar: " + JSON.stringify(data.errors));
+                    alert("Error al enviar: " + JSON.stringify(data.errors || data.error));
                 }
             } catch (err) {
                 alert("Error de conexión: " + err.message);
@@ -575,7 +567,6 @@
             cargarMesas();
         }
 
-        // Verificación inicial de sesión
         window.addEventListener('DOMContentLoaded', verificarSesion);
     </script>
 </body>
