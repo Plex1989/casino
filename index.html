@@ -9,14 +9,17 @@
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="logo.png">
 
-    <!-- OneSignal SDK -->
+    <!-- OneSignal SDK con activación inmediata de alertas push -->
     <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
     <script>
         window.OneSignalDeferred = window.OneSignalDeferred || [];
         OneSignalDeferred.push(async function(OneSignal) {
             await OneSignal.init({
                 appId: "15bf381f-0de7-4e12-918b-57db8e55be92",
+                allowLocalhostAsSecureOrigin: true
             });
+            // Solicita permisos de notificación al cargar la página
+            OneSignal.Slidedown.promptPush();
         });
     </script>
 
@@ -32,6 +35,7 @@
             --neon-gold: #d4af37;
             --neon-purple: #b026ff;
             --neon-green: #25D366;
+            --neon-orange: #ff6600;
             --border-color: #2a2d3d;
         }
 
@@ -46,7 +50,7 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             margin: 0;
             padding: 12px;
-            padding-bottom: 70px;
+            padding-bottom: 80px;
         }
 
         .container {
@@ -79,12 +83,58 @@
             font-size: 0.85em;
         }
 
-        /* BOTONES DE ACCIÓN RÁPIDA (GRUPO & MENÚ) */
+        /* BANNER DE INSTALACIÓN DE APLICACIÓN & PERMISOS PUSH */
+        .banner-instalacion {
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.15), rgba(176, 38, 255, 0.2));
+            border: 1px solid var(--neon-cyan);
+            border-radius: 12px;
+            padding: 12px 14px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
+        }
+
+        .banner-instalacion-texto {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .banner-instalacion-texto strong {
+            color: var(--neon-cyan);
+            font-size: 0.9em;
+        }
+
+        .banner-instalacion-texto span {
+            color: #c5c6c7;
+            font-size: 0.75em;
+        }
+
+        .btn-instalar-app {
+            background: linear-gradient(90deg, #0070f3, var(--neon-cyan));
+            color: black;
+            border: none;
+            padding: 9px 14px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 0.8em;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: 0.2s;
+        }
+
+        .btn-instalar-app:active {
+            transform: scale(0.95);
+        }
+
+        /* BOTONES SUPERIORES (GRUPO & MENÚ) */
         .quick-actions-bar {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 10px;
-            margin: 15px 0;
+            margin-bottom: 15px;
         }
 
         .btn-quick {
@@ -98,8 +148,8 @@
             font-weight: bold;
             text-decoration: none;
             text-align: center;
-            transition: 0.2s;
             box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+            transition: 0.2s;
         }
 
         .btn-quick:active {
@@ -133,7 +183,7 @@
             box-shadow: 0 0 15px rgba(255, 0, 60, 0.4);
         }
 
-        /* Tarjetas de Promoción */
+        /* Promociones Activas */
         .promo-banner {
             background: linear-gradient(135deg, rgba(176,38,255,0.15), rgba(0,240,255,0.1));
             border: 1px solid var(--neon-purple);
@@ -189,6 +239,7 @@
             filter: grayscale(40%);
         }
 
+        /* Efecto Mesa Caliente */
         .mesa-card.mesa-hot-glow {
             border-color: #ff6600;
             box-shadow: 0 0 18px rgba(255, 102, 0, 0.35);
@@ -218,7 +269,7 @@
             color: #8892b0;
         }
 
-        /* ESTATUS CON FOCO PARPADEANTE */
+        /* Badge Estatus & Foco Rojo */
         .badge-estatus {
             display: inline-flex;
             align-items: center;
@@ -325,7 +376,7 @@
             100% { transform: scale(1.01); color: #fff; }
         }
 
-        /* BOTÓN DE WHATSAPP PARA APARTAR LUGAR EN CADA MESA */
+        /* BOTÓN DE WHATSAPP PARA APARTAR LUGAR */
         .btn-mesa-whatsapp {
             display: flex;
             align-items: center;
@@ -361,9 +412,20 @@
             <p>Estado de Mesas & Jackpots en Vivo</p>
         </header>
 
-        <!-- BOTONES DE ACCIÓN RÁPIDA: WHATSAPP VIP & MENÚ -->
+        <!-- BANNER DE INSTALACIÓN DE APP & ACTIVACIÓN DE PUSH -->
+        <div id="banner-instalacion" class="banner-instalacion">
+            <div class="banner-instalacion-texto">
+                <strong>📲 Instala la App en tu Celular</strong>
+                <span>Recibe jackpots y mesas abiertas en tu pantalla</span>
+            </div>
+            <button class="btn-instalar-app" onclick="ejecutarInstalacionApp()">
+                Instalar
+            </button>
+        </div>
+
+        <!-- ACCIONES RÁPIDAS (WHATSAPP VIP Y MENÚ) -->
         <div class="quick-actions-bar">
-            <a href="https://chat.whatsapp.com/" id="link-grupo-vip" target="_blank" class="btn-quick btn-quick-wa">
+            <a href="https://chat.whatsapp.com/TU_GRUPO_AQUI" id="link-grupo-vip" target="_blank" class="btn-quick btn-quick-wa">
                 <span>💬</span>
                 <span>Unirme al Grupo</span>
             </a>
@@ -386,15 +448,40 @@
     </div>
 
     <script>
-        // CONFIGURACIÓN DE CONTACTO
-        // Cambia este número por el número de WhatsApp oficial del Casino (con lada de México 52):
-        const NUMERO_WHATSAPP_CASINO = "5215555555555";
-        // Si tienes el enlace de invitación de tu grupo de WhatsApp, pégalo aquí:
-        const LINK_GRUPO_WHATSAPP = "https://chat.whatsapp.com/TU_GRUPO_AQUI";
+        // NÚMERO DIRECTO DE WHATSAPP CONFIGURADO (228 231 1773)
+        const NUMERO_WHATSAPP_CASINO = "522282311773";
 
-        document.getElementById('link-grupo-vip').href = LINK_GRUPO_WHATSAPP;
+        // GESTIÓN DE INSTALACIÓN PWA
+        let promptInstalacion;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            promptInstalacion = e;
+            const banner = document.getElementById('banner-instalacion');
+            if (banner) banner.style.display = 'flex';
+        });
 
-        // BASE DE DATOS SUPABASE
+        async function ejecutarInstalacionApp() {
+            // Activa o pide permisos de notificaciones push
+            if (window.OneSignal) {
+                try {
+                    await OneSignal.Notifications.requestPermission();
+                } catch(e) {}
+            }
+
+            if (promptInstalacion) {
+                promptInstalacion.prompt();
+                const { outcome } = await promptInstalacion.userChoice;
+                if (outcome === 'accepted') {
+                    document.getElementById('banner-instalacion').style.display = 'none';
+                }
+                promptInstalacion = null;
+            } else {
+                // Guía para Safari en iPhone o navegadores sin prompt automático
+                alert("Para instalar en tu celular:\n\n📱 En iPhone (Safari): Toca el botón 'Compartir' (el cuadro con la flecha hacia arriba) y elige 'Agregar a pantalla de inicio'.\n\n🤖 En Android: Toca los 3 puntos arriba a la derecha y selecciona 'Instalar aplicación'.");
+            }
+        }
+
+        // SUPABASE CLIENT
         const SUPABASE_URL = "https://kqgtyzsxwrkomdtuktkk.supabase.co";
         const SUPABASE_ANON_KEY = "sb_publishable_on1rkqvAIhSQonTODdk5fA_qTpEo_8H";
         const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -437,7 +524,7 @@
             }
         }
 
-        // CARGA DE MESAS
+        // CARGA DE MESAS CON WHATSAPP Y ALERTA CALIENTE
         async function cargarMesas() {
             const { data: mesas } = await client.from('mesas').select('*').order('juego').order('nombre');
             const cont = document.getElementById('mesas-container');
@@ -450,7 +537,7 @@
                     const promoTexto = (m.promo_especial || '').toUpperCase();
                     const esHot = promoTexto.includes('CALIENTE') || promoTexto.includes('FUERTE') || promoTexto.includes('ÚLTIMOS') || promoTexto.includes('ULTIMOS');
 
-                    // MENSAJE DE WHATSAPP CON TEXTO CLARO PARA APARTAR LUGAR
+                    // MENSAJE DE APARTAR LUGAR DIRECTO A TU WHATSAPP (228 231 1773)
                     const mensajeWa = `Hola, voy en camino al casino. ¿Me pueden apartar un lugar en la mesa "${m.nombre}" (${m.juego})? ¡Gracias!`;
                     const urlWaMesa = `https://wa.me/${NUMERO_WHATSAPP_CASINO}?text=${encodeURIComponent(mensajeWa)}`;
 
@@ -507,7 +594,7 @@
             }
         }
 
-        // CANAL REALTIME DE SUPABASE
+        // TIEMPO REAL
         client.channel('cambios-casino-publico')
             .on('postgres_changes', { event: '*', schema: 'public', table: 'mesas' }, () => cargarMesas())
             .on('postgres_changes', { event: '*', schema: 'public', table: 'promociones' }, () => cargarPromociones())
