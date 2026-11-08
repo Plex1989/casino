@@ -225,7 +225,7 @@
             border: 1px solid var(--neon-red);
         }
 
-        /* CONTROL TÁCTIL RÁPIDO PARA JUGADORES (+ / -) */
+        /* CONTROL TÁCTIL RÁPIDO PARA JUGADORES */
         .stepper-container {
             display: flex;
             align-items: center;
@@ -233,36 +233,37 @@
             border: 1px solid var(--border-color);
             border-radius: 8px;
             overflow: hidden;
-            height: 46px;
+            height: 48px;
         }
 
         .btn-step {
-            width: 44px;
+            width: 50px;
             height: 100%;
             background: #1c1f2e;
             color: var(--neon-cyan);
             border: none;
-            font-size: 1.5em;
+            font-size: 1.6em;
             font-weight: bold;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: 0.15s;
+            transition: 0.1s;
             user-select: none;
+            touch-action: manipulation;
         }
 
         .btn-step:active {
             background: var(--neon-cyan);
             color: black;
-            transform: scale(0.92);
+            transform: scale(0.95);
         }
 
         .stepper-display {
             flex: 1;
             text-align: center;
             font-weight: bold;
-            font-size: 1.15em;
+            font-size: 1.25em;
             color: white;
         }
 
@@ -350,7 +351,7 @@
                 <h2>Gestión de Mesas</h2>
             </div>
 
-            <!-- FORMULARIO: CREAR NUEVA MESA -->
+            <!-- FORMULARIO CREAR MESA -->
             <div class="form-crear-mesa">
                 <h3 style="color: var(--neon-gold); margin: 0 0 10px 0; font-size: 1.05em; display: flex; align-items: center; gap: 6px;">
                     <span>➕</span> Agregar Nueva Mesa
@@ -358,8 +359,8 @@
 
                 <div class="mesa-grid">
                     <div>
-                        <label>Nombre</label>
-                        <input type="text" id="nueva-mesa-nombre" placeholder="Ej. Mesa 1 VIP">
+                        <label>Nombre de la Mesa</label>
+                        <input type="text" id="nueva-mesa-nombre" placeholder="Ej. Mesa VIP 1">
                     </div>
                     <div>
                         <label>Juego</label>
@@ -404,7 +405,7 @@
                         <input type="number" id="nueva-mesa-jackpot" value="0">
                     </div>
                     <div>
-                        <label>Promo Especial</label>
+                        <label>Promo Mesa</label>
                         <input type="text" id="nueva-mesa-promo" placeholder="Ej. Bono de $500">
                     </div>
                 </div>
@@ -414,7 +415,7 @@
                 </button>
             </div>
 
-            <!-- MESAS ACTIVAS -->
+            <!-- LISTADO DE MESAS EXISTENTES -->
             <h3 style="color: var(--neon-cyan); font-size: 1em; margin-bottom: 12px;">Mesas en Operación</h3>
             <div id="contenedor-mesas-admin">
                 <p style="text-align: center; color: #8892b0;">Cargando mesas...</p>
@@ -478,7 +479,7 @@
             const descripcion = document.getElementById('promo-descripcion').value.trim();
 
             if (!titulo || !descripcion) {
-                alert("Completa todos los campos.");
+                alert("Completa todos los campos de la promoción.");
                 return;
             }
 
@@ -523,10 +524,10 @@
                             <span style="color: #8892b0; font-size: 0.8em;">${p.descripcion}</span>
                         </div>
                         <div style="display: flex; gap: 6px; flex-shrink: 0;">
-                            <button onclick="togglePromo(${p.id}, ${p.activa})" style="background: ${p.activa ? 'rgba(37,211,102,0.2)' : 'rgba(255,255,255,0.1)'}; color: ${p.activa ? 'var(--neon-green)' : '#888'}; border: 1px solid ${p.activa ? 'var(--neon-green)' : '#555'}; padding: 6px 10px; border-radius: 6px; font-size: 0.8em; font-weight: bold; cursor: pointer;">
+                            <button onclick="togglePromo('${p.id}', ${p.activa})" style="background: ${p.activa ? 'rgba(37,211,102,0.2)' : 'rgba(255,255,255,0.1)'}; color: ${p.activa ? 'var(--neon-green)' : '#888'}; border: 1px solid ${p.activa ? 'var(--neon-green)' : '#555'}; padding: 6px 10px; border-radius: 6px; font-size: 0.8em; font-weight: bold; cursor: pointer;">
                                 ${p.activa ? 'Activa' : 'Pausada'}
                             </button>
-                            <button onclick="eliminarPromo(${p.id})" style="background: rgba(255,0,60,0.2); color: var(--neon-red); border: 1px solid var(--neon-red); padding: 6px 10px; border-radius: 6px; font-size: 0.8em; cursor: pointer;">
+                            <button onclick="eliminarPromo('${p.id}')" style="background: rgba(255,0,60,0.2); color: var(--neon-red); border: 1px solid var(--neon-red); padding: 6px 10px; border-radius: 6px; font-size: 0.8em; cursor: pointer;">
                                 🗑️
                             </button>
                         </div>
@@ -537,32 +538,48 @@
             }
         }
 
-        // ================= ACTUALIZACIÓN INSTANTÁNEA EN VIVO =================
+        // ================= GESTIÓN EN TIEMPO REAL =================
 
-        // 1. SUBIR O BAJAR JUGADORES AL INSTANTE SIN DAR GUARDAR
+        // SUBIR O BAJAR JUGADORES (SIN REQUERIR BOTÓN DE GUARDAR)
         async function cambiarJugadores(id, delta, maxCapacidad) {
-            const display = document.getElementById(`val-jugadores-${id}`);
-            let actual = parseInt(display.innerText) || 0;
-            let nuevo = actual + delta;
+            try {
+                const display = document.getElementById(`val-jugadores-${id}`);
+                if (!display) return;
 
-            if (nuevo < 0) nuevo = 0;
-            if (nuevo > maxCapacidad) nuevo = maxCapacidad;
-            if (nuevo === actual) return;
+                let actual = parseInt(display.innerText.trim()) || 0;
+                
+                // Si la capacidad en BD es nula o menor a 1, fijamos 50 como tope seguro
+                let max = parseInt(maxCapacidad);
+                if (isNaN(max) || max <= 0) max = 50;
 
-            // Actualización visual inmediata en pantalla
-            display.innerText = nuevo;
-            mostrarAvisoEnVivo(id);
+                let nuevo = actual + delta;
+                if (nuevo < 0) nuevo = 0;
+                if (nuevo > max) nuevo = max;
 
-            // Guardado automático e inmediato en Supabase
-            const { error } = await client.from('mesas').update({ jugadores_actuales: nuevo }).eq('id', id);
-            if (error) {
-                console.error("Error al actualizar jugadores:", error);
-                display.innerText = actual; // revierte si hubo error
-                alert("Error al conectar: " + error.message);
+                if (nuevo === actual) return;
+
+                // 1. Reflejo visual inmediato en pantalla
+                display.innerText = nuevo;
+                mostrarAvisoEnVivo(id);
+
+                // 2. Guardado directo e instantáneo en la base de datos
+                const { error } = await client
+                    .from('mesas')
+                    .update({ jugadores_actuales: nuevo })
+                    .eq('id', id);
+
+                if (error) {
+                    console.error("Error al actualizar jugadores:", error);
+                    alert("Error en Supabase: " + error.message);
+                    display.innerText = actual; // revierte el cambio si hubo error
+                }
+            } catch (err) {
+                console.error("Fallo inesperado:", err);
+                alert("Error: " + err.message);
             }
         }
 
-        // 2. CAMBIO DE ESTATUS INSTANTÁNEO AL SELECCIONAR
+        // CAMBIAR ESTATUS INMEDIATAMENTE AL TOCAR EL SELECTOR
         async function cambiarEstatus(id, selectElement) {
             const nuevoEstatus = selectElement.value;
             selectElement.className = 'mesa-estatus-select ' + (nuevoEstatus === 'Abierta' ? 'abierta' : 'cerrada');
@@ -623,7 +640,7 @@
             }
         }
 
-        // GUARDADO MANUAL DE CAMPOS DE TEXTO (Crupier, Jackpot, etc.)
+        // GUARDAR CAMPOS DE TEXTO MANUALES
         async function actualizarMesa(id) {
             const crupier = document.getElementById(`crupier-${id}`).value.trim();
             const apuesta_minima = parseInt(document.getElementById(`apuesta-min-${id}`).value) || 0;
@@ -664,7 +681,9 @@
             }
 
             if (mesas && mesas.length > 0) {
-                cont.innerHTML = mesas.map(m => `
+                cont.innerHTML = mesas.map(m => {
+                    const capMax = m.capacidad_maxima && m.capacidad_maxima > 0 ? m.capacidad_maxima : 10;
+                    return `
                     <div class="mesa-item">
                         <div class="mesa-item-top">
                             <span class="mesa-nombre">${m.nombre} (${m.juego})</span>
@@ -673,18 +692,18 @@
 
                         <div class="mesa-grid">
                             <div>
-                                <label>Estatus (Toca para cambiar)</label>
-                                <select id="estatus-${m.id}" class="mesa-estatus-select ${m.estatus === 'Abierta' ? 'abierta' : 'cerrada'}" onchange="cambiarEstatus(${m.id}, this)">
+                                <label>Estatus</label>
+                                <select id="estatus-${m.id}" class="mesa-estatus-select ${m.estatus === 'Abierta' ? 'abierta' : 'cerrada'}" onchange="cambiarEstatus('${m.id}', this)">
                                     <option value="Abierta" ${m.estatus === 'Abierta' ? 'selected' : ''}>🟢 Abierta</option>
                                     <option value="Cerrada" ${m.estatus === 'Cerrada' ? 'selected' : ''}>🔴 Cerrada</option>
                                 </select>
                             </div>
                             <div>
-                                <label>Jugadores (${m.capacidad_maxima} máx)</label>
+                                <label>Jugadores (${capMax} máx)</label>
                                 <div class="stepper-container">
-                                    <button type="button" class="btn-step" onclick="cambiarJugadores(${m.id}, -1, ${m.capacidad_maxima})">−</button>
+                                    <button type="button" class="btn-step" onclick="cambiarJugadores('${m.id}', -1, ${capMax})">−</button>
                                     <div class="stepper-display" id="val-jugadores-${m.id}">${m.jugadores_actuales || 0}</div>
-                                    <button type="button" class="btn-step" onclick="cambiarJugadores(${m.id}, 1, ${m.capacidad_maxima})">+</button>
+                                    <button type="button" class="btn-step" onclick="cambiarJugadores('${m.id}', 1, ${capMax})">+</button>
                                 </div>
                             </div>
                         </div>
@@ -712,15 +731,15 @@
                         </div>
 
                         <div class="mesa-botones">
-                            <button class="btn-action btn-save" onclick="actualizarMesa(${m.id})" style="margin-top: 0; padding: 10px; font-size: 0.9em;">
+                            <button class="btn-action btn-save" onclick="actualizarMesa('${m.id}')" style="margin-top: 0; padding: 10px; font-size: 0.9em;">
                                 💾 Guardar Crupier/Promo
                             </button>
-                            <button class="btn-del-mesa" onclick="eliminarMesa(${m.id}, '${m.nombre}')" title="Eliminar">
+                            <button class="btn-del-mesa" onclick="eliminarMesa('${m.id}', '${m.nombre}')" title="Eliminar">
                                 🗑️
                             </button>
                         </div>
                     </div>
-                `).join('');
+                `}).join('');
             } else {
                 cont.innerHTML = '<p style="text-align: center; color: #8892b0;">No hay mesas registradas.</p>';
             }
