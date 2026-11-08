@@ -4,17 +4,22 @@ const CACHE_NAME = 'casino-v1';
 const urlsToCache = [
   '/',
   '/index.html',
-  '/logo.png',
-  '/ruleta.gif',
-  '/blackjack.png',
-  '/bacara.png',
-  '/texas.png'
+  '/logo.png'
 ];
 
 self.addEventListener('install', event => {
+  self.skipWaiting();
   event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache))
+    caches.open(CACHE_NAME).then(cache => {
+      return Promise.allSettled(
+        urlsToCache.map(url => cache.add(url))
+      );
+    })
   );
+});
+
+self.addEventListener('activate', event => {
+  event.waitUntil(clients.claim());
 });
 
 self.addEventListener('fetch', event => {
