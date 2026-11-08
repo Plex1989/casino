@@ -1,138 +1,597 @@
-<!-- ========================================== -->
-<!-- MÓDULO: MENSAJES PUSH PARA EL ADMINISTRADOR -->
-<!-- ========================================== -->
-<div class="admin-push-card">
-    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
-        <span style="font-size: 1.5em;">📢</span>
-        <h3 style="margin: 0; color: #00f0ff;">Enviar Alerta Push Masiva</h3>
-    </div>
-    <p style="color: #8892b0; font-size: 0.9em; margin-top: 0;">
-        Escribe un anuncio y llegará de inmediato a la pantalla de bloqueo de todos los clientes con la app.
-    </p>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Panel de Administración - Casino</title>
     
-    <label for="push-titulo">Título de la Alerta:</label>
-    <input type="text" id="push-titulo" placeholder="Ej. 🎁 ¡Bono Especial en Mesas!" />
+    <meta name="theme-color" content="#0b0c10">
+    <link rel="apple-touch-icon" href="logo.png">
 
-    <label for="push-mensaje">Mensaje:</label>
-    <textarea id="push-mensaje" rows="3" placeholder="Ej. La mesa de Ruleta tiene jackpot acumulado. ¡Aparta tu lugar ahora!"></textarea>
+    <!-- Supabase JS SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <button id="btn-enviar-push" onclick="enviarPushDesdeAdmin()">🚀 Enviar a Todos los Clientes</button>
-</div>
-
-<style>
-    .admin-push-card {
-        background: #151722;
-        border: 1px solid #b026ff;
-        border-radius: 12px;
-        padding: 20px;
-        margin: 25px 0;
-        box-shadow: 0 4px 15px rgba(176, 38, 255, 0.2);
-    }
-    .admin-push-card label {
-        display: block;
-        color: white;
-        font-weight: bold;
-        margin-top: 12px;
-        margin-bottom: 6px;
-        font-size: 0.9em;
-    }
-    .admin-push-card input, 
-    .admin-push-card textarea {
-        width: 100%;
-        padding: 12px;
-        background: #0b0c10;
-        border: 1px solid #2a2d3d;
-        border-radius: 8px;
-        color: white;
-        box-sizing: border-box;
-        font-family: inherit;
-        font-size: 0.95em;
-    }
-    .admin-push-card input:focus, 
-    .admin-push-card textarea:focus {
-        border-color: #00f0ff;
-        outline: none;
-        box-shadow: 0 0 8px rgba(0, 240, 255, 0.3);
-    }
-    #btn-enviar-push {
-        margin-top: 15px;
-        width: 100%;
-        padding: 14px;
-        background: linear-gradient(90deg, #b026ff, #00f0ff);
-        color: white;
-        font-weight: bold;
-        font-size: 1.05em;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-        transition: 0.3s;
-    }
-    #btn-enviar-push:hover {
-        opacity: 0.9;
-        transform: scale(1.01);
-    }
-    #btn-enviar-push:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-        transform: none;
-    }
-</style>
-
-<script>
-    const ONESIGNAL_APP_ID = "15bf381f-0de7-4e12-918b-57db8e55be92";
-    const ONESIGNAL_REST_KEY = "os_v2_app_cw7tqhyn45hbfemlk7ny4vn6sjgkrqfztlku3mfyxdsrlsyalbctaur1td5t17q3owurepbcgsmvdacb7h3iayhdkm5z5yjauboor4a";
-    const URL_APP_CASINO = "https://casino-three-rho.vercel.app";
-
-    async function enviarPushDesdeAdmin() {
-        const inputTitulo = document.getElementById('push-titulo');
-        const inputMensaje = document.getElementById('push-mensaje');
-        const boton = document.getElementById('btn-enviar-push');
-
-        const titulo = inputTitulo.value.trim();
-        const mensaje = inputMensaje.value.trim();
-
-        if (!titulo || !mensaje) {
-            alert("Por favor escribe tanto el título como el mensaje.");
-            return;
+    <style>
+        :root {
+            --bg-color: #0b0c10;
+            --card-bg: #151722;
+            --neon-cyan: #00f0ff;
+            --neon-red: #ff003c;
+            --neon-gold: #d4af37;
+            --neon-purple: #b026ff;
+            --neon-green: #25D366;
+            --border-color: #2a2d3d;
         }
 
-        if (!confirm(`¿Confirmas el envío de esta notificación a todos los clientes?\n\nTítulo: "${titulo}"\nMensaje: "${mensaje}"`)) {
-            return;
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        boton.disabled = true;
-        boton.innerHTML = "⏳ Enviando alerta a todos los celulares...";
+        body {
+            background-color: var(--bg-color);
+            color: white;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 15px;
+            padding-bottom: 80px;
+            font-size: 16px;
+        }
 
-        try {
-            const respuesta = await fetch("https://onesignal.com/api/v1/notifications", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json; charset=utf-8",
-                    "Authorization": `Basic ${ONESIGNAL_REST_KEY}`
-                },
-                body: JSON.stringify({
-                    app_id: ONESIGNAL_APP_ID,
-                    included_segments: ["Total Subscriptions"],
-                    headings: { "es": titulo, "en": titulo },
-                    contents: { "es": mensaje, "en": mensaje },
-                    url: URL_APP_CASINO
-                })
-            });
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
 
-            const resultado = await respuesta.json();
+        h1, h2, h3 {
+            margin: 0;
+            font-weight: 700;
+        }
 
-            if (respuesta.ok && !resultado.errors) {
-                alert(`¡Notificación enviada exitosamente!\nDestinatarios aproximados: ${resultado.recipients || 1}`);
-                inputTitulo.value = '';
-                inputMensaje.value = '';
+        /* Encabezado */
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 20px;
+        }
+
+        .admin-title {
+            color: var(--neon-cyan);
+            font-size: 1.3em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-logout {
+            background: rgba(255, 0, 60, 0.15);
+            color: var(--neon-red);
+            border: 1px solid var(--neon-red);
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 0.85em;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* Tarjetas modulares */
+        .admin-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 18px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+        }
+
+        .admin-card.push-card {
+            border: 1px solid var(--neon-purple);
+            box-shadow: 0 0 15px rgba(176, 38, 255, 0.2);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .card-header h2 {
+            font-size: 1.15em;
+            color: var(--neon-purple);
+        }
+
+        .push-card .card-header h2 {
+            color: var(--neon-cyan);
+        }
+
+        label {
+            display: block;
+            color: #c5c6c7;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-top: 12px;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 12px;
+            background: #0b0c10;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: white;
+            font-size: 16px; /* Evita zoom automático en Safari iOS */
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            border-color: var(--neon-cyan);
+        }
+
+        .btn-action {
+            width: 100%;
+            padding: 14px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1em;
+            border: none;
+            cursor: pointer;
+            margin-top: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: 0.2s;
+        }
+
+        .btn-action:active {
+            transform: scale(0.98);
+        }
+
+        .btn-push {
+            background: linear-gradient(90deg, var(--neon-purple), #7928ca);
+            color: white;
+            box-shadow: 0 4px 15px rgba(176, 38, 255, 0.3);
+        }
+
+        .btn-save {
+            background: linear-gradient(90deg, #0070f3, var(--neon-cyan));
+            color: black;
+        }
+
+        /* Lista de Mesas */
+        .mesa-item {
+            background: #0e1017;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 14px;
+            margin-bottom: 12px;
+        }
+
+        .mesa-item-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .mesa-nombre {
+            font-weight: bold;
+            font-size: 1.05em;
+            color: white;
+        }
+
+        .mesa-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .mesa-estatus-select {
+            padding: 8px;
+            font-weight: bold;
+            border-radius: 6px;
+        }
+
+        .mesa-estatus-select.abierta {
+            background: rgba(37, 211, 102, 0.15);
+            color: var(--neon-green);
+            border: 1px solid var(--neon-green);
+        }
+
+        .mesa-estatus-select.cerrada {
+            background: rgba(255, 0, 60, 0.15);
+            color: var(--neon-red);
+            border: 1px solid var(--neon-red);
+        }
+
+        /* Pantalla de Login */
+        #seccion-login {
+            display: none;
+            padding-top: 40px;
+        }
+
+        .login-box {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+        }
+
+        .login-box img {
+            width: 100px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        
+        <!-- ================= PANTALLA DE LOGIN ================= -->
+        <div id="seccion-login">
+            <div class="login-box">
+                <img src="logo.png" alt="Casino" onerror="this.src='https://via.placeholder.com/100?text=CASINO'">
+                <h2 style="color: var(--neon-cyan); margin-bottom: 8px;">Panel de Control</h2>
+                <p style="color: #8892b0; font-size: 0.9em; margin-top: 0; margin-bottom: 20px;">Acceso administrativo Casino</p>
+                
+                <div style="text-align: left;">
+                    <label>Correo Electrónico</label>
+                    <input type="email" id="login-email" placeholder="admin@casino.com" autocomplete="username">
+
+                    <label>Contraseña</label>
+                    <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password">
+                </div>
+
+                <button class="btn-action btn-save" onclick="iniciarSesion()" id="btn-login" style="margin-top: 25px;">
+                    Iniciar Sesión
+                </button>
+            </div>
+        </div>
+
+        <!-- ================= PANEL PRINCIPAL ================= -->
+        <div id="seccion-admin" style="display: none;">
+            
+            <header class="admin-header">
+                <div class="admin-title">
+                    <span>🎰</span>
+                    <span>Administración</span>
+                </div>
+                <button class="btn-logout" onclick="cerrarSesion()">Salir</button>
+            </header>
+
+            <!-- 1. MÓDULO PUSH -->
+            <section class="admin-card push-card">
+                <div class="card-header">
+                    <span style="font-size: 1.4em;">📢</span>
+                    <h2>Enviar Notificación Push</h2>
+                </div>
+                <p style="color: #8892b0; font-size: 0.85em; margin-top: 0;">
+                    Llega al instante a la pantalla de bloqueo de todos los teléfonos que tengan la app instalada.
+                </p>
+
+                <label>Título de la Alerta</label>
+                <input type="text" id="push-titulo" placeholder="Ej. 🎁 ¡Ruleta con Jackpot al Máximo!">
+
+                <label>Mensaje</label>
+                <textarea id="push-mensaje" rows="2" placeholder="Ej. La mesa ya está abierta. ¡Entra y aparta tu lugar ahora!"></textarea>
+
+                <button class="btn-action btn-push" id="btn-enviar-push" onclick="enviarPush()">
+                    🚀 Disparar Alerta Masiva
+                </button>
+            </section>
+
+            <!-- 2. GESTOR DE PROMOCIONES -->
+            <section class="admin-card">
+                <div class="card-header">
+                    <span style="font-size: 1.4em;">🏷️</span>
+                    <h2>Nueva Promoción</h2>
+                </div>
+
+                <label>Tipo de Promoción</label>
+                <select id="promo-tipo">
+                    <option value="General">📢 General (Anuncio)</option>
+                    <option value="Flash">⚡ Oferta Flash (Marquesina roja)</option>
+                </select>
+
+                <label>Título</label>
+                <input type="text" id="promo-titulo" placeholder="Ej. Noche de Damas 2x1">
+
+                <label>Descripción</label>
+                <textarea id="promo-descripcion" rows="2" placeholder="Ej. Cóctel de bienvenida gratis de 8 PM a 11 PM."></textarea>
+
+                <button class="btn-action btn-save" onclick="crearPromocion()">
+                    ➕ Publicar Promoción
+                </button>
+
+                <div id="lista-promos" style="margin-top: 20px;"></div>
+            </section>
+
+            <!-- 3. GESTOR DE MESAS EN VIVO -->
+            <section class="admin-card">
+                <div class="card-header">
+                    <span style="font-size: 1.4em;">🎲</span>
+                    <h2>Estatus de Mesas en Piso</h2>
+                </div>
+                <p style="color: #8892b0; font-size: 0.85em; margin-top: 0; margin-bottom: 15px;">
+                    Los cambios se actualizan automáticamente en tiempo real en los celulares de los clientes.
+                </p>
+
+                <div id="contenedor-mesas-admin">
+                    <p style="text-align: center; color: #8892b0;">Cargando mesas...</p>
+                </div>
+            </section>
+
+        </div>
+
+    </div>
+
+    <script>
+        // CONFIGURACIÓN DE SERVICIOS
+        const SUPABASE_URL = "https://kqgtyzsxwrkomdtuktkk.supabase.co";
+        const SUPABASE_ANON_KEY = "sb_publishable_on1rkqvAIhSQonTODdk5fA_qTpEo_8H";
+        const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        const ONESIGNAL_APP_ID = "15bf381f-0de7-4e12-918b-57db8e55be92";
+        const ONESIGNAL_REST_KEY = "os_v2_app_cw7tqhyn45hbfemlk7ny4vn6sjgkrqfztlku3mfyxdsrlsyalbctaur1td5t17q3owurepbcgsmvdacb7h3iayhdkm5z5yjauboor4a";
+        const URL_APP_CASINO = "https://casino-three-rho.vercel.app";
+
+        // ================= GESTIÓN DE SESIÓN PERSISTENTE =================
+        async function verificarSesion() {
+            const { data: { session } } = await client.auth.getSession();
+            
+            if (session) {
+                document.getElementById('seccion-login').style.display = 'none';
+                document.getElementById('seccion-admin').style.display = 'block';
+                cargarDatosAdmin();
             } else {
-                alert("Error de OneSignal: " + (resultado.errors ? JSON.stringify(resultado.errors) : "No se pudo entregar."));
+                document.getElementById('seccion-login').style.display = 'block';
+                document.getElementById('seccion-admin').style.display = 'none';
             }
-        } catch (error) {
-            alert("Error de conexión al enviar la notificación: " + error.message);
-        } finally {
-            boton.disabled = false;
-            boton.innerHTML = "🚀 Enviar a Todos los Clientes";
         }
-    }
-</script>
+
+        async function iniciarSesion() {
+            const email = document.getElementById('login-email').value.trim();
+            const password = document.getElementById('login-password').value.trim();
+            const btn = document.getElementById('btn-login');
+
+            if (!email || !password) {
+                alert("Por favor ingresa usuario y contraseña.");
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = "Verificando...";
+
+            const { data, error } = await client.auth.signInWithPassword({ email, password });
+
+            if (error) {
+                alert("Acceso denegado: " + error.message);
+                btn.disabled = false;
+                btn.innerHTML = "Iniciar Sesión";
+            } else {
+                verificarSesion();
+            }
+        }
+
+        async function cerrarSesion() {
+            if (confirm("¿Cerrar sesión en este dispositivo?")) {
+                await client.auth.signOut();
+                location.reload();
+            }
+        }
+
+        // ================= ENVÍO DE NOTIFICACIONES PUSH =================
+        async function enviarPush() {
+            const inputTitulo = document.getElementById('push-titulo');
+            const inputMensaje = document.getElementById('push-mensaje');
+            const btn = document.getElementById('btn-enviar-push');
+
+            const titulo = inputTitulo.value.trim();
+            const mensaje = inputMensaje.value.trim();
+
+            if (!titulo || !mensaje) {
+                alert("Escribe tanto el título como el mensaje.");
+                return;
+            }
+
+            if (!confirm(`¿Enviar esta alerta masiva a los clientes?\n\n"${titulo}"`)) {
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = "⏳ Enviando a celulares...";
+
+            try {
+                const response = await fetch("https://onesignal.com/api/v1/notifications", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json; charset=utf-8",
+                        "Authorization": `Basic ${ONESIGNAL_REST_KEY}`
+                    },
+                    body: JSON.stringify({
+                        app_id: ONESIGNAL_APP_ID,
+                        included_segments: ["Total Subscriptions"],
+                        headings: { "es": titulo, "en": titulo },
+                        contents: { "es": mensaje, "en": mensaje },
+                        url: URL_APP_CASINO
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && !data.errors) {
+                    alert(`¡Notificación entregada!\nDestinatarios: ${data.recipients || 1}`);
+                    inputTitulo.value = '';
+                    inputMensaje.value = '';
+                } else {
+                    alert("Error: " + JSON.stringify(data.errors));
+                }
+            } catch (err) {
+                alert("Error de red: " + err.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = "🚀 Disparar Alerta Masiva";
+            }
+        }
+
+        // ================= GESTIÓN DE PROMOCIONES =================
+        async function crearPromocion() {
+            const tipo = document.getElementById('promo-tipo').value;
+            const titulo = document.getElementById('promo-titulo').value.trim();
+            const descripcion = document.getElementById('promo-descripcion').value.trim();
+
+            if (!titulo || !descripcion) {
+                alert("Completa todos los campos de la promoción.");
+                return;
+            }
+
+            const { error } = await client.from('promociones').insert([{
+                tipo,
+                titulo,
+                descripcion,
+                activa: true
+            }]);
+
+            if (error) {
+                alert("Error: " + error.message);
+            } else {
+                document.getElementById('promo-titulo').value = '';
+                document.getElementById('promo-descripcion').value = '';
+                cargarPromociones();
+            }
+        }
+
+        async function togglePromo(id, estadoActual) {
+            await client.from('promociones').update({ activa: !estadoActual }).eq('id', id);
+            cargarPromociones();
+        }
+
+        async function eliminarPromo(id) {
+            if (confirm("¿Eliminar esta promoción?")) {
+                await client.from('promociones').delete().eq('id', id);
+                cargarPromociones();
+            }
+        }
+
+        async function cargarPromociones() {
+            const { data: promos } = await client.from('promociones').select('*').order('fecha_creacion', { ascending: false });
+            const contenedor = document.getElementById('lista-promos');
+            
+            if (promos && promos.length > 0) {
+                contenedor.innerHTML = promos.map(p => `
+                    <div style="background: #0b0c10; padding: 12px; border-radius: 8px; margin-top: 10px; border: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+                        <div>
+                            <strong style="color: ${p.tipo === 'Flash' ? 'var(--neon-red)' : 'var(--neon-purple)'}; font-size: 0.9em;">[${p.tipo}]</strong>
+                            <strong style="color: white; display: block; font-size: 0.95em;">${p.titulo}</strong>
+                            <span style="color: #8892b0; font-size: 0.8em;">${p.descripcion}</span>
+                        </div>
+                        <div style="display: flex; gap: 6px; flex-shrink: 0;">
+                            <button onclick="togglePromo(${p.id}, ${p.activa})" style="background: ${p.activa ? 'rgba(37,211,102,0.2)' : 'rgba(255,255,255,0.1)'}; color: ${p.activa ? 'var(--neon-green)' : '#888'}; border: 1px solid ${p.activa ? 'var(--neon-green)' : '#555'}; padding: 6px 10px; border-radius: 6px; font-size: 0.8em; font-weight: bold; cursor: pointer;">
+                                ${p.activa ? 'Activa' : 'Pausada'}
+                            </button>
+                            <button onclick="eliminarPromo(${p.id})" style="background: rgba(255,0,60,0.2); color: var(--neon-red); border: 1px solid var(--neon-red); padding: 6px 10px; border-radius: 6px; font-size: 0.8em; cursor: pointer;">
+                                🗑️
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                contenedor.innerHTML = '<p style="color: #8892b0; font-size: 0.85em; text-align: center;">Sin promociones activas.</p>';
+            }
+        }
+
+        // ================= GESTIÓN DE MESAS =================
+        async function actualizarMesa(id) {
+            const estatus = document.getElementById(`estatus-${id}`).value;
+            const crupier = document.getElementById(`crupier-${id}`).value.trim();
+            const jugadores = parseInt(document.getElementById(`jugadores-${id}`).value) || 0;
+            const jackpot = parseInt(document.getElementById(`jackpot-${id}`).value) || 0;
+            const promo = document.getElementById(`promo-${id}`).value.trim();
+
+            const { error } = await client.from('mesas').update({
+                estatus,
+                crupier,
+                jugadores_actuales: jugadores,
+                jackpot,
+                promo_especial: promo
+            }).eq('id', id);
+
+            if (error) {
+                alert("Error al actualizar mesa: " + error.message);
+            } else {
+                const badge = document.getElementById(`badge-guardado-${id}`);
+                badge.style.display = 'inline';
+                setTimeout(() => badge.style.display = 'none', 2000);
+            }
+        }
+
+        async function cargarMesas() {
+            const { data: mesas } = await client.from('mesas').select('*').order('juego').order('nombre');
+            const cont = document.getElementById('contenedor-mesas-admin');
+
+            if (mesas && mesas.length > 0) {
+                cont.innerHTML = mesas.map(m => `
+                    <div class="mesa-item">
+                        <div class="mesa-item-top">
+                            <span class="mesa-nombre">${m.nombre} (${m.juego})</span>
+                            <span id="badge-guardado-${m.id}" style="color: var(--neon-green); font-size: 0.75em; display: none; font-weight: bold;">✓ Guardado</span>
+                        </div>
+
+                        <div class="mesa-grid">
+                            <div>
+                                <label>Estatus</label>
+                                <select id="estatus-${m.id}" class="mesa-estatus-select ${m.estatus === 'Abierta' ? 'abierta' : 'cerrada'}" onchange="this.className = 'mesa-estatus-select ' + (this.value === 'Abierta' ? 'abierta' : 'cerrada')">
+                                    <option value="Abierta" ${m.estatus === 'Abierta' ? 'selected' : ''}>🟢 Abierta</option>
+                                    <option value="Cerrada" ${m.estatus === 'Cerrada' ? 'selected' : ''}>🔴 Cerrada</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label>Jugadores</label>
+                                <input type="number" id="jugadores-${m.id}" value="${m.jugadores_actuales}" min="0" max="${m.capacidad_maxima}">
+                            </div>
+                        </div>
+
+                        <div class="mesa-grid" style="margin-top: 6px;">
+                            <div>
+                                <label>Crupier</label>
+                                <input type="text" id="crupier-${m.id}" value="${m.crupier || ''}" placeholder="Nombre">
+                            </div>
+                            <div>
+                                <label>Jackpot ($)</label>
+                                <input type="number" id="jackpot-${m.id}" value="${m.jackpot || 0}">
+                            </div>
+                        </div>
+
+                        <label>Promo Especial Mesa</label>
+                        <input type="text" id="promo-${m.id}" value="${m.promo_especial || ''}" placeholder="Ej. Paga 3 a 2 en Blackjack">
+
+                        <button class="btn-action btn-save" onclick="actualizarMesa(${m.id})" style="padding: 10px; font-size: 0.9em; margin-top: 10px;">
+                            💾 Guardar Cambios Mesa
+                        </button>
+                    </div>
+                `).join('');
+            } else {
+                cont.innerHTML = '<p style="text-align: center; color: #8892b0;">No hay mesas registradas.</p>';
+            }
+        }
+
+        function cargarDatosAdmin() {
+            cargarPromociones();
+            cargarMesas();
+        }
+
+        // Revisión de sesión automática al abrir
+        window.addEventListener('DOMContentLoaded', verificarSesion);
+    </script>
+</body>
+</html>
