@@ -135,15 +135,28 @@
             margin-bottom: 14px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
             transition: 0.2s;
+            position: relative;
         }
 
         .mesa-card.abierta {
-            border-color: rgba(0, 240, 255, 0.4);
+            border-color: rgba(0, 240, 255, 0.35);
         }
 
         .mesa-card.cerrada {
             opacity: 0.65;
             filter: grayscale(40%);
+        }
+
+        /* EFECTO BORDE ENCENDIDO CUANDO ES MESA CALIENTE */
+        .mesa-card.mesa-hot-glow {
+            border-color: #ff6600;
+            box-shadow: 0 0 18px rgba(255, 102, 0, 0.35);
+            animation: resplandorMesa 2s infinite alternate;
+        }
+
+        @keyframes resplandorMesa {
+            0% { box-shadow: 0 0 8px rgba(255, 102, 0, 0.25); }
+            100% { box-shadow: 0 0 22px rgba(255, 102, 0, 0.55); }
         }
 
         .mesa-header {
@@ -188,7 +201,6 @@
             border: 1px solid #ff003c;
         }
 
-        /* FOCO ROJO PARPADEANTE */
         .foco-rojo-blink {
             width: 10px;
             height: 10px;
@@ -247,14 +259,31 @@
             color: var(--neon-cyan);
         }
 
+        /* ETIQUETA NORMAL */
         .mesa-promo-tag {
             margin-top: 10px;
             background: rgba(212, 175, 55, 0.12);
             border: 1px dashed var(--neon-gold);
-            padding: 6px 10px;
-            border-radius: 6px;
-            font-size: 0.8em;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.85em;
             color: var(--neon-gold);
+            font-weight: 600;
+        }
+
+        /* ETIQUETA ESPECIAL: FUEGO Y ALTA TENSIÓN */
+        .mesa-promo-tag.hot-alert {
+            background: linear-gradient(90deg, rgba(255, 102, 0, 0.22), rgba(255, 0, 60, 0.18));
+            border: 1px solid #ff6600;
+            color: #ffb833;
+            box-shadow: 0 0 12px rgba(255, 102, 0, 0.35);
+            animation: pulsoTextoHot 1.4s infinite alternate;
+            letter-spacing: 0.5px;
+        }
+
+        @keyframes pulsoTextoHot {
+            0% { transform: scale(0.99); }
+            100% { transform: scale(1.01); color: #fff; }
         }
     </style>
 </head>
@@ -323,7 +352,7 @@
             }
         }
 
-        // CARGA DE MESAS EN TIEMPO REAL
+        // CARGA DE MESAS CON DETECCIÓN DE MESA CALIENTE
         async function cargarMesas() {
             const { data: mesas } = await client.from('mesas').select('*').order('juego').order('nombre');
             const cont = document.getElementById('mesas-container');
@@ -332,9 +361,13 @@
                 cont.innerHTML = mesas.map(m => {
                     const estaAbierta = m.estatus === 'Abierta';
                     const lugares = (m.capacidad_maxima - (m.jugadores_actuales || 0));
+                    
+                    // Identifica frases calientes para darles el efecto de fuego
+                    const promoTexto = (m.promo_especial || '').toUpperCase();
+                    const esHot = promoTexto.includes('CALIENTE') || promoTexto.includes('FUERTE') || promoTexto.includes('ÚLTIMOS') || promoTexto.includes('ULTIMOS');
 
                     return `
-                        <div class="mesa-card ${estaAbierta ? 'abierta' : 'cerrada'}">
+                        <div class="mesa-card ${estaAbierta ? 'abierta' : 'cerrada'} ${esHot && estaAbierta ? 'mesa-hot-glow' : ''}">
                             <div class="mesa-header">
                                 <div class="mesa-info">
                                     <h3>${m.nombre}</h3>
@@ -368,8 +401,8 @@
                             </div>
 
                             ${m.promo_especial ? `
-                                <div class="mesa-promo-tag">
-                                    ✨ <strong>Promo:</strong> ${m.promo_especial}
+                                <div class="mesa-promo-tag ${esHot ? 'hot-alert' : ''}">
+                                    ${esHot ? '🔥' : '✨'} <strong>Estado:</strong> ${m.promo_especial}
                                 </div>
                             ` : ''}
                         </div>
@@ -386,7 +419,7 @@
             .on('postgres_changes', { event: '*', schema: 'public', table: 'promociones' }, () => cargarPromociones())
             .subscribe();
 
-        // RESPALDO DE SINCRONIZACIÓN AUTOMÁTICA CADA 3 SEGUNDOS
+        // RESPALDO DE REFRESCO INTELIGENTE CADA 3 SEGUNDOS
         setInterval(() => {
             cargarMesas();
             cargarPromociones();
