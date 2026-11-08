@@ -132,6 +132,23 @@
             border-color: var(--neon-cyan);
         }
 
+        .pass-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .btn-toggle-eye {
+            position: absolute;
+            right: 10px;
+            background: none;
+            border: none;
+            color: #8892b0;
+            font-size: 1.2em;
+            cursor: pointer;
+            padding: 5px;
+        }
+
         .btn-action {
             width: 100%;
             padding: 14px;
@@ -242,10 +259,13 @@
                 
                 <div style="text-align: left;">
                     <label>Usuario</label>
-                    <input type="text" id="login-user" placeholder="admin" autocomplete="username" autocapitalize="none" autocorrect="off">
+                    <input type="text" id="login-user" placeholder="admin" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false">
 
                     <label>Contraseña</label>
-                    <input type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password" autocapitalize="none">
+                    <div class="pass-wrapper">
+                        <input type="password" id="login-pass" placeholder="casino123" autocomplete="current-password" autocapitalize="none" autocorrect="off" spellcheck="false">
+                        <button type="button" class="btn-toggle-eye" onclick="togglePasswordVisibility()">👁️</button>
+                    </div>
                 </div>
 
                 <button class="btn-action btn-save" onclick="iniciarSesion()" style="margin-top: 20px;">
@@ -337,7 +357,13 @@
         const SUPABASE_ANON_KEY = "sb_publishable_on1rkqvAIhSQonTODdk5fA_qTpEo_8H";
         const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // AUTENTICACIÓN LOCAL
+        // MOSTRAR/OCULTAR CONTRASEÑA
+        function togglePasswordVisibility() {
+            const passInput = document.getElementById('login-pass');
+            passInput.type = passInput.type === 'password' ? 'text' : 'password';
+        }
+
+        // AUTENTICACIÓN LOCAL FLEXIBLE
         function verificarSesion() {
             if (localStorage.getItem('admin_autenticado') === 'true') {
                 document.getElementById('seccion-login').style.display = 'none';
@@ -353,9 +379,11 @@
             const userInput = document.getElementById('login-user').value || '';
             const passInput = document.getElementById('login-pass').value || '';
 
-            const user = userInput.trim().toLowerCase();
-            const pass = passInput.trim();
+            // Limpia espacios y pasa a minúsculas
+            const user = userInput.trim().toLowerCase().replace(/\s+/g, '');
+            const pass = passInput.trim().toLowerCase().replace(/\s+/g, '');
 
+            // Acepta admin y casino123 sin importar mayúsculas o espacios
             if (user === "admin" && pass === "casino123") {
                 localStorage.setItem('admin_autenticado', 'true');
                 verificarSesion();
@@ -371,7 +399,7 @@
             }
         }
 
-        // ENVÍO DE NOTIFICACIONES PUSH A TRAVÉS DE TU SERVIDOR EN VERCEL
+        // ENVÍO DE NOTIFICACIONES PUSH VÍA VERCEL API
         async function enviarPush() {
             const inputTitulo = document.getElementById('push-titulo');
             const inputMensaje = document.getElementById('push-mensaje');
@@ -395,13 +423,8 @@
             try {
                 const response = await fetch("/api/push", {
                     method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        titulo: titulo,
-                        mensaje: mensaje
-                    })
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ titulo, mensaje })
                 });
 
                 const data = await response.json();
