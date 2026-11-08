@@ -13,22 +13,23 @@
     <!-- Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <!-- OneSignal SDK Oficial -->
+    <!-- OneSignal SDK Oficial v16 -->
     <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
     <script>
       window.OneSignalDeferred = window.OneSignalDeferred || [];
       OneSignalDeferred.push(async function(OneSignal) {
         await OneSignal.init({
           appId: "15bf381f-0de7-4e12-918b-57db8e55be92",
+          serviceWorkerPath: "OneSignalSDKWorker.js"
         });
 
-        // Sincronización automática de suscripción si ya hay permiso concedido
+        // Si el dispositivo ya cuenta con permisos en el sistema operativo, forzar registro inmediato
         if (Notification.permission === "granted") {
             try {
                 await OneSignal.User.PushSubscription.optIn();
-                console.log("Suscripción sincronizada con éxito en OneSignal.");
+                console.log("Suscripción activa sincronizada con OneSignal.");
             } catch (err) {
-                console.error("Error al sincronizar:", err);
+                console.error("Error al sincronizar suscripción:", err);
             }
         }
 
@@ -57,6 +58,8 @@
             } else {
                 actualizarEstadoBoton();
             }
+        }).catch(err => {
+            console.error("Error al solicitar permiso:", err);
         });
       }
 
@@ -76,7 +79,7 @@
             return;
         }
 
-        // Si ya está concedido el permiso, ocultar el botón
+        // Si ya está concedido el permiso, ocultar botón
         if (Notification.permission === "granted") {
             btn.style.display = 'none';
         } else {
@@ -297,7 +300,7 @@
         client.channel('public-changes').on('postgres_changes', { event: '*', schema: 'public' }, cargarDatos).subscribe();
         cargarDatos();
 
-        // Registro del Service Worker oficial
+        // El Service Worker se gestiona mediante OneSignalSDKWorker.js
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => { 
                 navigator.serviceWorker.register('OneSignalSDKWorker.js')
