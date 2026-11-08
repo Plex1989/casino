@@ -54,7 +54,6 @@
             margin: 0 auto;
         }
 
-        /* Encabezado */
         header {
             text-align: center;
             padding: 15px 0;
@@ -80,7 +79,6 @@
             font-size: 0.85em;
         }
 
-        /* Marquesina Flash */
         .marquesina-flash {
             background: linear-gradient(90deg, #ff003c, #990024);
             color: white;
@@ -95,7 +93,6 @@
             box-shadow: 0 0 15px rgba(255, 0, 60, 0.4);
         }
 
-        /* Tarjetas de Promoción */
         .promo-banner {
             background: linear-gradient(135deg, rgba(176,38,255,0.15), rgba(0,240,255,0.1));
             border: 1px solid var(--neon-purple);
@@ -119,7 +116,6 @@
             font-size: 0.85em;
         }
 
-        /* Título de sección */
         .section-title {
             color: var(--neon-cyan);
             font-size: 1.1em;
@@ -131,7 +127,6 @@
             padding-bottom: 6px;
         }
 
-        /* Tarjeta de Mesa */
         .mesa-card {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
@@ -139,7 +134,7 @@
             padding: 16px;
             margin-bottom: 14px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-            transition: transform 0.2s;
+            transition: 0.2s;
         }
 
         .mesa-card.abierta {
@@ -169,11 +164,11 @@
             color: #8892b0;
         }
 
-        /* BADGE CON FOCO ROJO PARPADEANTE */
+        /* ESTATUS CON FOCO PARPADEANTE */
         .badge-estatus {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            gap: 7px;
             padding: 6px 12px;
             border-radius: 20px;
             font-size: 0.8em;
@@ -193,7 +188,7 @@
             border: 1px solid #ff003c;
         }
 
-        /* FOCO ROJO CON ANIMACIÓN DE PULSO / PARPADEO */
+        /* FOCO ROJO PARPADEANTE */
         .foco-rojo-blink {
             width: 10px;
             height: 10px;
@@ -217,7 +212,6 @@
             }
         }
 
-        /* Cuadrícula de Datos de la Mesa */
         .mesa-stats {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -274,13 +268,9 @@
             <p>Estado de Mesas & Jackpots en Vivo</p>
         </header>
 
-        <!-- Marquesina Flash -->
         <div id="marquesina-container"></div>
-
-        <!-- Promociones Activas -->
         <div id="promos-container"></div>
 
-        <!-- Mesas -->
         <h2 class="section-title">
             <span>🎲</span> Mesas de Juego
         </h2>
@@ -295,7 +285,7 @@
         const SUPABASE_ANON_KEY = "sb_publishable_on1rkqvAIhSQonTODdk5fA_qTpEo_8H";
         const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // CARGA DE PROMOCIONES
+        // PROMOCIONES
         async function cargarPromociones() {
             const { data: promos } = await client.from('promociones').select('*').eq('activa', true).order('fecha_creacion', { ascending: false });
             
@@ -333,7 +323,7 @@
             }
         }
 
-        // CARGA DE MESAS CON FOCO ROJO Y APUESTA MÍNIMA
+        // CARGA DE MESAS EN TIEMPO REAL
         async function cargarMesas() {
             const { data: mesas } = await client.from('mesas').select('*').order('juego').order('nombre');
             const cont = document.getElementById('mesas-container');
@@ -390,11 +380,17 @@
             }
         }
 
-        // CANAL EN TIEMPO REAL: ACTUALIZA AUTOMÁTICAMENTE AL GUARDAR EN ADMIN
-        client.channel('cambios-casino')
+        // CANAL REALTIME DE SUPABASE
+        client.channel('cambios-casino-publico')
             .on('postgres_changes', { event: '*', schema: 'public', table: 'mesas' }, () => cargarMesas())
             .on('postgres_changes', { event: '*', schema: 'public', table: 'promociones' }, () => cargarPromociones())
             .subscribe();
+
+        // RESPALDO DE SINCRONIZACIÓN AUTOMÁTICA CADA 3 SEGUNDOS
+        setInterval(() => {
+            cargarMesas();
+            cargarPromociones();
+        }, 3000);
 
         window.addEventListener('DOMContentLoaded', () => {
             cargarPromociones();
