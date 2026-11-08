@@ -56,7 +56,7 @@
 
         header {
             text-align: center;
-            padding: 15px 0;
+            padding: 15px 0 10px 0;
         }
 
         header img {
@@ -79,6 +79,46 @@
             font-size: 0.85em;
         }
 
+        /* BOTONES DE ACCIÓN RÁPIDA (GRUPO & MENÚ) */
+        .quick-actions-bar {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .btn-quick {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 10px;
+            border-radius: 10px;
+            font-size: 0.85em;
+            font-weight: bold;
+            text-decoration: none;
+            text-align: center;
+            transition: 0.2s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+        }
+
+        .btn-quick:active {
+            transform: scale(0.97);
+        }
+
+        .btn-quick-wa {
+            background: linear-gradient(90deg, #128C7E, #25D366);
+            color: white;
+            border: 1px solid #25D366;
+        }
+
+        .btn-quick-menu {
+            background: linear-gradient(90deg, rgba(176,38,255,0.25), rgba(0,240,255,0.2));
+            color: var(--neon-cyan);
+            border: 1px solid var(--neon-cyan);
+        }
+
+        /* Marquesina Flash */
         .marquesina-flash {
             background: linear-gradient(90deg, #ff003c, #990024);
             color: white;
@@ -93,6 +133,7 @@
             box-shadow: 0 0 15px rgba(255, 0, 60, 0.4);
         }
 
+        /* Tarjetas de Promoción */
         .promo-banner {
             background: linear-gradient(135deg, rgba(176,38,255,0.15), rgba(0,240,255,0.1));
             border: 1px solid var(--neon-purple);
@@ -127,6 +168,7 @@
             padding-bottom: 6px;
         }
 
+        /* Tarjeta de Mesa */
         .mesa-card {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
@@ -147,7 +189,6 @@
             filter: grayscale(40%);
         }
 
-        /* EFECTO BORDE ENCENDIDO CUANDO ES MESA CALIENTE */
         .mesa-card.mesa-hot-glow {
             border-color: #ff6600;
             box-shadow: 0 0 18px rgba(255, 102, 0, 0.35);
@@ -259,7 +300,6 @@
             color: var(--neon-cyan);
         }
 
-        /* ETIQUETA NORMAL */
         .mesa-promo-tag {
             margin-top: 10px;
             background: rgba(212, 175, 55, 0.12);
@@ -271,7 +311,6 @@
             font-weight: 600;
         }
 
-        /* ETIQUETA ESPECIAL: FUEGO Y ALTA TENSIÓN */
         .mesa-promo-tag.hot-alert {
             background: linear-gradient(90deg, rgba(255, 102, 0, 0.22), rgba(255, 0, 60, 0.18));
             border: 1px solid #ff6600;
@@ -285,6 +324,31 @@
             0% { transform: scale(0.99); }
             100% { transform: scale(1.01); color: #fff; }
         }
+
+        /* BOTÓN DE WHATSAPP PARA APARTAR LUGAR EN CADA MESA */
+        .btn-mesa-whatsapp {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            margin-top: 12px;
+            padding: 12px;
+            background: rgba(37, 211, 102, 0.12);
+            border: 1px solid #25D366;
+            color: #25D366;
+            border-radius: 8px;
+            font-size: 0.88em;
+            font-weight: bold;
+            text-decoration: none;
+            transition: 0.2s;
+        }
+
+        .btn-mesa-whatsapp:active {
+            background: #25D366;
+            color: black;
+            transform: scale(0.98);
+        }
     </style>
 </head>
 <body>
@@ -296,6 +360,18 @@
             <h1>Casino Real</h1>
             <p>Estado de Mesas & Jackpots en Vivo</p>
         </header>
+
+        <!-- BOTONES DE ACCIÓN RÁPIDA: WHATSAPP VIP & MENÚ -->
+        <div class="quick-actions-bar">
+            <a href="https://chat.whatsapp.com/" id="link-grupo-vip" target="_blank" class="btn-quick btn-quick-wa">
+                <span>💬</span>
+                <span>Unirme al Grupo</span>
+            </a>
+            <a href="menu.html" class="btn-quick btn-quick-menu">
+                <span>🍸</span>
+                <span>Solicitar Menú</span>
+            </a>
+        </div>
 
         <div id="marquesina-container"></div>
         <div id="promos-container"></div>
@@ -310,6 +386,15 @@
     </div>
 
     <script>
+        // CONFIGURACIÓN DE CONTACTO
+        // Cambia este número por el número de WhatsApp oficial del Casino (con lada de México 52):
+        const NUMERO_WHATSAPP_CASINO = "5215555555555";
+        // Si tienes el enlace de invitación de tu grupo de WhatsApp, pégalo aquí:
+        const LINK_GRUPO_WHATSAPP = "https://chat.whatsapp.com/TU_GRUPO_AQUI";
+
+        document.getElementById('link-grupo-vip').href = LINK_GRUPO_WHATSAPP;
+
+        // BASE DE DATOS SUPABASE
         const SUPABASE_URL = "https://kqgtyzsxwrkomdtuktkk.supabase.co";
         const SUPABASE_ANON_KEY = "sb_publishable_on1rkqvAIhSQonTODdk5fA_qTpEo_8H";
         const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -352,7 +437,7 @@
             }
         }
 
-        // CARGA DE MESAS CON DETECCIÓN DE MESA CALIENTE
+        // CARGA DE MESAS
         async function cargarMesas() {
             const { data: mesas } = await client.from('mesas').select('*').order('juego').order('nombre');
             const cont = document.getElementById('mesas-container');
@@ -362,9 +447,12 @@
                     const estaAbierta = m.estatus === 'Abierta';
                     const lugares = (m.capacidad_maxima - (m.jugadores_actuales || 0));
                     
-                    // Identifica frases calientes para darles el efecto de fuego
                     const promoTexto = (m.promo_especial || '').toUpperCase();
                     const esHot = promoTexto.includes('CALIENTE') || promoTexto.includes('FUERTE') || promoTexto.includes('ÚLTIMOS') || promoTexto.includes('ULTIMOS');
+
+                    // MENSAJE DE WHATSAPP CON TEXTO CLARO PARA APARTAR LUGAR
+                    const mensajeWa = `Hola, voy en camino al casino. ¿Me pueden apartar un lugar en la mesa "${m.nombre}" (${m.juego})? ¡Gracias!`;
+                    const urlWaMesa = `https://wa.me/${NUMERO_WHATSAPP_CASINO}?text=${encodeURIComponent(mensajeWa)}`;
 
                     return `
                         <div class="mesa-card ${estaAbierta ? 'abierta' : 'cerrada'} ${esHot && estaAbierta ? 'mesa-hot-glow' : ''}">
@@ -405,6 +493,12 @@
                                     ${esHot ? '🔥' : '✨'} <strong>Estado:</strong> ${m.promo_especial}
                                 </div>
                             ` : ''}
+
+                            ${estaAbierta ? `
+                                <a href="${urlWaMesa}" target="_blank" class="btn-mesa-whatsapp">
+                                    <span>📲</span> Voy en camino (Apartar lugar)
+                                </a>
+                            ` : ''}
                         </div>
                     `;
                 }).join('');
@@ -419,7 +513,7 @@
             .on('postgres_changes', { event: '*', schema: 'public', table: 'promociones' }, () => cargarPromociones())
             .subscribe();
 
-        // RESPALDO DE REFRESCO INTELIGENTE CADA 3 SEGUNDOS
+        // RESPALDO CADA 3 SEGUNDOS
         setInterval(() => {
             cargarMesas();
             cargarPromociones();
