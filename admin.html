@@ -207,9 +207,10 @@
         }
 
         .mesa-estatus-select {
-            padding: 8px;
+            padding: 10px;
             font-weight: bold;
-            border-radius: 6px;
+            border-radius: 8px;
+            cursor: pointer;
         }
 
         .mesa-estatus-select.abierta {
@@ -222,6 +223,47 @@
             background: rgba(255, 0, 60, 0.15);
             color: var(--neon-red);
             border: 1px solid var(--neon-red);
+        }
+
+        /* CONTROL TÁCTIL RÁPIDO PARA JUGADORES (+ / -) */
+        .stepper-container {
+            display: flex;
+            align-items: center;
+            background: #0b0c10;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+            height: 46px;
+        }
+
+        .btn-step {
+            width: 44px;
+            height: 100%;
+            background: #1c1f2e;
+            color: var(--neon-cyan);
+            border: none;
+            font-size: 1.5em;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.15s;
+            user-select: none;
+        }
+
+        .btn-step:active {
+            background: var(--neon-cyan);
+            color: black;
+            transform: scale(0.92);
+        }
+
+        .stepper-display {
+            flex: 1;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.15em;
+            color: white;
         }
 
         .mesa-botones {
@@ -308,7 +350,7 @@
                 <h2>Gestión de Mesas</h2>
             </div>
 
-            <!-- FORMULARIO CREAR MESA -->
+            <!-- FORMULARIO: CREAR NUEVA MESA -->
             <div class="form-crear-mesa">
                 <h3 style="color: var(--neon-gold); margin: 0 0 10px 0; font-size: 1.05em; display: flex; align-items: center; gap: 6px;">
                     <span>➕</span> Agregar Nueva Mesa
@@ -316,8 +358,8 @@
 
                 <div class="mesa-grid">
                     <div>
-                        <label>Nombre de la Mesa</label>
-                        <input type="text" id="nueva-mesa-nombre" placeholder="Ej. Mesa VIP 1">
+                        <label>Nombre</label>
+                        <input type="text" id="nueva-mesa-nombre" placeholder="Ej. Mesa 1 VIP">
                     </div>
                     <div>
                         <label>Juego</label>
@@ -362,8 +404,8 @@
                         <input type="number" id="nueva-mesa-jackpot" value="0">
                     </div>
                     <div>
-                        <label>Promo Mesa</label>
-                        <input type="text" id="nueva-mesa-promo" placeholder="Ej. Bono de $500 al primer Blackjack">
+                        <label>Promo Especial</label>
+                        <input type="text" id="nueva-mesa-promo" placeholder="Ej. Bono de $500">
                     </div>
                 </div>
 
@@ -372,7 +414,7 @@
                 </button>
             </div>
 
-            <!-- LISTADO DE MESAS EXISTENTES -->
+            <!-- MESAS ACTIVAS -->
             <h3 style="color: var(--neon-cyan); font-size: 1em; margin-bottom: 12px;">Mesas en Operación</h3>
             <div id="contenedor-mesas-admin">
                 <p style="text-align: center; color: #8892b0;">Cargando mesas...</p>
@@ -396,13 +438,11 @@
             const mensaje = inputMensaje.value.trim();
 
             if (!titulo || !mensaje) {
-                alert("Por favor escribe tanto el título como el mensaje.");
+                alert("Por favor escribe el título y el mensaje.");
                 return;
             }
 
-            if (!confirm(`¿Confirmas el envío de esta notificación?\n\n"${titulo}"`)) {
-                return;
-            }
+            if (!confirm(`¿Confirmas el envío?\n\n"${titulo}"`)) return;
 
             btn.disabled = true;
             btn.innerHTML = "⏳ Enviando notificación...";
@@ -438,7 +478,7 @@
             const descripcion = document.getElementById('promo-descripcion').value.trim();
 
             if (!titulo || !descripcion) {
-                alert("Completa todos los campos de la promoción.");
+                alert("Completa todos los campos.");
                 return;
             }
 
@@ -497,7 +537,53 @@
             }
         }
 
-        // ================= CREAR, EDITAR Y ELIMINAR MESAS =================
+        // ================= ACTUALIZACIÓN INSTANTÁNEA EN VIVO =================
+
+        // 1. SUBIR O BAJAR JUGADORES AL INSTANTE SIN DAR GUARDAR
+        async function cambiarJugadores(id, delta, maxCapacidad) {
+            const display = document.getElementById(`val-jugadores-${id}`);
+            let actual = parseInt(display.innerText) || 0;
+            let nuevo = actual + delta;
+
+            if (nuevo < 0) nuevo = 0;
+            if (nuevo > maxCapacidad) nuevo = maxCapacidad;
+            if (nuevo === actual) return;
+
+            // Actualización visual inmediata en pantalla
+            display.innerText = nuevo;
+            mostrarAvisoEnVivo(id);
+
+            // Guardado automático e inmediato en Supabase
+            const { error } = await client.from('mesas').update({ jugadores_actuales: nuevo }).eq('id', id);
+            if (error) {
+                console.error("Error al actualizar jugadores:", error);
+                display.innerText = actual; // revierte si hubo error
+                alert("Error al conectar: " + error.message);
+            }
+        }
+
+        // 2. CAMBIO DE ESTATUS INSTANTÁNEO AL SELECCIONAR
+        async function cambiarEstatus(id, selectElement) {
+            const nuevoEstatus = selectElement.value;
+            selectElement.className = 'mesa-estatus-select ' + (nuevoEstatus === 'Abierta' ? 'abierta' : 'cerrada');
+            mostrarAvisoEnVivo(id);
+
+            const { error } = await client.from('mesas').update({ estatus: nuevoEstatus }).eq('id', id);
+            if (error) {
+                alert("Error al cambiar estatus: " + error.message);
+            }
+        }
+
+        function mostrarAvisoEnVivo(id) {
+            const badge = document.getElementById(`badge-guardado-${id}`);
+            if (badge) {
+                badge.innerText = "⚡ Sincronizado";
+                badge.style.display = 'inline';
+                setTimeout(() => badge.style.display = 'none', 1800);
+            }
+        }
+
+        // CREAR MESA
         async function crearMesa() {
             const nombre = document.getElementById('nueva-mesa-nombre').value.trim();
             const juego = document.getElementById('nueva-mesa-juego').value;
@@ -509,7 +595,7 @@
             const promo = document.getElementById('nueva-mesa-promo').value.trim();
 
             if (!nombre) {
-                alert("Por favor escribe el nombre de la mesa.");
+                alert("Escribe el nombre de la mesa.");
                 return;
             }
 
@@ -528,28 +614,24 @@
             if (error) {
                 alert("Error al crear mesa: " + error.message);
             } else {
-                alert("¡Mesa agregada correctamente!");
+                alert("¡Mesa creada con éxito!");
                 document.getElementById('nueva-mesa-nombre').value = '';
                 document.getElementById('nueva-mesa-crupier').value = '';
-                document.getElementById('nueva-mesa-apuesta-min').value = '50';
                 document.getElementById('nueva-mesa-jackpot').value = '0';
                 document.getElementById('nueva-mesa-promo').value = '';
                 cargarMesas();
             }
         }
 
+        // GUARDADO MANUAL DE CAMPOS DE TEXTO (Crupier, Jackpot, etc.)
         async function actualizarMesa(id) {
-            const estatus = document.getElementById(`estatus-${id}`).value;
             const crupier = document.getElementById(`crupier-${id}`).value.trim();
-            const jugadores = parseInt(document.getElementById(`jugadores-${id}`).value) || 0;
             const apuesta_minima = parseInt(document.getElementById(`apuesta-min-${id}`).value) || 0;
             const jackpot = parseInt(document.getElementById(`jackpot-${id}`).value) || 0;
             const promo = document.getElementById(`promo-${id}`).value.trim();
 
             const { error } = await client.from('mesas').update({
-                estatus,
                 crupier,
-                jugadores_actuales: jugadores,
                 apuesta_minima,
                 jackpot,
                 promo_especial: promo
@@ -558,29 +640,26 @@
             if (error) {
                 alert("Error al guardar: " + error.message);
             } else {
-                const badge = document.getElementById(`badge-guardado-${id}`);
-                badge.style.display = 'inline';
-                setTimeout(() => badge.style.display = 'none', 2000);
+                mostrarAvisoEnVivo(id);
             }
         }
 
+        // ELIMINAR MESA
         async function eliminarMesa(id, nombre) {
-            if (confirm(`¿Seguro que deseas eliminar la ${nombre}?`)) {
+            if (confirm(`¿Eliminar la ${nombre}?`)) {
                 const { error } = await client.from('mesas').delete().eq('id', id);
-                if (error) {
-                    alert("Error al eliminar: " + error.message);
-                } else {
-                    cargarMesas();
-                }
+                if (error) alert("Error: " + error.message);
+                else cargarMesas();
             }
         }
 
+        // CARGAR MESAS
         async function cargarMesas() {
             const { data: mesas, error } = await client.from('mesas').select('*').order('juego').order('nombre');
             const cont = document.getElementById('contenedor-mesas-admin');
 
             if (error) {
-                cont.innerHTML = `<p style="color: var(--neon-red); text-align: center;">Error al cargar mesas: ${error.message}</p>`;
+                cont.innerHTML = `<p style="color: var(--neon-red); text-align: center;">Error: ${error.message}</p>`;
                 return;
             }
 
@@ -589,20 +668,24 @@
                     <div class="mesa-item">
                         <div class="mesa-item-top">
                             <span class="mesa-nombre">${m.nombre} (${m.juego})</span>
-                            <span id="badge-guardado-${m.id}" style="color: var(--neon-green); font-size: 0.75em; display: none; font-weight: bold;">✓ Guardado</span>
+                            <span id="badge-guardado-${m.id}" style="color: var(--neon-cyan); font-size: 0.8em; display: none; font-weight: bold;">⚡ Sincronizado</span>
                         </div>
 
                         <div class="mesa-grid">
                             <div>
-                                <label>Estatus</label>
-                                <select id="estatus-${m.id}" class="mesa-estatus-select ${m.estatus === 'Abierta' ? 'abierta' : 'cerrada'}" onchange="this.className = 'mesa-estatus-select ' + (this.value === 'Abierta' ? 'abierta' : 'cerrada')">
+                                <label>Estatus (Toca para cambiar)</label>
+                                <select id="estatus-${m.id}" class="mesa-estatus-select ${m.estatus === 'Abierta' ? 'abierta' : 'cerrada'}" onchange="cambiarEstatus(${m.id}, this)">
                                     <option value="Abierta" ${m.estatus === 'Abierta' ? 'selected' : ''}>🟢 Abierta</option>
                                     <option value="Cerrada" ${m.estatus === 'Cerrada' ? 'selected' : ''}>🔴 Cerrada</option>
                                 </select>
                             </div>
                             <div>
-                                <label>Jugadores</label>
-                                <input type="number" id="jugadores-${m.id}" value="${m.jugadores_actuales}" min="0" max="${m.capacidad_maxima}">
+                                <label>Jugadores (${m.capacidad_maxima} máx)</label>
+                                <div class="stepper-container">
+                                    <button type="button" class="btn-step" onclick="cambiarJugadores(${m.id}, -1, ${m.capacidad_maxima})">−</button>
+                                    <div class="stepper-display" id="val-jugadores-${m.id}">${m.jugadores_actuales || 0}</div>
+                                    <button type="button" class="btn-step" onclick="cambiarJugadores(${m.id}, 1, ${m.capacidad_maxima})">+</button>
+                                </div>
                             </div>
                         </div>
 
@@ -624,22 +707,22 @@
                             </div>
                             <div>
                                 <label>Promo Mesa</label>
-                                <input type="text" id="promo-${m.id}" value="${m.promo_especial || ''}" placeholder="Ej. Bono de $500">
+                                <input type="text" id="promo-${m.id}" value="${m.promo_especial || ''}" placeholder="Ej. Bono $500">
                             </div>
                         </div>
 
                         <div class="mesa-botones">
                             <button class="btn-action btn-save" onclick="actualizarMesa(${m.id})" style="margin-top: 0; padding: 10px; font-size: 0.9em;">
-                                💾 Guardar Mesa
+                                💾 Guardar Crupier/Promo
                             </button>
-                            <button class="btn-del-mesa" onclick="eliminarMesa(${m.id}, '${m.nombre}')" title="Eliminar mesa">
+                            <button class="btn-del-mesa" onclick="eliminarMesa(${m.id}, '${m.nombre}')" title="Eliminar">
                                 🗑️
                             </button>
                         </div>
                     </div>
                 `).join('');
             } else {
-                cont.innerHTML = '<p style="text-align: center; color: #8892b0;">No hay mesas registradas. ¡Agrega la primera arriba!</p>';
+                cont.innerHTML = '<p style="text-align: center; color: #8892b0;">No hay mesas registradas.</p>';
             }
         }
 
