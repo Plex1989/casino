@@ -20,6 +20,7 @@
             --neon-gold: #d4af37;
             --neon-purple: #b026ff;
             --neon-green: #25D366;
+            --neon-orange: #ff6600;
             --border-color: #2a2d3d;
         }
 
@@ -225,7 +226,7 @@
             border: 1px solid var(--neon-red);
         }
 
-        /* CONTROL TÁCTIL RÁPIDO PARA JUGADORES */
+        /* Control para jugadores */
         .stepper-container {
             display: flex;
             align-items: center;
@@ -265,6 +266,53 @@
             font-weight: bold;
             font-size: 1.25em;
             color: white;
+        }
+
+        /* BOTONES PREESTABLECIDOS DE 1 TOQUE (HOT BADGES) */
+        .preset-badge-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 6px;
+        }
+
+        .btn-preset {
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 0.78em;
+            font-weight: bold;
+            cursor: pointer;
+            border: 1px solid transparent;
+            background: #151722;
+            transition: 0.15s;
+        }
+
+        .btn-preset:active {
+            transform: scale(0.94);
+        }
+
+        .btn-preset.fuego {
+            background: rgba(255, 102, 0, 0.15);
+            color: #ff6600;
+            border-color: #ff6600;
+        }
+
+        .btn-preset.fuerte {
+            background: rgba(0, 240, 255, 0.15);
+            color: var(--neon-cyan);
+            border-color: var(--neon-cyan);
+        }
+
+        .btn-preset.ultimos {
+            background: rgba(255, 0, 60, 0.15);
+            color: var(--neon-red);
+            border-color: var(--neon-red);
+        }
+
+        .btn-preset.limpiar {
+            background: rgba(255, 255, 255, 0.05);
+            color: #8892b0;
+            border-color: #444;
         }
 
         .mesa-botones {
@@ -405,7 +453,7 @@
                         <input type="number" id="nueva-mesa-jackpot" value="0">
                     </div>
                     <div>
-                        <label>Promo Mesa</label>
+                        <label>Promo / Estado</label>
                         <input type="text" id="nueva-mesa-promo" placeholder="Ej. Bono de $500">
                     </div>
                 </div>
@@ -540,46 +588,34 @@
 
         // ================= GESTIÓN EN TIEMPO REAL =================
 
-        // SUBIR O BAJAR JUGADORES (SIN REQUERIR BOTÓN DE GUARDAR)
+        // 1. SUBIR O BAJAR JUGADORES (SIN REQUERIR BOTÓN DE GUARDAR)
         async function cambiarJugadores(id, delta, maxCapacidad) {
             try {
                 const display = document.getElementById(`val-jugadores-${id}`);
                 if (!display) return;
 
                 let actual = parseInt(display.innerText.trim()) || 0;
-                
-                // Si la capacidad en BD es nula o menor a 1, fijamos 50 como tope seguro
-                let max = parseInt(maxCapacidad);
-                if (isNaN(max) || max <= 0) max = 50;
+                let max = parseInt(maxCapacidad) || 50;
 
                 let nuevo = actual + delta;
                 if (nuevo < 0) nuevo = 0;
                 if (nuevo > max) nuevo = max;
-
                 if (nuevo === actual) return;
 
-                // 1. Reflejo visual inmediato en pantalla
                 display.innerText = nuevo;
                 mostrarAvisoEnVivo(id);
 
-                // 2. Guardado directo e instantáneo en la base de datos
-                const { error } = await client
-                    .from('mesas')
-                    .update({ jugadores_actuales: nuevo })
-                    .eq('id', id);
-
+                const { error } = await client.from('mesas').update({ jugadores_actuales: nuevo }).eq('id', id);
                 if (error) {
-                    console.error("Error al actualizar jugadores:", error);
                     alert("Error en Supabase: " + error.message);
-                    display.innerText = actual; // revierte el cambio si hubo error
+                    display.innerText = actual;
                 }
             } catch (err) {
-                console.error("Fallo inesperado:", err);
                 alert("Error: " + err.message);
             }
         }
 
-        // CAMBIAR ESTATUS INMEDIATAMENTE AL TOCAR EL SELECTOR
+        // 2. CAMBIAR ESTATUS INMEDIATAMENTE AL TOCAR
         async function cambiarEstatus(id, selectElement) {
             const nuevoEstatus = selectElement.value;
             selectElement.className = 'mesa-estatus-select ' + (nuevoEstatus === 'Abierta' ? 'abierta' : 'cerrada');
@@ -588,6 +624,19 @@
             const { error } = await client.from('mesas').update({ estatus: nuevoEstatus }).eq('id', id);
             if (error) {
                 alert("Error al cambiar estatus: " + error.message);
+            }
+        }
+
+        // 3. APLICAR FRASE PREESTABLECIDA DE 1 TOQUE (HOT BADGES)
+        async function aplicarPreset(id, frase) {
+            const inputPromo = document.getElementById(`promo-${id}`);
+            if (inputPromo) inputPromo.value = frase;
+
+            mostrarAvisoEnVivo(id);
+
+            const { error } = await client.from('mesas').update({ promo_especial: frase }).eq('id', id);
+            if (error) {
+                alert("Error al actualizar frase: " + error.message);
             }
         }
 
@@ -640,7 +689,7 @@
             }
         }
 
-        // GUARDAR CAMPOS DE TEXTO MANUALES
+        // GUARDAR CAMPOS MANUALES (Crupier, Jackpot, etc.)
         async function actualizarMesa(id) {
             const crupier = document.getElementById(`crupier-${id}`).value.trim();
             const apuesta_minima = parseInt(document.getElementById(`apuesta-min-${id}`).value) || 0;
@@ -725,14 +774,25 @@
                                 <input type="text" id="crupier-${m.id}" value="${m.crupier || ''}" placeholder="Nombre">
                             </div>
                             <div>
-                                <label>Promo Mesa</label>
-                                <input type="text" id="promo-${m.id}" value="${m.promo_especial || ''}" placeholder="Ej. Bono $500">
+                                <label>Promo o Frase de Alerta</label>
+                                <input type="text" id="promo-${m.id}" value="${m.promo_especial || ''}" placeholder="Frase especial">
+                            </div>
+                        </div>
+
+                        <!-- BOTONES PREDEFINIDOS DE 1 TOQUE -->
+                        <div style="margin-top: 8px;">
+                            <span style="font-size: 0.72em; color: #8892b0; text-transform: uppercase; font-weight: bold;">Activar frase rápida (1 toque):</span>
+                            <div class="preset-badge-group">
+                                <button type="button" class="btn-preset fuego" onclick="aplicarPreset('${m.id}', '🔥 MESA CALIENTE')">🔥 Mesa Caliente</button>
+                                <button type="button" class="btn-preset fuerte" onclick="aplicarPreset('${m.id}', '⚡ APUESTAS FUERTES')">⚡ Apuestas Fuertes</button>
+                                <button type="button" class="btn-preset ultimos" onclick="aplicarPreset('${m.id}', '🚨 ÚLTIMOS LUGARES')">🚨 Últimos Lugares</button>
+                                <button type="button" class="btn-preset limpiar" onclick="aplicarPreset('${m.id}', '')">✕ Quitar</button>
                             </div>
                         </div>
 
                         <div class="mesa-botones">
                             <button class="btn-action btn-save" onclick="actualizarMesa('${m.id}')" style="margin-top: 0; padding: 10px; font-size: 0.9em;">
-                                💾 Guardar Crupier/Promo
+                                💾 Guardar Crupier/Jackpot
                             </button>
                             <button class="btn-del-mesa" onclick="eliminarMesa('${m.id}', '${m.nombre}')" title="Eliminar">
                                 🗑️
