@@ -199,11 +199,11 @@
             cursor: pointer;
         }
 
-        /* ACCIONES RÁPIDAS (WHATSAPP VIP Y MENÚ) */
+        /* ACCIONES RÁPIDAS (GRUPO VIP, MENÚ & COMPARTIR) */
         .quick-actions-bar {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px;
             margin-bottom: 15px;
         }
 
@@ -211,19 +211,22 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
-            padding: 12px 10px;
+            gap: 6px;
+            padding: 11px 6px;
             border-radius: 10px;
-            font-size: 0.85em;
+            font-size: 0.8em;
             font-weight: bold;
             text-decoration: none;
             text-align: center;
             box-shadow: 0 4px 12px rgba(0,0,0,0.4);
             transition: 0.2s;
+            cursor: pointer;
+            border: none;
+            font-family: inherit;
         }
 
         .btn-quick:active {
-            transform: scale(0.97);
+            transform: scale(0.96);
         }
 
         .btn-quick-wa {
@@ -236,6 +239,12 @@
             background: linear-gradient(90deg, rgba(176,38,255,0.25), rgba(0,240,255,0.2));
             color: var(--neon-cyan);
             border: 1px solid var(--neon-cyan);
+        }
+
+        .btn-quick-share {
+            background: linear-gradient(90deg, rgba(217, 218, 219, 0.15), rgba(0, 240, 255, 0.15));
+            color: var(--silver-metal);
+            border: 1px solid var(--silver-metal);
         }
 
         /* Marquesina Flash */
@@ -493,16 +502,20 @@
             </button>
         </div>
 
-        <!-- ACCIONES RÁPIDAS (WHATSAPP VIP Y MENÚ) -->
+        <!-- ACCIONES RÁPIDAS: GRUPO VIP, MENÚ & COMPARTIR -->
         <div class="quick-actions-bar">
             <a href="https://chat.whatsapp.com/TU_GRUPO_AQUI" id="link-grupo-vip" target="_blank" class="btn-quick btn-quick-wa">
                 <span>💬</span>
-                <span>Unirme al Grupo</span>
+                <span>Grupo VIP</span>
             </a>
             <a href="menu.html" class="btn-quick btn-quick-menu">
                 <span>🍸</span>
-                <span>Solicitar Menú</span>
+                <span>Menú</span>
             </a>
+            <button type="button" class="btn-quick btn-quick-share" onclick="compartirApp()">
+                <span>📤</span>
+                <span>Compartir</span>
+            </button>
         </div>
 
         <div id="marquesina-container"></div>
@@ -539,6 +552,30 @@
 
     <script>
         const NUMERO_WHATSAPP_CASINO = "522282311773";
+
+        // ================= FUNCIÓN PARA COMPARTIR POR WHATSAPP =================
+        async function compartirApp() {
+            const urlApp = window.location.origin || "https://casino-three-rho.vercel.app";
+            const textoCompartir = `🎰 *CASINO BIGBOLA* 🎲\n\n¡Entra a checar el estatus de las mesas en vivo, jackpots acumulados, promociones y menú de sala!\n\n👉 ${urlApp}`;
+
+            // Si el celular soporta el menú nativo de compartir
+            if (navigator.share) {
+                try {
+                    await navigator.share({
+                        title: 'CASINO BIGBOLA',
+                        text: textoCompartir,
+                        url: urlApp
+                    });
+                    return;
+                } catch (err) {
+                    if (err.name === 'AbortError') return; // El usuario canceló la acción
+                }
+            }
+
+            // Enlace directo a WhatsApp en caso de que no tenga Web Share
+            const urlWhatsApp = `https://api.whatsapp.com/send?text=${encodeURIComponent(textoCompartir)}`;
+            window.open(urlWhatsApp, '_blank');
+        }
 
         // ================= DETECCIÓN DE PWA INSTALADA & DISPOSITIVO =================
         const esModoApp = window.matchMedia('(display-mode: standalone)').matches 
