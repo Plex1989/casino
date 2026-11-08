@@ -8,7 +8,7 @@
     <meta name="theme-color" content="#0b0c10">
     <link rel="apple-touch-icon" href="logo.png">
 
-    <!-- Supabase JS SDK (para mesas y promociones) -->
+    <!-- Supabase JS SDK -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
@@ -31,7 +31,7 @@
         body {
             background-color: var(--bg-color);
             color: white;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             margin: 0;
             padding: 15px;
             padding-bottom: 80px;
@@ -73,7 +73,7 @@
             cursor: pointer;
         }
 
-        /* Tarjetas */
+        /* Tarjetas modulares */
         .admin-card {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
@@ -233,7 +233,7 @@
 
     <div class="container">
         
-        <!-- ================= PANTALLA DE LOGIN ================= -->
+        <!-- PANTALLA DE LOGIN -->
         <div id="seccion-login">
             <div class="login-box">
                 <img src="logo.png" alt="Casino" onerror="this.src='https://via.placeholder.com/90?text=CASINO'">
@@ -242,10 +242,10 @@
                 
                 <div style="text-align: left;">
                     <label>Usuario</label>
-                    <input type="text" id="login-user" placeholder="admin" autocomplete="username">
+                    <input type="text" id="login-user" placeholder="admin" autocomplete="username" autocapitalize="none" autocorrect="off">
 
                     <label>Contraseña</label>
-                    <input type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password">
+                    <input type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password" autocapitalize="none">
                 </div>
 
                 <button class="btn-action btn-save" onclick="iniciarSesion()" style="margin-top: 20px;">
@@ -254,7 +254,7 @@
             </div>
         </div>
 
-        <!-- ================= PANEL PRINCIPAL ================= -->
+        <!-- PANEL PRINCIPAL -->
         <div id="seccion-admin" style="display: none;">
             
             <header class="admin-header">
@@ -332,7 +332,7 @@
     </div>
 
     <script>
-        // CONFIGURACIÓN DE SERVICIOS
+        // CONFIGURACIÓN DE CONEXIÓN
         const SUPABASE_URL = "https://kqgtyzsxwrkomdtuktkk.supabase.co";
         const SUPABASE_ANON_KEY = "sb_publishable_on1rkqvAIhSQonTODdk5fA_qTpEo_8H";
         const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -341,11 +341,7 @@
         const ONESIGNAL_REST_KEY = "os_v2_app_cw7tqhyn45hbfemlk7ny4vn6sjgkrqfztlku3mfyxdsrlsyalbctaur1td5t17q3owurepbcgsmvdacb7h3iayhdkm5z5yjauboor4a";
         const URL_APP_CASINO = "https://casino-three-rho.vercel.app";
 
-        // CREDENCIALES FIJAS
-        const USUARIO_CORRECTO = "admin";
-        const PASSWORD_CORRECTA = "casino123";
-
-        // ================= AUTENTICACIÓN PERSISTENTE =================
+        // AUTENTICACIÓN PERSISTENTE
         function verificarSesion() {
             if (localStorage.getItem('admin_autenticado') === 'true') {
                 document.getElementById('seccion-login').style.display = 'none';
@@ -358,15 +354,17 @@
         }
 
         function iniciarSesion() {
-            const user = document.getElementById('login-user').value.trim();
-            const pass = document.getElementById('login-pass').value.trim();
+            const userInput = document.getElementById('login-user').value || '';
+            const passInput = document.getElementById('login-pass').value || '';
 
-            if (user === USUARIO_CORRECTO && pass === PASSWORD_CORRECTA) {
-                // Guarda la sesión indefinidamente en la memoria del celular
+            const user = userInput.trim().toLowerCase();
+            const pass = passInput.trim();
+
+            if (user === "admin" && pass === "casino123") {
                 localStorage.setItem('admin_autenticado', 'true');
                 verificarSesion();
             } else {
-                alert("Usuario o contraseña incorrectos.");
+                alert("Usuario o contraseña incorrectos.\n\nUsuario: admin\nContraseña: casino123");
             }
         }
 
@@ -377,7 +375,7 @@
             }
         }
 
-        // ================= ENVÍO DIRECTO DE NOTIFICACIONES PUSH =================
+        // ENVÍO DE NOTIFICACIONES PUSH
         async function enviarPush() {
             const inputTitulo = document.getElementById('push-titulo');
             const inputMensaje = document.getElementById('push-mensaje');
@@ -431,7 +429,7 @@
             }
         }
 
-        // ================= GESTIÓN DE PROMOCIONES =================
+        // GESTIÓN DE PROMOCIONES
         async function crearPromocion() {
             const tipo = document.getElementById('promo-tipo').value;
             const titulo = document.getElementById('promo-titulo').value.trim();
@@ -497,7 +495,7 @@
             }
         }
 
-        // ================= GESTIÓN DE MESAS =================
+        // GESTIÓN DE MESAS
         async function actualizarMesa(id) {
             const estatus = document.getElementById(`estatus-${id}`).value;
             const crupier = document.getElementById(`crupier-${id}`).value.trim();
@@ -577,7 +575,7 @@
             cargarMesas();
         }
 
-        // Ejecutar verificación de sesión al abrir
+        // Verificación inicial de sesión
         window.addEventListener('DOMContentLoaded', verificarSesion);
     </script>
 </body>
