@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Casino En Vivo - Mesas & Promociones</title>
+    <title>CASINO BIGBOLA - Mesas & Promociones en Vivo</title>
 
     <meta name="theme-color" content="#0b0c10">
     <link rel="manifest" href="manifest.json">
-    <link rel="apple-touch-icon" href="logo.png">
+    <link rel="apple-touch-icon" href="logo.jpg">
 
-    <!-- OneSignal SDK con activación inmediata de alertas push -->
+    <!-- OneSignal SDK -->
     <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
     <script>
         window.OneSignalDeferred = window.OneSignalDeferred || [];
@@ -19,7 +19,6 @@
                 allowLocalhostAsSecureOrigin: true
             });
 
-            // Si el usuario aún no ha decidido, muestra la solicitud
             if (Notification.permission === 'default') {
                 try {
                     await OneSignal.Slidedown.promptPush({ force: true });
@@ -41,6 +40,7 @@
             --neon-purple: #b026ff;
             --neon-green: #25D366;
             --neon-orange: #ff6600;
+            --silver-metal: #d9dadb;
             --border-color: #2a2d3d;
         }
 
@@ -69,26 +69,32 @@
         }
 
         header img {
-            width: 80px;
-            height: auto;
-            margin-bottom: 5px;
+            width: 85px;
+            height: 85px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 6px;
+            border: 2px solid var(--silver-metal);
+            box-shadow: 0 0 15px rgba(217, 218, 219, 0.4);
         }
 
         header h1 {
             margin: 0;
-            font-size: 1.4em;
-            color: var(--neon-cyan);
-            letter-spacing: 1px;
+            font-size: 1.45em;
+            color: var(--silver-metal);
+            letter-spacing: 1.5px;
             text-transform: uppercase;
+            text-shadow: 0 0 10px rgba(255,255,255,0.25);
         }
 
         header p {
             margin: 4px 0 0 0;
-            color: #8892b0;
+            color: var(--neon-cyan);
             font-size: 0.85em;
+            letter-spacing: 0.5px;
         }
 
-        /* BANNER DE INSTALACIÓN (OCULTO POR DEFECTO PARA QUE NO PARPADEE SI YA ESTÁ INSTALADA) */
+        /* BANNER DE INSTALACIÓN (SE OCULTA EN MODO APP) */
         .banner-instalacion {
             display: none;
             background: linear-gradient(135deg, rgba(0, 240, 255, 0.15), rgba(176, 38, 255, 0.2));
@@ -272,7 +278,7 @@
         }
 
         .section-title {
-            color: var(--neon-cyan);
+            color: var(--silver-metal);
             font-size: 1.1em;
             margin: 20px 0 12px 0;
             display: flex;
@@ -471,8 +477,8 @@
     <div class="container">
         
         <header>
-            <img src="logo.png" alt="Casino" onerror="this.src='https://via.placeholder.com/80?text=CASINO'">
-            <h1>Casino Real</h1>
+            <img src="logo.jpg" alt="Casino BigBola" onerror="this.src='logo.png'">
+            <h1>CASINO BIGBOLA</h1>
             <p>Estado de Mesas & Jackpots en Vivo</p>
         </header>
 
@@ -546,13 +552,11 @@
             const banner = document.getElementById('banner-instalacion');
             if (!banner) return;
 
-            // Si el usuario ya la abrió como app instalada, ocultar el banner por completo
             if (esModoApp) {
                 banner.style.display = 'none';
                 return;
             }
 
-            // Si es iPhone en navegador normal, mostrar banner adaptado
             if (esIphone) {
                 banner.style.display = 'flex';
                 document.getElementById('texto-banner-titulo').innerText = '📲 Instala la App en tu iPhone';
@@ -560,7 +564,6 @@
             }
         }
 
-        // En Android, el navegador avisa cuándo se puede instalar con un clic
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             promptInstalacionAndroid = e;
@@ -570,7 +573,6 @@
             }
         });
 
-        // Cuando la app termina de instalarse en el dispositivo
         window.addEventListener('appinstalled', () => {
             promptInstalacionAndroid = null;
             const banner = document.getElementById('banner-instalacion');
@@ -578,20 +580,17 @@
         });
 
         async function ejecutarInstalacionApp() {
-            // Solicitar permisos de OneSignal al interactuar
             if (window.OneSignal) {
                 try {
                     await OneSignal.Notifications.requestPermission();
                 } catch(e) {}
             }
 
-            // Si es iPhone, abrir la ventana explicativa
             if (esIphone) {
                 document.getElementById('modal-ios-install').style.display = 'flex';
                 return;
             }
 
-            // Si es Android y se capturó el evento nativo
             if (promptInstalacionAndroid) {
                 promptInstalacionAndroid.prompt();
                 const { outcome } = await promptInstalacionAndroid.userChoice;
@@ -664,7 +663,7 @@
                     const promoTexto = (m.promo_especial || '').toUpperCase();
                     const esHot = promoTexto.includes('CALIENTE') || promoTexto.includes('FUERTE') || promoTexto.includes('ÚLTIMOS') || promoTexto.includes('ULTIMOS');
 
-                    const mensajeWa = `Hola, voy en camino al casino. ¿Me pueden apartar un lugar en la mesa "${m.nombre}" (${m.juego})? ¡Gracias!`;
+                    const mensajeWa = `Hola, voy en camino a Casino BigBola. ¿Me pueden apartar un lugar en la mesa "${m.nombre}" (${m.juego})? ¡Gracias!`;
                     const urlWaMesa = `https://wa.me/${NUMERO_WHATSAPP_CASINO}?text=${encodeURIComponent(mensajeWa)}`;
 
                     return `
@@ -720,7 +719,7 @@
             }
         }
 
-        // CANAL REALTIME
+        // TIEMPO REAL
         client.channel('cambios-casino-publico')
             .on('postgres_changes', { event: '*', schema: 'public', table: 'mesas' }, () => cargarMesas())
             .on('postgres_changes', { event: '*', schema: 'public', table: 'promociones' }, () => cargarPromociones())
