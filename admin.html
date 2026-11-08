@@ -62,15 +62,18 @@
             gap: 8px;
         }
 
-        .btn-logout {
-            background: rgba(255, 0, 60, 0.15);
-            color: var(--neon-red);
-            border: 1px solid var(--neon-red);
+        .btn-view-app {
+            background: rgba(0, 240, 255, 0.1);
+            color: var(--neon-cyan);
+            border: 1px solid var(--neon-cyan);
             padding: 8px 14px;
             border-radius: 8px;
             font-size: 0.85em;
             font-weight: bold;
-            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
         }
 
         /* Tarjetas */
@@ -130,23 +133,6 @@
 
         input:focus, textarea:focus, select:focus {
             border-color: var(--neon-cyan);
-        }
-
-        .pass-wrapper {
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
-
-        .btn-toggle-eye {
-            position: absolute;
-            right: 10px;
-            background: none;
-            border: none;
-            color: #8892b0;
-            font-size: 1.2em;
-            cursor: pointer;
-            padding: 5px;
         }
 
         .btn-action {
@@ -224,182 +210,91 @@
             color: var(--neon-red);
             border: 1px solid var(--neon-red);
         }
-
-        /* Login */
-        #seccion-login {
-            display: none;
-            padding-top: 40px;
-        }
-
-        .login-box {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 25px;
-            text-align: center;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.6);
-        }
-
-        .login-box img {
-            width: 90px;
-            margin-bottom: 15px;
-        }
     </style>
 </head>
 <body>
 
     <div class="container">
         
-        <!-- PANTALLA DE LOGIN -->
-        <div id="seccion-login">
-            <div class="login-box">
-                <img src="logo.png" alt="Casino" onerror="this.src='https://via.placeholder.com/90?text=CASINO'">
-                <h2 style="color: var(--neon-cyan); margin: 0 0 8px 0; font-size: 1.3em;">Acceso Administrativo</h2>
-                <p style="color: #8892b0; font-size: 0.9em; margin-top: 0; margin-bottom: 20px;">Control de Operación del Casino</p>
-                
-                <div style="text-align: left;">
-                    <label>Usuario</label>
-                    <input type="text" id="login-user" placeholder="admin" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false">
-
-                    <label>Contraseña</label>
-                    <div class="pass-wrapper">
-                        <input type="password" id="login-pass" placeholder="casino123" autocomplete="current-password" autocapitalize="none" autocorrect="off" spellcheck="false">
-                        <button type="button" class="btn-toggle-eye" onclick="togglePasswordVisibility()">👁️</button>
-                    </div>
-                </div>
-
-                <button class="btn-action btn-save" onclick="iniciarSesion()" style="margin-top: 20px;">
-                    Entrar al Panel
-                </button>
+        <header class="admin-header">
+            <div class="admin-title">
+                <span>🎰</span>
+                <span>Admin Casino</span>
             </div>
-        </div>
+            <a href="index.html" class="btn-view-app">📱 Ir a App</a>
+        </header>
 
-        <!-- PANEL PRINCIPAL -->
-        <div id="seccion-admin" style="display: none;">
-            
-            <header class="admin-header">
-                <div class="admin-title">
-                    <span>🎰</span>
-                    <span>Admin Casino</span>
-                </div>
-                <button class="btn-logout" onclick="cerrarSesion()">Cerrar Sesión</button>
-            </header>
+        <!-- 1. MÓDULO PUSH -->
+        <section class="admin-card push-card">
+            <div class="card-header">
+                <span style="font-size: 1.4em;">📢</span>
+                <h2>Enviar Notificación Push</h2>
+            </div>
+            <p style="color: #8892b0; font-size: 0.85em; margin-top: 0;">
+                Llega de inmediato a la pantalla de bloqueo de los clientes suscritos.
+            </p>
 
-            <!-- 1. MÓDULO PUSH -->
-            <section class="admin-card push-card">
-                <div class="card-header">
-                    <span style="font-size: 1.4em;">📢</span>
-                    <h2>Enviar Notificación Push</h2>
-                </div>
-                <p style="color: #8892b0; font-size: 0.85em; margin-top: 0;">
-                    Llega de inmediato a la pantalla de bloqueo de los clientes suscritos.
-                </p>
+            <label>Título de la Alerta</label>
+            <input type="text" id="push-titulo" placeholder="Ej. 🎁 ¡Ruleta con Jackpot al Máximo!">
 
-                <label>Título de la Alerta</label>
-                <input type="text" id="push-titulo" placeholder="Ej. 🎁 ¡Ruleta con Jackpot al Máximo!">
+            <label>Mensaje</label>
+            <textarea id="push-mensaje" rows="2" placeholder="Ej. La mesa ya está abierta. ¡Entra y aparta tu lugar ahora!"></textarea>
 
-                <label>Mensaje</label>
-                <textarea id="push-mensaje" rows="2" placeholder="Ej. La mesa ya está abierta. ¡Entra y aparta tu lugar ahora!"></textarea>
+            <button class="btn-action btn-push" id="btn-enviar-push" onclick="enviarPush()">
+                🚀 Enviar a Todos los Celulares
+            </button>
+        </section>
 
-                <button class="btn-action btn-push" id="btn-enviar-push" onclick="enviarPush()">
-                    🚀 Enviar a Todos los Celulares
-                </button>
-            </section>
+        <!-- 2. GESTOR DE PROMOCIONES -->
+        <section class="admin-card">
+            <div class="card-header">
+                <span style="font-size: 1.4em;">🏷️</span>
+                <h2>Nueva Promoción</h2>
+            </div>
 
-            <!-- 2. GESTOR DE PROMOCIONES -->
-            <section class="admin-card">
-                <div class="card-header">
-                    <span style="font-size: 1.4em;">🏷️</span>
-                    <h2>Nueva Promoción</h2>
-                </div>
+            <label>Tipo de Promoción</label>
+            <select id="promo-tipo">
+                <option value="General">📢 General (Tarjeta fija)</option>
+                <option value="Flash">⚡ Oferta Flash (Marquesina roja)</option>
+            </select>
 
-                <label>Tipo de Promoción</label>
-                <select id="promo-tipo">
-                    <option value="General">📢 General (Tarjeta fija)</option>
-                    <option value="Flash">⚡ Oferta Flash (Marquesina roja)</option>
-                </select>
+            <label>Título</label>
+            <input type="text" id="promo-titulo" placeholder="Ej. 2x1 en Bebidas VIP">
 
-                <label>Título</label>
-                <input type="text" id="promo-titulo" placeholder="Ej. 2x1 en Bebidas VIP">
+            <label>Descripción</label>
+            <textarea id="promo-descripcion" rows="2" placeholder="Ej. Válido en mesas abiertas hasta las 11:00 PM."></textarea>
 
-                <label>Descripción</label>
-                <textarea id="promo-descripcion" rows="2" placeholder="Ej. Válido en mesas abiertas hasta las 11:00 PM."></textarea>
+            <button class="btn-action btn-save" onclick="crearPromocion()">
+                ➕ Publicar Promoción
+            </button>
 
-                <button class="btn-action btn-save" onclick="crearPromocion()">
-                    ➕ Publicar Promoción
-                </button>
+            <div id="lista-promos" style="margin-top: 20px;"></div>
+        </section>
 
-                <div id="lista-promos" style="margin-top: 20px;"></div>
-            </section>
+        <!-- 3. GESTOR DE MESAS EN VIVO -->
+        <section class="admin-card">
+            <div class="card-header">
+                <span style="font-size: 1.4em;">🎲</span>
+                <h2>Estatus de Mesas</h2>
+            </div>
+            <p style="color: #8892b0; font-size: 0.85em; margin-top: 0; margin-bottom: 15px;">
+                Actualiza el estado y los jugadores en tiempo real.
+            </p>
 
-            <!-- 3. GESTOR DE MESAS EN VIVO -->
-            <section class="admin-card">
-                <div class="card-header">
-                    <span style="font-size: 1.4em;">🎲</span>
-                    <h2>Estatus de Mesas</h2>
-                </div>
-                <p style="color: #8892b0; font-size: 0.85em; margin-top: 0; margin-bottom: 15px;">
-                    Actualiza el estado y los jugadores en tiempo real.
-                </p>
-
-                <div id="contenedor-mesas-admin">
-                    <p style="text-align: center; color: #8892b0;">Cargando mesas...</p>
-                </div>
-            </section>
-
-        </div>
+            <div id="contenedor-mesas-admin">
+                <p style="text-align: center; color: #8892b0;">Cargando mesas...</p>
+            </div>
+        </section>
 
     </div>
 
     <script>
-        // CONFIGURACIÓN DE BASE DE DATOS
+        // CONEXIÓN CON SUPABASE
         const SUPABASE_URL = "https://kqgtyzsxwrkomdtuktkk.supabase.co";
         const SUPABASE_ANON_KEY = "sb_publishable_on1rkqvAIhSQonTODdk5fA_qTpEo_8H";
         const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // MOSTRAR/OCULTAR CONTRASEÑA
-        function togglePasswordVisibility() {
-            const passInput = document.getElementById('login-pass');
-            passInput.type = passInput.type === 'password' ? 'text' : 'password';
-        }
-
-        // AUTENTICACIÓN LOCAL FLEXIBLE
-        function verificarSesion() {
-            if (localStorage.getItem('admin_autenticado') === 'true') {
-                document.getElementById('seccion-login').style.display = 'none';
-                document.getElementById('seccion-admin').style.display = 'block';
-                cargarDatosAdmin();
-            } else {
-                document.getElementById('seccion-login').style.display = 'block';
-                document.getElementById('seccion-admin').style.display = 'none';
-            }
-        }
-
-        function iniciarSesion() {
-            const userInput = document.getElementById('login-user').value || '';
-            const passInput = document.getElementById('login-pass').value || '';
-
-            // Limpia espacios y pasa a minúsculas
-            const user = userInput.trim().toLowerCase().replace(/\s+/g, '');
-            const pass = passInput.trim().toLowerCase().replace(/\s+/g, '');
-
-            // Acepta admin y casino123 sin importar mayúsculas o espacios
-            if (user === "admin" && pass === "casino123") {
-                localStorage.setItem('admin_autenticado', 'true');
-                verificarSesion();
-            } else {
-                alert("Usuario o contraseña incorrectos.\n\nUsuario: admin\nContraseña: casino123");
-            }
-        }
-
-        function cerrarSesion() {
-            if (confirm("¿Cerrar sesión en este dispositivo?")) {
-                localStorage.removeItem('admin_autenticado');
-                location.reload();
-            }
-        }
-
-        // ENVÍO DE NOTIFICACIONES PUSH VÍA VERCEL API
+        // ENVÍO DE NOTIFICACIONES PUSH A TRAVÉS DE TU SERVIDOR EN VERCEL
         async function enviarPush() {
             const inputTitulo = document.getElementById('push-titulo');
             const inputMensaje = document.getElementById('push-mensaje');
@@ -585,12 +480,11 @@
             }
         }
 
-        function cargarDatosAdmin() {
+        // Carga inmediata de datos al abrir la página
+        window.addEventListener('DOMContentLoaded', () => {
             cargarPromociones();
             cargarMesas();
-        }
-
-        window.addEventListener('DOMContentLoaded', verificarSesion);
+        });
     </script>
 </body>
 </html>
