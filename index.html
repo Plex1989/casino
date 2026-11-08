@@ -18,8 +18,13 @@
                 appId: "15bf381f-0de7-4e12-918b-57db8e55be92",
                 allowLocalhostAsSecureOrigin: true
             });
-            // Solicita permisos de notificación al cargar la página
-            OneSignal.Slidedown.promptPush();
+
+            // Si el usuario aún no ha decidido, muestra la solicitud
+            if (Notification.permission === 'default') {
+                try {
+                    await OneSignal.Slidedown.promptPush({ force: true });
+                } catch(e) {}
+            }
         });
     </script>
 
@@ -83,14 +88,14 @@
             font-size: 0.85em;
         }
 
-        /* BANNER DE INSTALACIÓN DE APLICACIÓN & PERMISOS PUSH */
+        /* BANNER DE INSTALACIÓN (OCULTO POR DEFECTO PARA QUE NO PARPADEE SI YA ESTÁ INSTALADA) */
         .banner-instalacion {
+            display: none;
             background: linear-gradient(135deg, rgba(0, 240, 255, 0.15), rgba(176, 38, 255, 0.2));
             border: 1px solid var(--neon-cyan);
             border-radius: 12px;
             padding: 12px 14px;
             margin-bottom: 15px;
-            display: flex;
             justify-content: space-between;
             align-items: center;
             gap: 10px;
@@ -129,7 +134,66 @@
             transform: scale(0.95);
         }
 
-        /* BOTONES SUPERIORES (GRUPO & MENÚ) */
+        /* MODAL GUÍA PARA IPHONE */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.85);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-box {
+            background: var(--card-bg);
+            border: 1px solid var(--neon-cyan);
+            border-radius: 16px;
+            padding: 22px;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 0 25px rgba(0,240,255,0.3);
+        }
+
+        .modal-box h3 {
+            color: var(--neon-cyan);
+            margin: 0 0 10px 0;
+            font-size: 1.2em;
+        }
+
+        .modal-box p {
+            color: #c5c6c7;
+            font-size: 0.85em;
+            margin-bottom: 16px;
+            line-height: 1.4;
+        }
+
+        .modal-pasos {
+            text-align: left;
+            background: #0b0c10;
+            padding: 14px;
+            border-radius: 10px;
+            font-size: 0.85em;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .btn-cerrar-modal {
+            margin-top: 18px;
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(90deg, #0070f3, var(--neon-cyan));
+            color: black;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* ACCIONES RÁPIDAS (WHATSAPP VIP Y MENÚ) */
         .quick-actions-bar {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -412,11 +476,11 @@
             <p>Estado de Mesas & Jackpots en Vivo</p>
         </header>
 
-        <!-- BANNER DE INSTALACIÓN DE APP & ACTIVACIÓN DE PUSH -->
+        <!-- BANNER DE INSTALACIÓN (SE OCULTA EN MODO APP) -->
         <div id="banner-instalacion" class="banner-instalacion">
             <div class="banner-instalacion-texto">
-                <strong>📲 Instala la App en tu Celular</strong>
-                <span>Recibe jackpots y mesas abiertas en tu pantalla</span>
+                <strong id="texto-banner-titulo">📲 Instala la App en tu Celular</strong>
+                <span id="texto-banner-sub">Recibe jackpots y mesas abiertas en tu pantalla</span>
             </div>
             <button class="btn-instalar-app" onclick="ejecutarInstalacionApp()">
                 Instalar
@@ -447,41 +511,104 @@
 
     </div>
 
+    <!-- MODAL GUÍA PARA IPHONE (SAFARI) -->
+    <div id="modal-ios-install" class="modal-overlay">
+        <div class="modal-box">
+            <div style="font-size: 2.2em; margin-bottom: 8px;">📲</div>
+            <h3>Instalar en tu iPhone</h3>
+            <p>
+                Para recibir notificaciones de mesas abiertas en tu iPhone, agrega la app a tu pantalla de inicio:
+            </p>
+            <div class="modal-pasos">
+                <div><strong>1.</strong> Toca el botón <strong>Compartir</strong> (el cuadro con la flecha hacia arriba <span style="color: var(--neon-cyan); font-size: 1.1em;">⎙</span> en la barra inferior de Safari).</div>
+                <div><strong>2.</strong> Desliza hacia abajo en el menú y selecciona <strong>"Agregar a pantalla de inicio" ➕</strong>.</div>
+                <div><strong>3.</strong> Pulsa <strong>"Agregar"</strong> arriba a la derecha.</div>
+                <div><strong>4.</strong> Abre la app desde tu pantalla para confirmar las alertas.</div>
+            </div>
+            <button class="btn-cerrar-modal" onclick="cerrarModalIos()">
+                Entendido
+            </button>
+        </div>
+    </div>
+
     <script>
-        // NÚMERO DIRECTO DE WHATSAPP CONFIGURADO (228 231 1773)
         const NUMERO_WHATSAPP_CASINO = "522282311773";
 
-        // GESTIÓN DE INSTALACIÓN PWA
-        let promptInstalacion;
+        // ================= DETECCIÓN DE PWA INSTALADA & DISPOSITIVO =================
+        const esModoApp = window.matchMedia('(display-mode: standalone)').matches 
+            || window.navigator.standalone === true 
+            || document.referrer.includes('android-app://');
+
+        const esIphone = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        let promptInstalacionAndroid = null;
+
+        function verificarEstadoInstalacion() {
+            const banner = document.getElementById('banner-instalacion');
+            if (!banner) return;
+
+            // Si el usuario ya la abrió como app instalada, ocultar el banner por completo
+            if (esModoApp) {
+                banner.style.display = 'none';
+                return;
+            }
+
+            // Si es iPhone en navegador normal, mostrar banner adaptado
+            if (esIphone) {
+                banner.style.display = 'flex';
+                document.getElementById('texto-banner-titulo').innerText = '📲 Instala la App en tu iPhone';
+                document.getElementById('texto-banner-sub').innerText = 'Toca aquí para ver los pasos';
+            }
+        }
+
+        // En Android, el navegador avisa cuándo se puede instalar con un clic
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
-            promptInstalacion = e;
+            promptInstalacionAndroid = e;
+            if (!esModoApp) {
+                const banner = document.getElementById('banner-instalacion');
+                if (banner) banner.style.display = 'flex';
+            }
+        });
+
+        // Cuando la app termina de instalarse en el dispositivo
+        window.addEventListener('appinstalled', () => {
+            promptInstalacionAndroid = null;
             const banner = document.getElementById('banner-instalacion');
-            if (banner) banner.style.display = 'flex';
+            if (banner) banner.style.display = 'none';
         });
 
         async function ejecutarInstalacionApp() {
-            // Activa o pide permisos de notificaciones push
+            // Solicitar permisos de OneSignal al interactuar
             if (window.OneSignal) {
                 try {
                     await OneSignal.Notifications.requestPermission();
                 } catch(e) {}
             }
 
-            if (promptInstalacion) {
-                promptInstalacion.prompt();
-                const { outcome } = await promptInstalacion.userChoice;
+            // Si es iPhone, abrir la ventana explicativa
+            if (esIphone) {
+                document.getElementById('modal-ios-install').style.display = 'flex';
+                return;
+            }
+
+            // Si es Android y se capturó el evento nativo
+            if (promptInstalacionAndroid) {
+                promptInstalacionAndroid.prompt();
+                const { outcome } = await promptInstalacionAndroid.userChoice;
                 if (outcome === 'accepted') {
                     document.getElementById('banner-instalacion').style.display = 'none';
                 }
-                promptInstalacion = null;
+                promptInstalacionAndroid = null;
             } else {
-                // Guía para Safari en iPhone o navegadores sin prompt automático
-                alert("Para instalar en tu celular:\n\n📱 En iPhone (Safari): Toca el botón 'Compartir' (el cuadro con la flecha hacia arriba) y elige 'Agregar a pantalla de inicio'.\n\n🤖 En Android: Toca los 3 puntos arriba a la derecha y selecciona 'Instalar aplicación'.");
+                alert("Para instalar en tu celular:\n\nToca los 3 puntos (⋮) en tu navegador arriba a la derecha y selecciona 'Instalar aplicación' o 'Agregar a la pantalla principal'.");
             }
         }
 
-        // SUPABASE CLIENT
+        function cerrarModalIos() {
+            document.getElementById('modal-ios-install').style.display = 'none';
+        }
+
+        // ================= SUPABASE Y TIEMPO REAL =================
         const SUPABASE_URL = "https://kqgtyzsxwrkomdtuktkk.supabase.co";
         const SUPABASE_ANON_KEY = "sb_publishable_on1rkqvAIhSQonTODdk5fA_qTpEo_8H";
         const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -524,7 +651,7 @@
             }
         }
 
-        // CARGA DE MESAS CON WHATSAPP Y ALERTA CALIENTE
+        // CARGA DE MESAS
         async function cargarMesas() {
             const { data: mesas } = await client.from('mesas').select('*').order('juego').order('nombre');
             const cont = document.getElementById('mesas-container');
@@ -537,7 +664,6 @@
                     const promoTexto = (m.promo_especial || '').toUpperCase();
                     const esHot = promoTexto.includes('CALIENTE') || promoTexto.includes('FUERTE') || promoTexto.includes('ÚLTIMOS') || promoTexto.includes('ULTIMOS');
 
-                    // MENSAJE DE APARTAR LUGAR DIRECTO A TU WHATSAPP (228 231 1773)
                     const mensajeWa = `Hola, voy en camino al casino. ¿Me pueden apartar un lugar en la mesa "${m.nombre}" (${m.juego})? ¡Gracias!`;
                     const urlWaMesa = `https://wa.me/${NUMERO_WHATSAPP_CASINO}?text=${encodeURIComponent(mensajeWa)}`;
 
@@ -594,7 +720,7 @@
             }
         }
 
-        // TIEMPO REAL
+        // CANAL REALTIME
         client.channel('cambios-casino-publico')
             .on('postgres_changes', { event: '*', schema: 'public', table: 'mesas' }, () => cargarMesas())
             .on('postgres_changes', { event: '*', schema: 'public', table: 'promociones' }, () => cargarPromociones())
@@ -607,6 +733,7 @@
         }, 3000);
 
         window.addEventListener('DOMContentLoaded', () => {
+            verificarEstadoInstalacion();
             cargarPromociones();
             cargarMesas();
         });
