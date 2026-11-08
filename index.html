@@ -31,40 +31,46 @@
         });
       });
 
-      // LÓGICA DE ACTIVACIÓN Y DESACTIVACIÓN CLARA
+      // LÓGICA DE ACTIVACIÓN Y DESACTIVACIÓN (DIRECTA Y SIN RETRASOS)
       async function toggleAlertas() {
         if (!("Notification" in window)) {
             alert("Lo sentimos, tu navegador no soporta notificaciones.");
             return;
         }
 
-        window.OneSignalDeferred.push(async function(OneSignal) {
-            const isSubscribed = OneSignal.User.PushSubscription.optedIn;
-
-            if (isSubscribed) {
-                // Si ya están activas, las desactivamos
-                await OneSignal.User.PushSubscription.optOut();
-                alert("Notificaciones desactivadas. Ya no recibirás alertas.");
+        // 1. SI NUNCA HA DADO PERMISO (Se pide instantáneamente al tocar, sin pasar por OneSignal primero)
+        if (Notification.permission === "default") {
+            const permiso = await Notification.requestPermission();
+            
+            if (permiso === "granted") {
+                window.OneSignalDeferred.push(function(OneSignal) {
+                    OneSignal.User.PushSubscription.optIn();
+                });
+                alert("¡Notificaciones activadas exitosamente!");
             } else {
-                // Si están inactivas, pedimos permiso o las reactivamos
-                if (Notification.permission === "default") {
-                    const permiso = await Notification.requestPermission();
-                    if (permiso === "granted") {
-                        await OneSignal.User.PushSubscription.optIn();
-                        alert("¡Notificaciones activadas exitosamente!");
-                    } else {
-                        alert("Permiso denegado. No te enviaremos alertas.");
-                    }
-                } else if (Notification.permission === "granted") {
-                    await OneSignal.User.PushSubscription.optIn();
-                    alert("¡Notificaciones activadas exitosamente!");
-                } else {
-                    alert("Tienes las notificaciones bloqueadas en este navegador. Toca el candado junto a la dirección web para permitirlas.");
-                }
+                alert("Permiso denegado. No te enviaremos alertas.");
             }
-            // Actualizamos la vista del botón
-            actualizarEstadoBoton();
-        });
+        } 
+        // 2. SI YA NOS HABÍA DADO PERMISO ANTES
+        else if (Notification.permission === "granted") {
+            window.OneSignalDeferred.push(function(OneSignal) {
+                const isSubscribed = OneSignal.User.PushSubscription.optedIn;
+                if (isSubscribed) {
+                    OneSignal.User.PushSubscription.optOut();
+                    alert("Notificaciones desactivadas. Ya no recibirás alertas.");
+                } else {
+                    OneSignal.User.PushSubscription.optIn();
+                    alert("¡Notificaciones reactivadas exitosamente!");
+                }
+            });
+        } 
+        // 3. SI EL USUARIO LAS BLOQUEÓ MANUALMENTE
+        else {
+            alert("Tienes las notificaciones bloqueadas en este navegador. Ve a la configuración de la app o del navegador para permitirlas.");
+        }
+        
+        // Actualizamos la vista del botón después de procesar
+        setTimeout(actualizarEstadoBoton, 500);
       }
 
       function actualizarEstadoBoton() {
