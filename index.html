@@ -13,7 +13,7 @@
     <!-- Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <!-- OneSignal SDK Oficial v16 -->
+    <!-- OneSignal SDK -->
     <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
     <script>
       window.OneSignalDeferred = window.OneSignalDeferred || [];
@@ -22,50 +22,58 @@
           appId: "15bf381f-0de7-4e12-918b-57db8e55be92",
         });
 
-        // Actualiza el estado visual del botón al entrar a la app
         actualizarEstadoBoton();
-
-        // Si cambia el permiso en segundo plano, se actualiza el botón
         OneSignal.User.PushSubscription.addEventListener("change", actualizarEstadoBoton);
       });
 
-      // Lógica a prueba de fallos para el botón
+      // LÓGICA ULTRA-COMPATIBLE Y SIN RETRASOS (Evita que el celular congele el botón)
       function toggleAlertas() {
-        window.OneSignalDeferred.push(async function(OneSignal) {
-            try {
-                const isSubscribed = OneSignal.User.PushSubscription.optedIn;
+        if (!("Notification" in window)) {
+            alert("Lo sentimos, tu dispositivo no soporta notificaciones web.");
+            return;
+        }
 
-                if (isSubscribed) {
-                    await OneSignal.User.PushSubscription.optOut();
-                    alert("Alertas desactivadas correctamente.");
-                    actualizarEstadoBoton();
-                } else {
-                    // 1. Revisar si ya tenemos permiso del sistema
-                    if (OneSignal.Notifications.permission !== "granted") {
-                        await OneSignal.Notifications.requestPermission();
-                    }
-                    
-                    // 2. Si ya hay permiso, conectar obligatoriamente al servidor
-                    if (OneSignal.Notifications.permission === "granted") {
-                        await OneSignal.User.PushSubscription.optIn();
-                        
-                        // Damos 1 segundo para que la conexión a internet termine y revisamos
-                        setTimeout(() => {
-                            if (OneSignal.User.PushSubscription.optedIn) {
-                                alert("¡Conectado! Alertas activadas exitosamente.");
-                            } else {
-                                alert("El celular dio permiso, pero OneSignal no pudo conectar. Revisa el archivo sw.js");
-                            }
-                            actualizarEstadoBoton();
-                        }, 1000);
-                    } else {
-                        alert("El permiso está bloqueado. Ve a los ajustes de tu celular (Notificaciones) y actívalo para esta app.");
-                    }
+        // 1. SI NUNCA HA DADO PERMISO (Petición directa e instantánea)
+        if (Notification.permission === "default" || Notification.permission === "prompt") {
+            try {
+                // Formato universal que evita que Safari/Android viejo se trabe
+                let promesa = Notification.requestPermission(procesarRespuestaDelCelular);
+                if (promesa && promesa.then) {
+                    promesa.then(procesarRespuestaDelCelular);
                 }
             } catch (error) {
-                alert("Error técnico de conexión: " + error.message);
+                alert("Error al pedir permiso: " + error);
             }
-        });
+        } 
+        // 2. SI YA DIO PERMISO (Prendemos o apagamos OneSignal)
+        else if (Notification.permission === "granted") {
+            window.OneSignalDeferred.push(function(OneSignal) {
+                if (OneSignal.User.PushSubscription.optedIn) {
+                    OneSignal.User.PushSubscription.optOut();
+                    alert("Alertas desactivadas correctamente.");
+                } else {
+                    OneSignal.User.PushSubscription.optIn();
+                    alert("¡Alertas reactivadas!");
+                }
+                setTimeout(actualizarEstadoBoton, 300);
+            });
+        } 
+        // 3. SI EL USUARIO BLOQUEÓ EL PERMISO
+        else {
+            alert("Permiso bloqueado. Ve a los Ajustes de tu celular > Notificaciones > Chrome/Safari y actívalas.");
+        }
+      }
+
+      function procesarRespuestaDelCelular(permiso) {
+          if (permiso === "granted") {
+              window.OneSignalDeferred.push(function(OneSignal) {
+                  OneSignal.User.PushSubscription.optIn();
+              });
+              alert("¡Notificaciones activadas exitosamente!");
+          } else {
+              alert("Cancelaste el permiso de notificaciones.");
+          }
+          setTimeout(actualizarEstadoBoton, 300);
       }
 
       function actualizarEstadoBoton() {
