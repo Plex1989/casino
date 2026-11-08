@@ -2,312 +2,404 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Casino - Estatus en Vivo</title>
-    
-    <!-- Configuración PWA -->
-    <link rel="manifest" href="manifest.json">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Casino En Vivo - Mesas & Promociones</title>
+
     <meta name="theme-color" content="#0b0c10">
+    <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="logo.png">
 
-    <!-- Supabase -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-    <!-- OneSignal SDK Oficial v16 -->
+    <!-- OneSignal SDK -->
     <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
     <script>
-      window.OneSignalDeferred = window.OneSignalDeferred || [];
-      OneSignalDeferred.push(async function(OneSignal) {
-        await OneSignal.init({
-          appId: "15bf381f-0de7-4e12-918b-57db8e55be92",
-          serviceWorkerPath: "OneSignalSDKWorker.js"
+        window.OneSignalDeferred = window.OneSignalDeferred || [];
+        OneSignalDeferred.push(async function(OneSignal) {
+            await OneSignal.init({
+                appId: "15bf381f-0de7-4e12-918b-57db8e55be92",
+            });
         });
-
-        // Si el dispositivo ya cuenta con permisos en el sistema operativo, forzar registro inmediato
-        if (Notification.permission === "granted") {
-            try {
-                await OneSignal.User.PushSubscription.optIn();
-                console.log("Suscripción activa sincronizada con OneSignal.");
-            } catch (err) {
-                console.error("Error al sincronizar suscripción:", err);
-            }
-        }
-
-        actualizarEstadoBoton();
-        OneSignal.User.PushSubscription.addEventListener("change", actualizarEstadoBoton);
-      });
-
-      function toggleAlertas() {
-        if (!("Notification" in window)) {
-            alert("Tu dispositivo no soporta notificaciones.");
-            return;
-        }
-
-        if (Notification.permission === "denied") {
-            alert("Las notificaciones están bloqueadas en tu teléfono.\n\nPara activarlas:\n1. Mantén presionado el ícono de la app Casino en tu pantalla.\n2. Toca en 'Info. de la aplicación'.\n3. Entra a 'Notificaciones' y activa el interruptor.");
-            return;
-        }
-
-        Notification.requestPermission().then(permiso => {
-            if (permiso === "granted") {
-                window.OneSignalDeferred.push(async function(OneSignal) {
-                    await OneSignal.User.PushSubscription.optIn();
-                    alert("¡Notificaciones activadas exitosamente!");
-                    actualizarEstadoBoton();
-                });
-            } else {
-                actualizarEstadoBoton();
-            }
-        }).catch(err => {
-            console.error("Error al solicitar permiso:", err);
-        });
-      }
-
-      function actualizarEstadoBoton() {
-        const btn = document.getElementById('btn-alertas');
-        if (!btn) return;
-
-        const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
-
-        if (isStandalone) {
-            document.body.classList.add('modo-app');
-        }
-
-        // En navegador web se mantiene oculto
-        if (!isStandalone) {
-            btn.style.display = 'none';
-            return;
-        }
-
-        // Si ya está concedido el permiso, ocultar botón
-        if (Notification.permission === "granted") {
-            btn.style.display = 'none';
-        } else {
-            btn.style.display = 'block';
-            btn.className = "btn-alertas-inactivo";
-            btn.innerHTML = Notification.permission === "denied" 
-                ? "⚠️ Activar Alertas (Desbloquear)" 
-                : "🔔 Activar Alertas";
-        }
-      }
-
-      window.addEventListener('DOMContentLoaded', actualizarEstadoBoton);
     </script>
 
+    <!-- Supabase JS SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <style>
-        :root { --bg-color: #0b0c10; --card-bg: #151722; --neon-cyan: #00f0ff; --neon-red: #ff003c; --neon-gold: #d4af37; --neon-purple: #b026ff; --btn-whatsapp: #25D366; }
-        body { background-color: var(--bg-color); color: white; font-family: 'Segoe UI', Tahoma, sans-serif; padding: 20px; max-width: 600px; margin: 0 auto; overflow-x: hidden; padding-bottom: 100px; }
-        
-        .header-logo { text-align: center; margin-bottom: 20px; }
-        .header-logo img { width: 120px; filter: drop-shadow(0 0 15px rgba(0, 240, 255, 0.4)); }
-
-        @keyframes slideIn { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        @keyframes pulseGlowRed { 0% { box-shadow: 0 0 5px var(--neon-red); } 50% { box-shadow: 0 0 20px var(--neon-red); } 100% { box-shadow: 0 0 5px var(--neon-red); } }
-        @keyframes scrollText { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
-        @keyframes jackpotPulse { 0% { color: #fff; text-shadow: 0 0 5px var(--neon-gold); } 50% { color: var(--neon-gold); text-shadow: 0 0 20px var(--neon-gold); } 100% { color: #fff; text-shadow: 0 0 5px var(--neon-gold); } }
-        @keyframes pulsePromoMesa { 0% { border-color: var(--neon-purple); } 50% { border-color: rgba(176,38,255,0.3); } 100% { border-color: var(--neon-purple); } }
-        @keyframes blinkDot { 0% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(1.2); } 100% { opacity: 1; transform: scale(1); } }
-        @keyframes pulseGlowPurple { 0% { box-shadow: 0 0 5px rgba(176,38,255,0.5); } 100% { box-shadow: 0 0 20px rgba(176,38,255,0.8); } }
-
-        #btn-alertas { display: none; width: 100%; padding: 12px; border-radius: 8px; font-weight: bold; font-size: 1.1em; margin-bottom: 25px; cursor: pointer; transition: 0.3s; text-align: center; }
-        .btn-alertas-inactivo { background-color: var(--neon-purple); color: white; border: none; animation: pulseGlowPurple 2s infinite alternate; }
-
-        .promo { padding: 15px 20px; border-radius: 12px; margin-bottom: 25px; animation: slideIn 0.5s ease-out; position: relative; overflow: hidden; }
-        .promo-general { background: var(--card-bg); border: 1px solid #2a2d3d; border-left: 5px solid var(--neon-purple); box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
-        .promo-general strong { color: var(--neon-purple); font-size: 1.1em; letter-spacing: 1px; text-transform: uppercase; }
-        
-        .promo-flash { background: #1a0505; border: 1px solid var(--neon-red); border-left: 5px solid var(--neon-red); animation: pulseGlowRed 1.5s infinite alternate, slideIn 0.5s ease-out; }
-        .promo-flash .flash-title { color: white; background: var(--neon-red); padding: 2px 10px; border-radius: 4px; font-weight: bold; font-size: 0.85em; display: inline-block; margin-bottom: 10px; letter-spacing: 1px; }
-        .flash-marquee { white-space: nowrap; overflow: hidden; box-sizing: border-box; }
-        .flash-marquee p { display: inline-block; padding-left: 100%; animation: scrollText 10s linear infinite; margin: 0; color: #ff9999; font-weight: bold; font-size: 1.1em; }
-
-        h2 { color: var(--neon-cyan); border-bottom: 1px solid rgba(0,240,255,0.2); padding-bottom: 10px; text-transform: uppercase; font-size: 1.2em; letter-spacing: 1px; display: flex; justify-content: space-between; align-items: center;}
-        
-        .mesa { background: var(--card-bg); padding: 20px 15px; margin-bottom: 20px; border-radius: 12px; border-left: 5px solid #4CAF50; transition: 0.3s; position: relative; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
-        .cerrada { border-left-color: #e0241b; opacity: 0.7; }
-        .stats { display: flex; justify-content: space-between; align-items: center; color: #8892b0; font-size: 0.95em; margin-top: 10px; flex-wrap: wrap; gap: 5px;}
-        
-        .badge { background: rgba(0,240,255,0.1); color: var(--neon-cyan); padding: 4px 10px; border-radius: 4px; font-size: 0.85em; border: 1px solid rgba(0,240,255,0.3); align-self: flex-start; flex-shrink: 0; }
-        
-        .jackpot-texto { font-size: 1.1em; font-weight: bold; text-align: center; margin-top: 15px; background: rgba(212,175,55,0.1); padding: 10px; border-radius: 6px; animation: jackpotPulse 1.5s infinite; border: 1px dashed var(--neon-gold); }
-        .promo-mesa-activa { margin-top: 15px; padding: 12px; background: rgba(176, 38, 255, 0.05); border: 1px dashed var(--neon-purple); border-radius: 8px; color: #dfb3ff; font-size: 0.9em; text-align: center; animation: pulsePromoMesa 2s infinite; }
-        .promo-mesa-activa strong { color: var(--neon-purple); }
-        .btn-reservar { background: var(--btn-whatsapp); color: white; border: none; padding: 8px 15px; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.3s; font-size: 0.9em; display: flex; align-items: center; gap: 5px; }
-        .btn-reservar:hover { background: #1ebe57; transform: scale(1.05); }
-
-        .icono-juego { width: 95px; height: 95px; object-fit: contain; filter: drop-shadow(0 0 12px rgba(212, 175, 55, 0.8)); flex-shrink: 0; }
-        
-        .mesa-header { display: flex; align-items: center; gap: 15px; flex-wrap: wrap; }
-        .mesa-titulo { margin: 0; color: white; font-size: 1.4em; text-transform: uppercase; text-shadow: 0 2px 4px rgba(0,0,0,0.5); display: flex; align-items: center; gap: 10px; flex-wrap: wrap;}
-        
-        .live-badge { display: flex; align-items: center; gap: 6px; color: var(--neon-red); font-size: 0.55em; font-weight: bold; letter-spacing: 1px; border: 1px solid var(--neon-red); padding: 3px 8px; border-radius: 12px; background: rgba(255, 0, 60, 0.1); text-shadow: none; margin-top: 2px; flex-shrink: 0; }
-        .live-dot { width: 8px; height: 8px; background-color: var(--neon-red); border-radius: 50%; animation: blinkDot 1s infinite; box-shadow: 0 0 5px var(--neon-red); }
-
-        .flotantes-container { position: fixed; bottom: 20px; right: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 1000; }
-        .btn-flotante { background-color: #1f2833; color: white; border: 1px solid var(--neon-cyan); border-radius: 50px; padding: 12px 20px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.5); transition: 0.3s; }
-        .btn-flotante.wa { background-color: var(--btn-whatsapp); border: none; box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4); }
-        .btn-flotante:active { transform: scale(0.95); }
-
-        /* Botón de Instalación */
-        .btn-instalar-top { background: linear-gradient(90deg, #00f0ff, #0088ff); color: black; border: none; width: 100%; padding: 12px; font-weight: bold; font-size: 1.1em; border-radius: 8px; margin-bottom: 20px; cursor: pointer; box-shadow: 0 4px 15px rgba(0, 240, 255, 0.3); animation: pulseGlow 2s infinite alternate; }
-        @keyframes pulseGlow { 0% { box-shadow: 0 0 5px rgba(0,240,255,0.5); } 100% { box-shadow: 0 0 20px rgba(0,240,255,0.8); } }
-        
-        #modal-instalar { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 9999; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; backdrop-filter: blur(5px); }
-        .modal-content { background: #151722; border: 2px solid var(--neon-cyan); border-radius: 12px; padding: 25px; text-align: center; max-width: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
-
-        @media (display-mode: standalone) {
-            .btn-instalar-top { display: none !important; }
+        :root {
+            --bg-color: #0b0c10;
+            --card-bg: #151722;
+            --neon-cyan: #00f0ff;
+            --neon-red: #ff003c;
+            --neon-gold: #d4af37;
+            --neon-purple: #b026ff;
+            --neon-green: #25D366;
+            --border-color: #2a2d3d;
         }
-        body.modo-app .btn-instalar-top { display: none !important; }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: white;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 12px;
+            padding-bottom: 70px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Encabezado */
+        header {
+            text-align: center;
+            padding: 15px 0;
+        }
+
+        header img {
+            width: 80px;
+            height: auto;
+            margin-bottom: 5px;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 1.4em;
+            color: var(--neon-cyan);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        header p {
+            margin: 4px 0 0 0;
+            color: #8892b0;
+            font-size: 0.85em;
+        }
+
+        /* Marquesina Flash */
+        .marquesina-flash {
+            background: linear-gradient(90deg, #ff003c, #990024);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85em;
+            font-weight: bold;
+            box-shadow: 0 0 15px rgba(255, 0, 60, 0.4);
+        }
+
+        /* Tarjetas de Promoción */
+        .promo-banner {
+            background: linear-gradient(135deg, rgba(176,38,255,0.15), rgba(0,240,255,0.1));
+            border: 1px solid var(--neon-purple);
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 20px;
+        }
+
+        .promo-banner h3 {
+            margin: 0 0 5px 0;
+            color: var(--neon-gold);
+            font-size: 1em;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .promo-banner p {
+            margin: 0;
+            color: #c5c6c7;
+            font-size: 0.85em;
+        }
+
+        /* Título de sección */
+        .section-title {
+            color: var(--neon-cyan);
+            font-size: 1.1em;
+            margin: 20px 0 12px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 6px;
+        }
+
+        /* Tarjeta de Mesa */
+        .mesa-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 14px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            transition: transform 0.2s;
+        }
+
+        .mesa-card.abierta {
+            border-color: rgba(0, 240, 255, 0.4);
+        }
+
+        .mesa-card.cerrada {
+            opacity: 0.65;
+            filter: grayscale(40%);
+        }
+
+        .mesa-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .mesa-info h3 {
+            margin: 0;
+            font-size: 1.1em;
+            color: white;
+        }
+
+        .mesa-info span {
+            font-size: 0.8em;
+            color: #8892b0;
+        }
+
+        /* BADGE CON FOCO ROJO PARPADEANTE */
+        .badge-estatus {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-estatus.abierta {
+            background: rgba(37, 211, 102, 0.12);
+            color: #25D366;
+            border: 1px solid #25D366;
+        }
+
+        .badge-estatus.cerrada {
+            background: rgba(255, 0, 60, 0.12);
+            color: #ff003c;
+            border: 1px solid #ff003c;
+        }
+
+        /* FOCO ROJO CON ANIMACIÓN DE PULSO / PARPADEO */
+        .foco-rojo-blink {
+            width: 10px;
+            height: 10px;
+            background-color: #ff003c;
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 8px #ff003c;
+            animation: parpadeoFoco 0.8s ease-in-out infinite alternate;
+        }
+
+        @keyframes parpadeoFoco {
+            0% {
+                opacity: 0.25;
+                transform: scale(0.85);
+                box-shadow: 0 0 2px #ff003c;
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1.25);
+                box-shadow: 0 0 12px #ff003c, 0 0 20px #ff003c;
+            }
+        }
+
+        /* Cuadrícula de Datos de la Mesa */
+        .mesa-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            background: #0b0c10;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.85em;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stat-label {
+            color: #8892b0;
+            font-size: 0.75em;
+            text-transform: uppercase;
+        }
+
+        .stat-val {
+            color: white;
+            font-weight: bold;
+            margin-top: 2px;
+        }
+
+        .stat-val.gold {
+            color: var(--neon-gold);
+        }
+
+        .stat-val.cyan {
+            color: var(--neon-cyan);
+        }
+
+        .mesa-promo-tag {
+            margin-top: 10px;
+            background: rgba(212, 175, 55, 0.12);
+            border: 1px dashed var(--neon-gold);
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 0.8em;
+            color: var(--neon-gold);
+        }
     </style>
 </head>
 <body>
-    
-    <button class="btn-instalar-top" onclick="abrirModalInstalacion()">📲 Instalar App del Casino</button>
 
-    <div id="modal-instalar">
-        <div class="modal-content">
-            <h3 style="color: var(--neon-cyan); margin-top: 0; font-size: 1.5em;">Instalar Aplicación</h3>
-            <p id="texto-modal-instalar" style="color: white; line-height: 1.6; font-size: 1.1em;"></p>
-            <button onclick="procederInstalacion()" style="background: var(--neon-cyan); color: black; border: none; padding: 12px 25px; border-radius: 25px; font-weight: bold; cursor: pointer; margin-top: 15px; font-size: 1.1em;">Instalar Ahora</button>
-            <button onclick="document.getElementById('modal-instalar').style.display='none'" style="background: transparent; color: #8892b0; border: none; padding: 10px; cursor: pointer; display: block; width: 100%; margin-top: 10px;">Cerrar</button>
+    <div class="container">
+        
+        <header>
+            <img src="logo.png" alt="Casino" onerror="this.src='https://via.placeholder.com/80?text=CASINO'">
+            <h1>Casino Real</h1>
+            <p>Estado de Mesas & Jackpots en Vivo</p>
+        </header>
+
+        <!-- Marquesina Flash -->
+        <div id="marquesina-container"></div>
+
+        <!-- Promociones Activas -->
+        <div id="promos-container"></div>
+
+        <!-- Mesas -->
+        <h2 class="section-title">
+            <span>🎲</span> Mesas de Juego
+        </h2>
+        <div id="mesas-container">
+            <p style="text-align: center; color: #8892b0;">Cargando mesas en vivo...</p>
         </div>
-    </div>
 
-    <div class="header-logo"><img src="logo.png" alt="Casino" onerror="this.src='https://via.placeholder.com/120?text=LOGO'"></div>
-
-    <button id="btn-alertas" class="btn-alertas-inactivo" onclick="toggleAlertas()">
-        🔔 Activar Alertas
-    </button>
-
-    <div id="promos-container"></div>
-
-    <div style="background: linear-gradient(90deg, #0d1a10, #142b18); border: 1px solid #25D366; border-radius: 12px; padding: 15px; margin-bottom: 25px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 15px rgba(37, 211, 102, 0.2); flex-wrap: wrap; gap: 10px;">
-        <div style="display: flex; align-items: center; gap: 15px; flex: 1; min-width: 200px;">
-            <div style="background: #25D366; color: white; width: 45px; height: 45px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 1.5em; flex-shrink: 0;">💬</div>
-            <div>
-                <strong style="color: #25D366; font-size: 1.1em; display: block;">Radar VIP Casino</strong>
-                <span style="color: #bbb; font-size: 0.85em;">Recibe alertas de mesas calientes y bonos exclusivos.</span>
-            </div>
-        </div>
-        <button onclick="window.open('https://api.whatsapp.com/send?phone=522282311773&text=Hola,%20me%20gustar%C3%ADa%20unirme%20al%20grupo%20VIP%20del%20casino.', '_blank')" style="background: #25D366; color: black; border: none; padding: 10px 15px; border-radius: 8px; font-weight: bold; cursor: pointer; flex-shrink: 0;">Unirme</button>
-    </div>
-    
-    <h2>EN EL PISO HOY</h2>
-    <div id="mesas-container"><p style="text-align:center; color:#8892b0;">Conectando con las mesas...</p></div>
-
-    <div class="flotantes-container">
-        <button class="btn-flotante" onclick="pedirMenu()">🍸 Menú Bar</button>
-        <button class="btn-flotante wa" onclick="compartirAppCliente()">📱 Compartir</button>
     </div>
 
     <script>
-        const numeroCasino = "522282311773";
-        let deferredPrompt;
-        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        const SUPABASE_URL = "https://kqgtyzsxwrkomdtuktkk.supabase.co";
+        const SUPABASE_ANON_KEY = "sb_publishable_on1rkqvAIhSQonTODdk5fA_qTpEo_8H";
+        const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-        });
-
-        function abrirModalInstalacion() {
-            document.getElementById('modal-instalar').style.display = 'flex';
-            const texto = document.getElementById('texto-modal-instalar');
-            
-            if (isIOS) {
-                texto.innerHTML = "Para instalar la App en tu iPhone:<br><br>1. Toca el ícono de <b>Compartir</b> abajo en tu pantalla.<br><br>2. Selecciona <b>'Agregar a Inicio'</b>.<br><br>¡Listo! La App aparecerá junto a tus demás aplicaciones.";
-            } else {
-                texto.innerHTML = "Presiona 'Instalar Ahora' para agregar la aplicación directamente a la pantalla principal de tu celular.<br><br>Es rápido, seguro y no ocupa espacio.";
-            }
-        }
-
-        function procederInstalacion() {
-            document.getElementById('modal-instalar').style.display = 'none';
-            if (!isIOS && deferredPrompt) {
-                deferredPrompt.prompt();
-                deferredPrompt.userChoice.then((choiceResult) => {
-                    if (choiceResult.outcome === 'accepted') console.log('Usuario instaló la App');
-                    deferredPrompt = null;
-                });
-            } else if (isIOS) {
-                alert("Sigue las instrucciones tocando el botón de Compartir en tu navegador.");
-            }
-        }
-
-        function compartirAppCliente() {
-            const urlPublica = window.location.href;
-            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(`🎰 ¡Checa las mesas abiertas y promos de hoy en el Casino! Entra aquí: ${urlPublica}`)}`, '_blank');
-        }
-        function pedirMenu() { window.open(`https://api.whatsapp.com/send?phone=${numeroCasino}&text=${encodeURIComponent('Hola, me podrían compartir el menú del restaurante/bar de hoy. ¡Gracias!')}`, '_blank'); }
-        function reservarMesa(nombreMesa) { window.open(`https://api.whatsapp.com/send?phone=${numeroCasino}&text=${encodeURIComponent(`Hola, voy en camino. ¿Me pueden confirmar si hay lugar en la mesa de ${nombreMesa}?`)}`, '_blank'); }
-
-        const client = supabase.createClient('https://kqgtyzsxwrkomdtuktkk.supabase.co', 'sb_publishable_on1rkqvAIhSQonTODdk5fA_qTpEo_8H');
-        const imagenesJuegos = { 'Ruleta': 'ruleta.gif', 'Blackjack': 'blackjack.png', 'Bacará': 'bacara.png', 'Texas Bonus': 'texas.png', 'Dados': 'dados.png' };
-
-        async function cargarDatos() {
+        // CARGA DE PROMOCIONES
+        async function cargarPromociones() {
             const { data: promos } = await client.from('promociones').select('*').eq('activa', true).order('fecha_creacion', { ascending: false });
-            if (promos && promos.length > 0) {
-                document.getElementById('promos-container').innerHTML = promos.map(p => {
-                    if(p.tipo === 'Flash') {
-                        return `<div class="promo promo-flash"><div class="flash-title">⚡ OFERTA FLASH</div><strong style="color: white; font-size: 1.2em; display:block; margin-bottom:5px;">${p.titulo}</strong><div class="flash-marquee"><p>${p.descripcion} &nbsp;&nbsp;🎰&nbsp;&nbsp; ${p.descripcion}</p></div></div>`;
-                    } else {
-                        return `<div class="promo promo-general"><strong>📢 ${p.titulo}</strong><br><span style="color: #bbb;">${p.descripcion}</span></div>`;
-                    }
-                }).join('');
-            } else { document.getElementById('promos-container').innerHTML = ''; }
+            
+            const contMarquesina = document.getElementById('marquesina-container');
+            const contPromos = document.getElementById('promos-container');
 
-            const { data: mesas } = await client.from('mesas').select('*').order('juego').order('nombre');
-            if (mesas && mesas.length > 0) {
-                document.getElementById('mesas-container').innerHTML = mesas.map(m => {
-                    const archivoImagen = imagenesJuegos[m.juego];
-                    const iconoHTML = archivoImagen ? `<img src="${archivoImagen}" class="icono-juego" alt="${m.juego}" onerror="this.style.display='none'">` : '';
-                    const botonReservar = m.estatus === 'Abierta' ? `<button class="btn-reservar" onclick="reservarMesa('${m.nombre}')">🟢 Reservar Lugar</button>` : '';
-                    const infoCrupier = m.crupier ? `<span style="color:var(--neon-cyan);">🃏 Crupier: <strong>${m.crupier}</strong></span>` : '<span></span>';
-                    const promoExclusiva = m.promo_especial ? `<div class="promo-mesa-activa"><strong>🎁 PROMO:</strong> ${m.promo_especial}</div>` : '';
-                    const indicadorEnVivo = m.estatus === 'Abierta' ? `<div class="live-badge"><div class="live-dot"></div>EN VIVO</div>` : '';
-                    
-                    return `
-                    <div class="mesa ${m.estatus === 'Cerrada' ? 'cerrada' : ''}">
-                        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-                            <div class="mesa-header">
-                                ${iconoHTML}
-                                <h3 class="mesa-titulo">
-                                    ${m.nombre} 
-                                    ${indicadorEnVivo}
-                                </h3>
-                            </div>
-                            <span class="badge">${m.juego}</span>
-                        </div>
-                        
-                        <div class="stats" style="margin-top:20px;">
-                            <span>Mínimo: <strong style="color:white;">$${m.apuesta_minima}</strong></span>
-                            <span>Ocupación: <strong style="color:white;">${m.jugadores_actuales} / ${m.capacidad_maxima}</strong></span>
-                        </div>
+            if (!promos || promos.length === 0) {
+                contMarquesina.innerHTML = '';
+                contPromos.innerHTML = '';
+                return;
+            }
 
-                        <div class="stats" style="margin-top:10px; border-top:1px solid #2a2d3d; padding-top:12px;">
-                            ${infoCrupier}
-                            ${botonReservar}
-                        </div>
+            const promoFlash = promos.find(p => p.tipo === 'Flash');
+            if (promoFlash) {
+                contMarquesina.innerHTML = `
+                    <div class="marquesina-flash">
+                        <span>⚡</span>
+                        <span><strong>${promoFlash.titulo}:</strong> ${promoFlash.descripcion}</span>
+                    </div>
+                `;
+            } else {
+                contMarquesina.innerHTML = '';
+            }
 
-                        ${m.jackpot > 0 ? `<div class="jackpot-texto">💰 JACKPOT: $${m.jackpot.toLocaleString('en-US')}</div>` : ''}
-                        ${promoExclusiva}
-                    </div>`
-                }).join('');
+            const promosRegulares = promos.filter(p => p.tipo !== 'Flash');
+            if (promosRegulares.length > 0) {
+                contPromos.innerHTML = promosRegulares.map(p => `
+                    <div class="promo-banner">
+                        <h3>🎁 ${p.titulo}</h3>
+                        <p>${p.descripcion}</p>
+                    </div>
+                `).join('');
+            } else {
+                contPromos.innerHTML = '';
             }
         }
 
-        client.channel('public-changes').on('postgres_changes', { event: '*', schema: 'public' }, cargarDatos).subscribe();
-        cargarDatos();
+        // CARGA DE MESAS CON FOCO ROJO Y APUESTA MÍNIMA
+        async function cargarMesas() {
+            const { data: mesas } = await client.from('mesas').select('*').order('juego').order('nombre');
+            const cont = document.getElementById('mesas-container');
 
-        // El Service Worker se gestiona mediante OneSignalSDKWorker.js
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => { 
-                navigator.serviceWorker.register('OneSignalSDKWorker.js')
-                .then(reg => console.log('Service Worker listo'))
-                .catch(err => console.log('Error SW:', err)); 
-            });
+            if (mesas && mesas.length > 0) {
+                cont.innerHTML = mesas.map(m => {
+                    const estaAbierta = m.estatus === 'Abierta';
+                    const lugares = (m.capacidad_maxima - (m.jugadores_actuales || 0));
+
+                    return `
+                        <div class="mesa-card ${estaAbierta ? 'abierta' : 'cerrada'}">
+                            <div class="mesa-header">
+                                <div class="mesa-info">
+                                    <h3>${m.nombre}</h3>
+                                    <span>${m.juego}</span>
+                                </div>
+                                <div>
+                                    ${estaAbierta 
+                                        ? `<div class="badge-estatus abierta"><span class="foco-rojo-blink"></span> MESA ABIERTA</div>`
+                                        : `<div class="badge-estatus cerrada">MESA CERRADA</div>`
+                                    }
+                                </div>
+                            </div>
+
+                            <div class="mesa-stats">
+                                <div class="stat-item">
+                                    <span class="stat-label">Apuesta Mínima</span>
+                                    <span class="stat-val cyan">$${m.apuesta_minima || 0}</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Jugadores</span>
+                                    <span class="stat-val">${m.jugadores_actuales || 0} / ${m.capacidad_maxima} (${lugares > 0 ? lugares + ' libres' : 'Llena'})</span>
+                                </div>
+                                <div class="stat-item" style="margin-top: 6px;">
+                                    <span class="stat-label">Crupier</span>
+                                    <span class="stat-val">${m.crupier || 'En rotación'}</span>
+                                </div>
+                                <div class="stat-item" style="margin-top: 6px;">
+                                    <span class="stat-label">Jackpot Acumulado</span>
+                                    <span class="stat-val gold">$${m.jackpot || 0}</span>
+                                </div>
+                            </div>
+
+                            ${m.promo_especial ? `
+                                <div class="mesa-promo-tag">
+                                    ✨ <strong>Promo:</strong> ${m.promo_especial}
+                                </div>
+                            ` : ''}
+                        </div>
+                    `;
+                }).join('');
+            } else {
+                cont.innerHTML = '<p style="text-align: center; color: #8892b0;">No hay mesas registradas actualmente.</p>';
+            }
         }
+
+        // CANAL EN TIEMPO REAL: ACTUALIZA AUTOMÁTICAMENTE AL GUARDAR EN ADMIN
+        client.channel('cambios-casino')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'mesas' }, () => cargarMesas())
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'promociones' }, () => cargarPromociones())
+            .subscribe();
+
+        window.addEventListener('DOMContentLoaded', () => {
+            cargarPromociones();
+            cargarMesas();
+        });
     </script>
 </body>
 </html>
