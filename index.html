@@ -31,67 +31,57 @@
         });
       });
 
-      // LÓGICA DIRECTA Y NATIVA: Imposible de bloquear por el celular
+      // LÓGICA DE ACTIVACIÓN Y DESACTIVACIÓN CLARA
       async function toggleAlertas() {
         if (!("Notification" in window)) {
             alert("Lo sentimos, tu navegador no soporta notificaciones.");
             return;
         }
 
-        // Si aún no hemos dado permisos ni denegado
-        if (Notification.permission === "default") {
-            const permiso = await Notification.requestPermission();
-            
-            if (permiso === "granted") {
-                // El usuario aceptó en el cuadro del sistema, prendemos OneSignal
-                window.OneSignalDeferred.push(function(OneSignal) {
-                    OneSignal.User.PushSubscription.optIn();
-                });
-                alert("¡Notificaciones activadas exitosamente!");
+        window.OneSignalDeferred.push(async function(OneSignal) {
+            const isSubscribed = OneSignal.User.PushSubscription.optedIn;
+
+            if (isSubscribed) {
+                // Si ya están activas, las desactivamos
+                await OneSignal.User.PushSubscription.optOut();
+                alert("Notificaciones desactivadas. Ya no recibirás alertas.");
             } else {
-                alert("Permiso denegado. No te enviaremos alertas.");
-            }
-        } 
-        // Si ya había permisos concedidos desde antes
-        else if (Notification.permission === "granted") {
-            window.OneSignalDeferred.push(async function(OneSignal) {
-                const isSubscribed = OneSignal.User.PushSubscription.optedIn;
-                if (isSubscribed) {
-                    await OneSignal.User.PushSubscription.optOut();
-                    alert("Alertas pausadas. Ya no recibirás mensajes.");
-                } else {
+                // Si están inactivas, pedimos permiso o las reactivamos
+                if (Notification.permission === "default") {
+                    const permiso = await Notification.requestPermission();
+                    if (permiso === "granted") {
+                        await OneSignal.User.PushSubscription.optIn();
+                        alert("¡Notificaciones activadas exitosamente!");
+                    } else {
+                        alert("Permiso denegado. No te enviaremos alertas.");
+                    }
+                } else if (Notification.permission === "granted") {
                     await OneSignal.User.PushSubscription.optIn();
-                    alert("Alertas reactivadas exitosamente.");
+                    alert("¡Notificaciones activadas exitosamente!");
+                } else {
+                    alert("Tienes las notificaciones bloqueadas en este navegador. Toca el candado junto a la dirección web para permitirlas.");
                 }
-            });
-        } 
-        // Si el usuario las bloqueó permanentemente en el navegador
-        else {
-            alert("Tienes las notificaciones bloqueadas en este navegador. Toca el candado junto a la dirección web para permitirlas.");
-        }
-        
-        // Actualizar colores del botón
-        setTimeout(actualizarEstadoBoton, 800);
+            }
+            // Actualizamos la vista del botón
+            actualizarEstadoBoton();
+        });
       }
 
       function actualizarEstadoBoton() {
-        const btn = document.getElementById('btn-alertas');
-        if (!btn) return;
+        window.OneSignalDeferred.push(function(OneSignal) {
+            const btn = document.getElementById('btn-alertas');
+            if (!btn) return;
 
-        if (Notification.permission === "granted") {
-            window.OneSignalDeferred.push(function(OneSignal) {
-                if (OneSignal.User.PushSubscription.optedIn) {
-                    btn.className = "btn-alertas-activo";
-                    btn.innerHTML = "✅ Alertas Activas (Toca para pausar)";
-                } else {
-                    btn.className = "btn-alertas-inactivo";
-                    btn.innerHTML = "🔔 Reactivar Alertas";
-                }
-            });
-        } else {
-            btn.className = "btn-alertas-inactivo";
-            btn.innerHTML = "🔔 Activar Alertas";
-        }
+            if (OneSignal.User.PushSubscription.optedIn) {
+                // ESTADO ACTIVO
+                btn.className = "btn-alertas-activo";
+                btn.innerHTML = "✅ Alertas Activas (Toca para desactivar)";
+            } else {
+                // ESTADO INACTIVO
+                btn.className = "btn-alertas-inactivo";
+                btn.innerHTML = "🔔 Activar Alertas";
+            }
+        });
       }
     </script>
 
@@ -110,7 +100,7 @@
         @keyframes blinkDot { 0% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(1.2); } 100% { opacity: 1; transform: scale(1); } }
         @keyframes pulseGlowPurple { 0% { box-shadow: 0 0 5px rgba(176,38,255,0.5); } 100% { box-shadow: 0 0 20px rgba(176,38,255,0.8); } }
 
-        /* Estilos del nuevo botón superior de alertas */
+        /* Estilos del botón de alertas */
         #btn-alertas { display: block; width: 100%; padding: 12px; border-radius: 8px; font-weight: bold; font-size: 1.1em; margin-bottom: 25px; cursor: pointer; transition: 0.3s; text-align: center; }
         .btn-alertas-inactivo { background-color: var(--neon-purple); color: white; border: none; animation: pulseGlowPurple 2s infinite alternate; }
         .btn-alertas-activo { background-color: rgba(76, 175, 80, 0.1); color: #4CAF50; border: 1px solid #4CAF50; animation: none; box-shadow: none; }
@@ -158,7 +148,7 @@
         #modal-instalar { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 9999; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; backdrop-filter: blur(5px); }
         .modal-content { background: #151722; border: 2px solid var(--neon-cyan); border-radius: 12px; padding: 25px; text-align: center; max-width: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
 
-        /* MAGIA CSS: OCULTAR BOTÓN SI LA APP YA ESTÁ INSTALADA */
+        /* MAGIA CSS: OCULTAR BOTÓN DE INSTALACIÓN SI LA APP YA ESTÁ INSTALADA */
         @media (display-mode: standalone) {
             .btn-instalar-top { display: none !important; }
         }
@@ -179,7 +169,7 @@
 
     <div class="header-logo"><img src="logo.png" alt="Casino" onerror="this.src='https://via.placeholder.com/120?text=LOGO'"></div>
 
-    <!-- EL NUEVO BOTÓN SUPERIOR E INTELIGENTE -->
+    <!-- EL NUEVO BOTÓN SUPERIOR E INTELIGENTE DE NOTIFICACIONES -->
     <button id="btn-alertas" class="btn-alertas-inactivo" onclick="toggleAlertas()">
         🔔 Activar Alertas
     </button>
@@ -201,7 +191,6 @@
     <div id="mesas-container"><p style="text-align:center; color:#8892b0;">Conectando con las mesas...</p></div>
 
     <div class="flotantes-container">
-        <!-- Botones flotantes inferiores -->
         <button class="btn-flotante" onclick="pedirMenu()">🍸 Menú Bar</button>
         <button class="btn-flotante wa" onclick="compartirAppCliente()">📱 Compartir</button>
     </div>
