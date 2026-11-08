@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Menú Lounge & Bar - Casino Real</title>
+
+    <meta name="theme-color" content="#0b0c10">
+    <link rel="apple-touch-icon" href="logo.png">
+
+    <style>
+        :root {
+            --bg-color: #0b0c10;
+            --card-bg: #151722;
+            --neon-cyan: #00f0ff;
+            --neon-gold: #d4af37;
+            --neon-red: #ff003c;
+            --neon-purple: #b026ff;
+            --neon-green: #25D366;
+            --border-color: #2a2d3d;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: white;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 12px;
+            padding-bottom: 90px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Barra Superior */
+        .top-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0 16px 0;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 15px;
+        }
+
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid var(--border-color);
+            color: white;
+            padding: 8px 14px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+
+        .lounge-title {
+            text-align: right;
+        }
+
+        .lounge-title h1 {
+            margin: 0;
+            font-size: 1.15em;
+            color: var(--neon-gold);
+            letter-spacing: 0.5px;
+        }
+
+        .lounge-title span {
+            font-size: 0.75em;
+            color: #8892b0;
+        }
+
+        /* Banner Promoción Bebidas */
+        .banner-bar {
+            background: linear-gradient(135deg, rgba(212,175,55,0.15), rgba(176,38,255,0.15));
+            border: 1px solid var(--neon-gold);
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .banner-bar .icon {
+            font-size: 2em;
+        }
+
+        .banner-bar h2 {
+            margin: 0;
+            font-size: 0.95em;
+            color: var(--neon-gold);
+        }
+
+        .banner-bar p {
+            margin: 3px 0 0 0;
+            font-size: 0.8em;
+            color: #c5c6c7;
+        }
+
+        /* Pestañas de Categoría */
+        .category-tabs {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+            margin-bottom: 15px;
+            scrollbar-width: none;
+        }
+
+        .category-tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .tab-btn {
+            background: #151722;
+            color: #8892b0;
+            border: 1px solid var(--border-color);
+            padding: 10px 16px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: bold;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .tab-btn.active {
+            background: rgba(0, 240, 255, 0.15);
+            color: var(--neon-cyan);
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.25);
+        }
+
+        /* Ítems del Menú */
+        .menu-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .menu-item {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .item-info {
+            flex: 1;
+        }
+
+        .item-top {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 4px;
+        }
+
+        .item-name {
+            font-weight: bold;
+            font-size: 0.98em;
+            color: white;
+        }
+
+        .item-badge {
+            font-size: 0.65em;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .item-badge.pop {
+            background: rgba(255, 102, 0, 0.2);
+            color: #ff8800;
+            border: 1px solid #ff8800;
+        }
+
+        .item-badge.vip {
+            background: rgba(212, 175, 55, 0.2);
+            color: var(--neon-gold);
+            border: 1px solid var(--neon-gold);
+        }
+
+        .item-desc {
+            color: #8892b0;
+            font-size: 0.8em;
+            line-height: 1.3;
+        }
+
+        .item-price {
+            text-align: right;
+            font-weight: bold;
+            font-size: 1.1em;
+            color: var(--neon-cyan);
+            white-space: nowrap;
+        }
+
+        /* Barra Flotante de Pedidos por WhatsApp */
+        .floating-order-bar {
+            position: fixed;
+            bottom: 12px;
+            left: 12px;
+            right: 12px;
+            max-width: 600px;
+            margin: 0 auto;
+            background: #128C7E;
+            color: white;
+            padding: 14px 18px;
+            border-radius: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.8), 0 0 15px rgba(37, 211, 102, 0.4);
+            text-decoration: none;
+            font-weight: bold;
+            z-index: 100;
+        }
+
+        .floating-order-bar:active {
+            transform: scale(0.98);
+        }
+
+        .order-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .order-text span:first-child {
+            font-size: 0.95em;
+        }
+
+        .order-text span:last-child {
+            font-size: 0.75em;
+            opacity: 0.85;
+            font-weight: normal;
+        }
+
+        .btn-order-icon {
+            font-size: 1.4em;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        
+        <div class="top-nav">
+            <a href="index.html" class="btn-back">⬅ Volver a Mesas</a>
+            <div class="lounge-title">
+                <h1>BAR & KITCHEN</h1>
+                <span>Servicio a Mesas & Lounge</span>
+            </div>
+        </div>
+
+        <div class="banner-bar">
+            <span class="icon">🍸</span>
+            <div>
+                <h2>Bebidas de Cortesía para Jugadores</h2>
+                <p>Nacionales y cervezas incluidas para jugadores activos en mesas de juego.</p>
+            </div>
+        </div>
+
+        <!-- Pestañas de Selección -->
+        <div class="category-tabs">
+            <button class="tab-btn active" onclick="filtrarCategoria('cocteles', this)">🍸 Coctelería & Tragos</button>
+            <button class="tab-btn" onclick="filtrarCategoria('snacks', this)">🍔 Snacks & Cocina</button>
+            <button class="tab-btn" onclick="filtrarCategoria('botellas', this)">🍾 Botellas VIP</button>
+            <button class="tab-btn" onclick="filtrarCategoria('sin-alcohol', this)">☕ Cafetería & Bebidas</button>
+        </div>
+
+        <!-- Contenedor del Menú -->
+        <div id="contenedor-menu" class="menu-grid"></div>
+
+    </div>
+
+    <!-- Barra fija para ordenar con el mesero por WhatsApp -->
+    <a href="#" id="btn-pedir-mesero" target="_blank" class="floating-order-bar">
+        <div class="order-text">
+            <span>🛎️ Solicitar Servicio a Sala</span>
+            <span>Un mesero atenderá tu mesa de inmediato</span>
+        </div>
+        <span class="btn-order-icon">💬</span>
+    </a>
+
+    <script>
+        const NUMERO_WHATSAPP_CASINO = "5215555555555"; // Mismo número del casino
+
+        document.getElementById('btn-pedir-mesero').href = `https://wa.me/${NUMERO_WHATSAPP_CASINO}?text=${encodeURIComponent("Hola, me gustaría solicitar servicio del menú a mi mesa, por favor.")}`;
+
+        // LISTA DE PRODUCTOS PREPARADOS
+        const platillos = [
+            // COCTELES
+            { cat: 'cocteles', nombre: 'Jackpot Martini Especial', desc: 'Ginebra Bombay, vermut seco, aceitunas marinadas y un toque cítrico secreto.', precio: 140, tag: 'pop' },
+            { cat: 'cocteles', nombre: 'Texas Red Bull & Vodka', desc: 'Vodka premium con lata de Red Bull Energy servido con hielo frappé.', precio: 160, tag: 'pop' },
+            { cat: 'cocteles', nombre: 'Margarita Ruleta de Oro', desc: 'Tequila reposado, licor de naranja, jugo de limón fresco y escarchado de sal negra.', precio: 130, tag: '' },
+            { cat: 'cocteles', nombre: 'Mojito Cubano Clásico', desc: 'Ron blanco, hierbabuena fresca macerada, azúcar de caña y toque de soda.', precio: 120, tag: '' },
+            { cat: 'cocteles', nombre: 'Whisky Black Label (Copa)', desc: 'Johnnie Walker Black Label servido en las rocas con corteza de limón.', precio: 160, tag: 'vip' },
+            { cat: 'cocteles', nombre: 'Cerveza Corona / Victoria (355ml)', desc: 'Bien fría, servida con limón y sal o clamato preparado.', precio: 65, tag: '' },
+
+            // SNACKS
+            { cat: 'snacks', nombre: 'Hamburguesa Casino Royale', desc: 'Carne Angus 200g, queso cheddar fundido, tocino crujiente, cebolla caramelizada y papas gajo.', precio: 195, tag: 'pop' },
+            { cat: 'snacks', nombre: 'Alitas Hot Poker (10 pzas)', desc: 'Bañadas en salsa Buffalo picante, Mango Habanero o BBQ con aderezo Blue Cheese y apio.', precio: 180, tag: 'pop' },
+            { cat: 'snacks', nombre: 'Nachos Tex-Mex Suprema', desc: 'Totopos crujientes con carne arrachera, frijoles refritos, guacamole, jalapeños y queso cheddar.', precio: 175, tag: '' },
+            { cat: 'snacks', nombre: 'Dedos de Queso Mozzarella', desc: '6 piezas empanizadas doradas con finas hierbas y salsa marinara casera.', precio: 135, tag: '' },
+            { cat: 'snacks', nombre: 'Tacos de Arrachera al Grill (3)', desc: 'Tortilla de maíz recién hecha con arrachera marinada, cebollitas asadas y salsas de la casa.', precio: 165, tag: '' },
+
+            // BOTELLAS VIP
+            { cat: 'botellas', nombre: 'Don Julio 70 Cristalino', desc: 'Servicio completo con 4 mezcladores a elegir y botana seca.', precio: 2200, tag: 'vip' },
+            { cat: 'botellas', nombre: 'Buchanan’s 12 Años', desc: 'Servicio VIP con hielera, vasos escarchados y 4 refrescos de cortesía.', precio: 1950, tag: 'vip' },
+            { cat: 'botellas', nombre: 'Champagne Moët & Chandon Brut', desc: 'Para celebrar tus mejores jugadas. Servido con copas flauta en hielera con luz LED.', precio: 2800, tag: 'vip' },
+
+            // SIN ALCOHOL
+            { cat: 'sin-alcohol', nombre: 'Red Bull Energy Drink (Lata)', desc: 'Regular, Sugarfree o Tropical.', precio: 75, tag: '' },
+            { cat: 'sin-alcohol', nombre: 'Café Espresso Doble / Americano', desc: 'Granos de altura recién molidos.', precio: 45, tag: '' },
+            { cat: 'sin-alcohol', nombre: 'Limonada / Naranjada Mineral', desc: 'Natural o mineral endulzada al gusto.', precio: 50, tag: '' }
+        ];
+
+        function renderMenu(filtro) {
+            const cont = document.getElementById('contenedor-menu');
+            const items = platillos.filter(p => p.cat === filtro);
+
+            cont.innerHTML = items.map(i => {
+                const badgeHtml = i.tag === 'pop' 
+                    ? '<span class="item-badge pop">★ Popular</span>' 
+                    : (i.tag === 'vip' ? '<span class="item-badge vip">★ VIP</span>' : '');
+
+                return `
+                    <div class="menu-item">
+                        <div class="item-info">
+                            <div class="item-top">
+                                <span class="item-name">${i.nombre}</span>
+                                ${badgeHtml}
+                            </div>
+                            <span class="item-desc">${i.desc}</span>
+                        </div>
+                        <div class="item-price">$${i.precio}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function filtrarCategoria(categoria, btn) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderMenu(categoria);
+        }
+
+        // Render inicial
+        renderMenu('cocteles');
+    </script>
+</body>
+</html>
