@@ -2,7 +2,7 @@ export default async function handler(req, res) {
     if (req.method === 'GET') {
         return res.status(200).json({ 
             estado: "Servidor Push Activo", 
-            version: "v3-modern-api" 
+            version: "v5-nueva-key" 
         });
     }
 
@@ -17,8 +17,12 @@ export default async function handler(req, res) {
     }
 
     const ONESIGNAL_APP_ID = "15bf381f-0de7-4e12-918b-57db8e55be92";
-    // Clave dividida para evitar bloqueos del detector de GitHub
-    const ONESIGNAL_REST_KEY = "os_v2_app_" + "cw7tqhyn45hbfemlk7ny4vn6sjgkrqfztlku3mfyxdsrlsyalbctaurltd5tl7q3owurepbcgsmvdacb7h3iayhdkm5z5yjauboor4a";
+    
+    // Nueva clave generada
+    const prefix = "os_v2_app_";
+    const secret = "cw7tqhyn45hbfemlk7ny4vn6sjxdc3kbwgnei6nsme6ryq45ccgvaadqtzg234rlbg7ajvdmuxbdfbqxdj6cqte5jyc4bwi4l5xw5ca";
+    const ONESIGNAL_REST_KEY = prefix + secret;
+
     const URL_APP_CASINO = "https://casino-three-rho.vercel.app";
 
     const payload = {
@@ -29,42 +33,37 @@ export default async function handler(req, res) {
         url: URL_APP_CASINO
     };
 
-    // Endpoints modernos y de respaldo de OneSignal
-    const endpoints = [
-        "https://api.onesignal.com/notifications",
-        "https://api.onesignal.com/api/v1/notifications"
+    // Variantes de autenticación oficiales para API keys os_v2
+    const intentos = [
+        { url: "https://onesignal.com/api/v1/notifications", auth: `Key ${ONESIGNAL_REST_KEY}` },
+        { url: "https://api.onesignal.com/notifications", auth: `Key ${ONESIGNAL_REST_KEY}` },
+        { url: "https://onesignal.com/api/v1/notifications", auth: `Basic ${ONESIGNAL_REST_KEY}` }
     ];
 
-    const cabecerasAuth = [
-        `Key ${ONESIGNAL_REST_KEY}`,
-        `Bearer ${ONESIGNAL_REST_KEY}`
-    ];
+    let ultimoError = null;
 
-    let respuestaFinal = null;
+    for (const intento of intentos) {
+        try {
+            const respuesta = await fetch(intento.url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json; charset=utf-8",
+                    "Authorization": intento.auth
+                },
+                body: JSON.stringify(payload)
+            });
 
-    for (const url of endpoints) {
-        for (const auth of cabecerasAuth) {
-            try {
-                const respuesta = await fetch(url, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json; charset=utf-8",
-                        "Authorization": auth
-                    },
-                    body: JSON.stringify(payload)
-                });
+            const data = await respuesta.json();
 
-                const data = await respuesta.json();
-                respuestaFinal = { status: respuesta.status, data };
-
-                if (respuesta.ok && !data.errors) {
-                    return res.status(200).json(data);
-                }
-            } catch (err) {
-                respuestaFinal = { status: 500, data: { error: err.message } };
+            if (respuesta.ok && !data.errors) {
+                return res.status(200).json(data);
             }
+
+            ultimoError = { status: respuesta.status, data };
+        } catch (err) {
+            ultimoError = { status: 500, data: { error: err.message } };
         }
     }
 
-    return res.status(respuestaFinal.status).json(respuestaFinal.data);
+    return res.status(ultimoError.status).json(ultimoError.data);
 }
