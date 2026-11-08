@@ -18,7 +18,7 @@ export default async function handler(req, res) {
             method: "POST",
             headers: {
                 "Content-Type": "application/json; charset=utf-8",
-                "Authorization": `Basic ${ONESIGNAL_REST_KEY}`
+                "Authorization": `Key ${ONESIGNAL_REST_KEY}`
             },
             body: JSON.stringify({
                 app_id: ONESIGNAL_APP_ID,
