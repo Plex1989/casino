@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Panel de Control - Casino</title>
+    <title>Panel de Control - CASINO BIGBOLA</title>
     
     <meta name="theme-color" content="#0b0c10">
-    <link rel="apple-touch-icon" href="logo.png">
+    <link rel="apple-touch-icon" href="logo.jpg">
 
     <!-- Supabase JS SDK -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -21,6 +21,7 @@
             --neon-purple: #b026ff;
             --neon-green: #25D366;
             --neon-orange: #ff6600;
+            --silver-metal: #d9dadb;
             --border-color: #2a2d3d;
         }
 
@@ -55,12 +56,22 @@
         }
 
         .admin-title {
-            color: var(--neon-cyan);
-            font-size: 1.25em;
+            color: var(--silver-metal);
+            font-size: 1.15em;
             font-weight: bold;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
+            letter-spacing: 0.5px;
+        }
+
+        .admin-logo {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid var(--silver-metal);
+            box-shadow: 0 0 10px rgba(217, 218, 219, 0.3);
         }
 
         .btn-view-app {
@@ -226,7 +237,7 @@
             border: 1px solid var(--neon-red);
         }
 
-        /* Control para jugadores */
+        /* Control para jugadores (+ / -) */
         .stepper-container {
             display: flex;
             align-items: center;
@@ -268,7 +279,7 @@
             color: white;
         }
 
-        /* BOTONES PREESTABLECIDOS DE 1 TOQUE (HOT BADGES) */
+        /* Botones de frases rápidas (1 toque) */
         .preset-badge-group {
             display: flex;
             flex-wrap: wrap;
@@ -339,8 +350,8 @@
         
         <header class="admin-header">
             <div class="admin-title">
-                <span>🎰</span>
-                <span>Admin Casino</span>
+                <img src="logo.jpg" alt="Casino BigBola" class="admin-logo" onerror="this.src='logo.png'">
+                <span>Admin CASINO BIGBOLA</span>
             </div>
             <a href="index.html" class="btn-view-app">📱 Ir a App</a>
         </header>
@@ -588,7 +599,7 @@
 
         // ================= GESTIÓN EN TIEMPO REAL =================
 
-        // 1. SUBIR O BAJAR JUGADORES (SIN REQUERIR BOTÓN DE GUARDAR)
+        // 1. SUBIR O BAJAR JUGADORES (SIN BOTÓN DE GUARDAR)
         async function cambiarJugadores(id, delta, maxCapacidad) {
             try {
                 const display = document.getElementById(`val-jugadores-${id}`);
@@ -615,7 +626,7 @@
             }
         }
 
-        // 2. CAMBIAR ESTATUS INMEDIATAMENTE AL TOCAR
+        // 2. CAMBIAR ESTATUS INMEDIATAMENTE AL SELECCIONAR
         async function cambiarEstatus(id, selectElement) {
             const nuevoEstatus = selectElement.value;
             selectElement.className = 'mesa-estatus-select ' + (nuevoEstatus === 'Abierta' ? 'abierta' : 'cerrada');
@@ -627,7 +638,7 @@
             }
         }
 
-        // 3. APLICAR FRASE PREESTABLECIDA DE 1 TOQUE (HOT BADGES)
+        // 3. APLICAR FRASE PREESTABLECIDA DE 1 TOQUE
         async function aplicarPreset(id, frase) {
             const inputPromo = document.getElementById(`promo-${id}`);
             if (inputPromo) inputPromo.value = frase;
@@ -689,7 +700,7 @@
             }
         }
 
-        // GUARDAR CAMPOS MANUALES (Crupier, Jackpot, etc.)
+        // GUARDAR CAMPOS MANUALES (Crupier, Apuesta Mínima, Jackpot, Promo)
         async function actualizarMesa(id) {
             const crupier = document.getElementById(`crupier-${id}`).value.trim();
             const apuesta_minima = parseInt(document.getElementById(`apuesta-min-${id}`).value) || 0;
