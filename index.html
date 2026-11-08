@@ -13,7 +13,7 @@
     <!-- Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <!-- OneSignal SDK para Notificaciones Push (BOTÓN NATIVO) -->
+    <!-- OneSignal SDK para Notificaciones Push -->
     <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
     <script>
       window.OneSignalDeferred = window.OneSignalDeferred || [];
@@ -25,48 +25,73 @@
         // Actualiza el botón al cargar la página
         actualizarEstadoBoton();
 
-        // Escucha en tiempo real si el cliente acepta los permisos
+        // Escucha en tiempo real si el cliente acepta o cancela los permisos
         OneSignal.User.PushSubscription.addEventListener("change", function(e) {
             actualizarEstadoBoton();
-            if(OneSignal.User.PushSubscription.optedIn) {
-                alert("¡Notificaciones activadas exitosamente!");
-            }
         });
       });
 
-      // Lógica de encendido/apagado usando el permiso NATIVO del celular
-      function toggleAlertas() {
-        window.OneSignalDeferred.push(async function(OneSignal) {
-            try {
+      // LÓGICA DIRECTA Y NATIVA: Imposible de bloquear por el celular
+      async function toggleAlertas() {
+        if (!("Notification" in window)) {
+            alert("Lo sentimos, tu navegador no soporta notificaciones.");
+            return;
+        }
+
+        // Si aún no hemos dado permisos ni denegado
+        if (Notification.permission === "default") {
+            const permiso = await Notification.requestPermission();
+            
+            if (permiso === "granted") {
+                // El usuario aceptó en el cuadro del sistema, prendemos OneSignal
+                window.OneSignalDeferred.push(function(OneSignal) {
+                    OneSignal.User.PushSubscription.optIn();
+                });
+                alert("¡Notificaciones activadas exitosamente!");
+            } else {
+                alert("Permiso denegado. No te enviaremos alertas.");
+            }
+        } 
+        // Si ya había permisos concedidos desde antes
+        else if (Notification.permission === "granted") {
+            window.OneSignalDeferred.push(async function(OneSignal) {
                 const isSubscribed = OneSignal.User.PushSubscription.optedIn;
                 if (isSubscribed) {
-                    // Cancela la suscripción
                     await OneSignal.User.PushSubscription.optOut();
-                    alert("Notificaciones canceladas. Ya no recibirás alertas.");
+                    alert("Alertas pausadas. Ya no recibirás mensajes.");
                 } else {
-                    // Pide los permisos directamente al sistema operativo (Garantizado en móviles)
-                    await OneSignal.Notifications.requestPermission();
+                    await OneSignal.User.PushSubscription.optIn();
+                    alert("Alertas reactivadas exitosamente.");
                 }
-                // Actualiza visualmente el botón
-                setTimeout(actualizarEstadoBoton, 500);
-            } catch (error) {
-                alert("Tu navegador bloqueó la solicitud. Intenta activar las notificaciones desde el candado en la barra de direcciones.");
-            }
-        });
+            });
+        } 
+        // Si el usuario las bloqueó permanentemente en el navegador
+        else {
+            alert("Tienes las notificaciones bloqueadas en este navegador. Toca el candado junto a la dirección web para permitirlas.");
+        }
+        
+        // Actualizar colores del botón
+        setTimeout(actualizarEstadoBoton, 800);
       }
 
       function actualizarEstadoBoton() {
-        window.OneSignalDeferred.push(function(OneSignal) {
-            const btn = document.getElementById('btn-alertas');
-            if (!btn) return;
-            if (OneSignal.User.PushSubscription.optedIn) {
-                btn.className = "btn-alertas-activo";
-                btn.innerHTML = "✅ Alertas Activas (Toca para cancelar)";
-            } else {
-                btn.className = "btn-alertas-inactivo";
-                btn.innerHTML = "🔔 Activar Alertas";
-            }
-        });
+        const btn = document.getElementById('btn-alertas');
+        if (!btn) return;
+
+        if (Notification.permission === "granted") {
+            window.OneSignalDeferred.push(function(OneSignal) {
+                if (OneSignal.User.PushSubscription.optedIn) {
+                    btn.className = "btn-alertas-activo";
+                    btn.innerHTML = "✅ Alertas Activas (Toca para pausar)";
+                } else {
+                    btn.className = "btn-alertas-inactivo";
+                    btn.innerHTML = "🔔 Reactivar Alertas";
+                }
+            });
+        } else {
+            btn.className = "btn-alertas-inactivo";
+            btn.innerHTML = "🔔 Activar Alertas";
+        }
       }
     </script>
 
