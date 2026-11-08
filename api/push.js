@@ -10,7 +10,7 @@ export default async function handler(req, res) {
     }
 
     const ONESIGNAL_APP_ID = "15bf381f-0de7-4e12-918b-57db8e55be92";
-    const ONESIGNAL_REST_KEY = "os_v2_app_cw7tqhyn45hbfemlk7ny4vn6sjgkrqfztlku3mfyxdsrlsyalbctaur1td5t17q3owurepbcgsmvdacb7h3iayhdkm5z5yjauboor4a";
+    const ONESIGNAL_REST_KEY = "os_v2_app_cw7tqhyn45hbfemlk7ny4vn6sjgkrqfztlku3mfyxdsrlsyalbctaurltd5tl7q3owurepbcgsmvdacb7h3iayhdkm5z5yjauboor4a";
     const URL_APP_CASINO = "https://casino-three-rho.vercel.app";
 
     try {
