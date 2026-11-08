@@ -20,60 +20,74 @@
       OneSignalDeferred.push(async function(OneSignal) {
         await OneSignal.init({
           appId: "15bf381f-0de7-4e12-918b-57db8e55be92",
+          // ESTA ES LA LÍNEA MÁGICA QUE FALTABA:
+          serviceWorkerPath: "sw.js" 
         });
 
         actualizarEstadoBoton();
         OneSignal.User.PushSubscription.addEventListener("change", actualizarEstadoBoton);
       });
 
-      // LÓGICA ULTRA-COMPATIBLE Y SIN RETRASOS (Evita que el celular congele el botón)
+      // LÓGICA DE ALERTAS
       function toggleAlertas() {
         if (!("Notification" in window)) {
             alert("Lo sentimos, tu dispositivo no soporta notificaciones web.");
             return;
         }
 
-        // 1. SI NUNCA HA DADO PERMISO (Petición directa e instantánea)
+        // 1. PEDIR PERMISOS POR PRIMERA VEZ
         if (Notification.permission === "default" || Notification.permission === "prompt") {
             try {
-                // Formato universal que evita que Safari/Android viejo se trabe
-                let promesa = Notification.requestPermission(procesarRespuestaDelCelular);
+                let promesa = Notification.requestPermission(procesarRespuesta);
                 if (promesa && promesa.then) {
-                    promesa.then(procesarRespuestaDelCelular);
+                    promesa.then(procesarRespuesta);
                 }
             } catch (error) {
                 alert("Error al pedir permiso: " + error);
             }
         } 
-        // 2. SI YA DIO PERMISO (Prendemos o apagamos OneSignal)
+        // 2. SI EL CELULAR YA TIENE EL PERMISO
         else if (Notification.permission === "granted") {
-            window.OneSignalDeferred.push(function(OneSignal) {
-                if (OneSignal.User.PushSubscription.optedIn) {
-                    OneSignal.User.PushSubscription.optOut();
-                    alert("Alertas desactivadas correctamente.");
-                } else {
-                    OneSignal.User.PushSubscription.optIn();
-                    alert("¡Alertas reactivadas!");
+            window.OneSignalDeferred.push(async function(OneSignal) {
+                const isSubscribed = OneSignal.User.PushSubscription.optedIn;
+                
+                try {
+                    if (isSubscribed) {
+                        await OneSignal.User.PushSubscription.optOut();
+                        alert("Alertas desactivadas correctamente.");
+                    } else {
+                        await OneSignal.User.PushSubscription.optIn();
+                        // Pausa de medio segundo para que el servidor responda antes de checar el botón
+                        await new Promise(resolve => setTimeout(resolve, 500));
+                        if (OneSignal.User.PushSubscription.optedIn) {
+                            alert("¡Suscripción exitosa al servidor!");
+                        } else {
+                            alert("Permiso dado, conectando en segundo plano...");
+                        }
+                    }
+                } catch (e) {
+                    console.log("Error de suscripción:", e);
                 }
-                setTimeout(actualizarEstadoBoton, 300);
+                
+                actualizarEstadoBoton();
             });
         } 
-        // 3. SI EL USUARIO BLOQUEÓ EL PERMISO
+        // 3. SI ESTÁ BLOQUEADO MANUALMENTE
         else {
-            alert("Permiso bloqueado. Ve a los Ajustes de tu celular > Notificaciones > Chrome/Safari y actívalas.");
+            alert("Permiso bloqueado. Ve a los Ajustes de tu celular > Notificaciones y actívalas para esta app.");
         }
       }
 
-      function procesarRespuestaDelCelular(permiso) {
+      function procesarRespuesta(permiso) {
           if (permiso === "granted") {
-              window.OneSignalDeferred.push(function(OneSignal) {
-                  OneSignal.User.PushSubscription.optIn();
+              window.OneSignalDeferred.push(async function(OneSignal) {
+                  await OneSignal.User.PushSubscription.optIn();
+                  alert("¡Notificaciones activadas exitosamente!");
+                  actualizarEstadoBoton();
               });
-              alert("¡Notificaciones activadas exitosamente!");
           } else {
               alert("Cancelaste el permiso de notificaciones.");
           }
-          setTimeout(actualizarEstadoBoton, 300);
       }
 
       function actualizarEstadoBoton() {
