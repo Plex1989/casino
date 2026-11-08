@@ -308,7 +308,7 @@
                 <h2>Gestión de Mesas</h2>
             </div>
 
-            <!-- FORMULARIO: AGREGAR NUEVA MESA -->
+            <!-- FORMULARIO CREAR MESA -->
             <div class="form-crear-mesa">
                 <h3 style="color: var(--neon-gold); margin: 0 0 10px 0; font-size: 1.05em; display: flex; align-items: center; gap: 6px;">
                     <span>➕</span> Agregar Nueva Mesa
@@ -337,6 +337,17 @@
                         <input type="number" id="nueva-mesa-capacidad" value="7" min="1" max="50">
                     </div>
                     <div>
+                        <label>Apuesta Mínima ($)</label>
+                        <input type="number" id="nueva-mesa-apuesta-min" value="50" min="0">
+                    </div>
+                </div>
+
+                <div class="mesa-grid" style="margin-top: 6px;">
+                    <div>
+                        <label>Crupier</label>
+                        <input type="text" id="nueva-mesa-crupier" placeholder="Ej. Carlos M.">
+                    </div>
+                    <div>
                         <label>Estatus Inicial</label>
                         <select id="nueva-mesa-estatus">
                             <option value="Abierta">🟢 Abierta</option>
@@ -347,17 +358,14 @@
 
                 <div class="mesa-grid" style="margin-top: 6px;">
                     <div>
-                        <label>Crupier</label>
-                        <input type="text" id="nueva-mesa-crupier" placeholder="Ej. Carlos M.">
-                    </div>
-                    <div>
                         <label>Jackpot Inicial ($)</label>
                         <input type="number" id="nueva-mesa-jackpot" value="0">
                     </div>
+                    <div>
+                        <label>Promo Mesa</label>
+                        <input type="text" id="nueva-mesa-promo" placeholder="Ej. Bono de $500 al primer Blackjack">
+                    </div>
                 </div>
-
-                <label>Promo Especial (Opcional)</label>
-                <input type="text" id="nueva-mesa-promo" placeholder="Ej. Bono de $500 al primer Blackjack">
 
                 <button class="btn-action btn-add-table" onclick="crearMesa()">
                     ➕ Registrar Mesa
@@ -374,12 +382,11 @@
     </div>
 
     <script>
-        // CONEXIÓN CON SUPABASE
         const SUPABASE_URL = "https://kqgtyzsxwrkomdtuktkk.supabase.co";
         const SUPABASE_ANON_KEY = "sb_publishable_on1rkqvAIhSQonTODdk5fA_qTpEo_8H";
         const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // ENVÍO DE NOTIFICACIONES PUSH A TRAVÉS DE TU SERVIDOR EN VERCEL
+        // ENVÍO DE PUSH
         async function enviarPush() {
             const inputTitulo = document.getElementById('push-titulo');
             const inputMensaje = document.getElementById('push-mensaje');
@@ -393,7 +400,7 @@
                 return;
             }
 
-            if (!confirm(`¿Confirmas el envío de esta notificación a todos los usuarios?\n\n"${titulo}"`)) {
+            if (!confirm(`¿Confirmas el envío de esta notificación?\n\n"${titulo}"`)) {
                 return;
             }
 
@@ -424,7 +431,7 @@
             }
         }
 
-        // GESTIÓN DE PROMOCIONES
+        // PROMOCIONES
         async function crearPromocion() {
             const tipo = document.getElementById('promo-tipo').value;
             const titulo = document.getElementById('promo-titulo').value.trim();
@@ -490,20 +497,19 @@
             }
         }
 
-        // ================= CREAR Y ADMINISTRAR MESAS =================
-
-        // 1. CREAR NUEVA MESA
+        // ================= CREAR, EDITAR Y ELIMINAR MESAS =================
         async function crearMesa() {
             const nombre = document.getElementById('nueva-mesa-nombre').value.trim();
             const juego = document.getElementById('nueva-mesa-juego').value;
             const capacidad = parseInt(document.getElementById('nueva-mesa-capacidad').value) || 7;
+            const apuesta_minima = parseInt(document.getElementById('nueva-mesa-apuesta-min').value) || 0;
             const estatus = document.getElementById('nueva-mesa-estatus').value;
             const crupier = document.getElementById('nueva-mesa-crupier').value.trim();
             const jackpot = parseInt(document.getElementById('nueva-mesa-jackpot').value) || 0;
             const promo = document.getElementById('nueva-mesa-promo').value.trim();
 
             if (!nombre) {
-                alert("Por favor escribe el nombre de la mesa (Ej: Mesa 1, Mesa VIP).");
+                alert("Por favor escribe el nombre de la mesa.");
                 return;
             }
 
@@ -512,6 +518,7 @@
                 juego,
                 capacidad_maxima: capacidad,
                 jugadores_actuales: 0,
+                apuesta_minima,
                 estatus,
                 crupier,
                 jackpot,
@@ -524,17 +531,18 @@
                 alert("¡Mesa agregada correctamente!");
                 document.getElementById('nueva-mesa-nombre').value = '';
                 document.getElementById('nueva-mesa-crupier').value = '';
+                document.getElementById('nueva-mesa-apuesta-min').value = '50';
                 document.getElementById('nueva-mesa-jackpot').value = '0';
                 document.getElementById('nueva-mesa-promo').value = '';
                 cargarMesas();
             }
         }
 
-        // 2. ACTUALIZAR MESA EXISTENTE
         async function actualizarMesa(id) {
             const estatus = document.getElementById(`estatus-${id}`).value;
             const crupier = document.getElementById(`crupier-${id}`).value.trim();
             const jugadores = parseInt(document.getElementById(`jugadores-${id}`).value) || 0;
+            const apuesta_minima = parseInt(document.getElementById(`apuesta-min-${id}`).value) || 0;
             const jackpot = parseInt(document.getElementById(`jackpot-${id}`).value) || 0;
             const promo = document.getElementById(`promo-${id}`).value.trim();
 
@@ -542,6 +550,7 @@
                 estatus,
                 crupier,
                 jugadores_actuales: jugadores,
+                apuesta_minima,
                 jackpot,
                 promo_especial: promo
             }).eq('id', id);
@@ -555,7 +564,6 @@
             }
         }
 
-        // 3. ELIMINAR MESA
         async function eliminarMesa(id, nombre) {
             if (confirm(`¿Seguro que deseas eliminar la ${nombre}?`)) {
                 const { error } = await client.from('mesas').delete().eq('id', id);
@@ -567,7 +575,6 @@
             }
         }
 
-        // 4. CARGAR LISTA DE MESAS
         async function cargarMesas() {
             const { data: mesas, error } = await client.from('mesas').select('*').order('juego').order('nombre');
             const cont = document.getElementById('contenedor-mesas-admin');
@@ -601,8 +608,8 @@
 
                         <div class="mesa-grid" style="margin-top: 6px;">
                             <div>
-                                <label>Crupier</label>
-                                <input type="text" id="crupier-${m.id}" value="${m.crupier || ''}" placeholder="Nombre">
+                                <label>Apuesta Mínima ($)</label>
+                                <input type="number" id="apuesta-min-${m.id}" value="${m.apuesta_minima || 0}">
                             </div>
                             <div>
                                 <label>Jackpot ($)</label>
@@ -610,8 +617,16 @@
                             </div>
                         </div>
 
-                        <label>Promo Mesa</label>
-                        <input type="text" id="promo-${m.id}" value="${m.promo_especial || ''}" placeholder="Ej. Paga 3 a 2 en Blackjack">
+                        <div class="mesa-grid" style="margin-top: 6px;">
+                            <div>
+                                <label>Crupier</label>
+                                <input type="text" id="crupier-${m.id}" value="${m.crupier || ''}" placeholder="Nombre">
+                            </div>
+                            <div>
+                                <label>Promo Mesa</label>
+                                <input type="text" id="promo-${m.id}" value="${m.promo_especial || ''}" placeholder="Ej. Bono de $500">
+                            </div>
+                        </div>
 
                         <div class="mesa-botones">
                             <button class="btn-action btn-save" onclick="actualizarMesa(${m.id})" style="margin-top: 0; padding: 10px; font-size: 0.9em;">
@@ -628,7 +643,6 @@
             }
         }
 
-        // Carga inicial
         window.addEventListener('DOMContentLoaded', () => {
             cargarPromociones();
             cargarMesas();
