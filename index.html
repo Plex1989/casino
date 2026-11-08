@@ -24,24 +24,32 @@
           serviceWorkerParam: { scope: "/" }
         });
 
+        // REGISTRO AUTOMÁTICO: Si el celular ya tiene permisos, vincula el teléfono a OneSignal de inmediato
+        if (Notification.permission === "granted") {
+            try {
+                await OneSignal.User.PushSubscription.optIn();
+                console.log("Dispositivo vinculado con éxito a OneSignal.");
+            } catch(e) {
+                console.log("Error al sincronizar con OneSignal:", e);
+            }
+        }
+
         actualizarEstadoBoton();
         OneSignal.User.PushSubscription.addEventListener("change", actualizarEstadoBoton);
       });
 
-      // LÓGICA DE ACTIVACIÓN
+      // LÓGICA DE ACTIVACIÓN MANUAL (Si aún no se habían concedido permisos)
       function toggleAlertas() {
         if (!("Notification" in window)) {
             alert("Tu dispositivo no soporta notificaciones.");
             return;
         }
 
-        // Si Android o el usuario las tiene bloqueadas
         if (Notification.permission === "denied") {
             alert("Las notificaciones están bloqueadas en tu teléfono.\n\nPara activarlas:\n1. Mantén presionado el ícono de la app Casino en tu pantalla de inicio.\n2. Toca en 'Info. de la aplicación' (ícono de la letra 'i').\n3. Entra a 'Notificaciones' y activa el interruptor.");
             return;
         }
 
-        // Si están pendientes por autorizar
         Notification.requestPermission().then(permiso => {
             if (permiso === "granted") {
                 window.OneSignalDeferred.push(async function(OneSignal) {
@@ -61,24 +69,23 @@
         const btn = document.getElementById('btn-alertas');
         if (!btn) return;
 
-        // Detectar si está en la app instalada
         const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
 
         if (isStandalone) {
             document.body.classList.add('modo-app');
         }
 
-        // 1. Si está en navegador web, NUNCA se muestra el botón de alertas
+        // 1. En navegador web nunca se muestra
         if (!isStandalone) {
             btn.style.display = 'none';
             return;
         }
 
-        // 2. Si ya dio permiso (granted), ocultar el botón por completo
+        // 2. Si ya dio permiso, ocultar botón
         if (Notification.permission === "granted") {
             btn.style.display = 'none';
         } else {
-            // 3. Si están en default o denied, MOSTRAR el botón en la app instalada
+            // 3. Si no ha respondido o están denegadas, mostrarlo en la app
             btn.style.display = 'block';
             btn.className = "btn-alertas-inactivo";
             btn.innerHTML = Notification.permission === "denied" 
