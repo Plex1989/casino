@@ -22,11 +22,11 @@
           appId: "15bf381f-0de7-4e12-918b-57db8e55be92",
         });
 
-        // Si ya hay permiso en el celular, sincroniza la suscripción de inmediato
+        // Sincronización automática de suscripción si ya hay permiso concedido
         if (Notification.permission === "granted") {
             try {
                 await OneSignal.User.PushSubscription.optIn();
-                console.log("Suscripción sincronizada en OneSignal");
+                console.log("Suscripción sincronizada con éxito en OneSignal.");
             } catch (err) {
                 console.error("Error al sincronizar:", err);
             }
@@ -76,7 +76,7 @@
             return;
         }
 
-        // Si ya está concedido el permiso, ocultar botón
+        // Si ya está concedido el permiso, ocultar el botón
         if (Notification.permission === "granted") {
             btn.style.display = 'none';
         } else {
@@ -297,7 +297,7 @@
         client.channel('public-changes').on('postgres_changes', { event: '*', schema: 'public' }, cargarDatos).subscribe();
         cargarDatos();
 
-        // Registro único y directo del Service Worker oficial
+        // Registro del Service Worker oficial
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => { 
                 navigator.serviceWorker.register('OneSignalSDKWorker.js')
