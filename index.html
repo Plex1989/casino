@@ -13,24 +13,22 @@
     <!-- Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <!-- OneSignal SDK -->
+    <!-- OneSignal SDK Oficial -->
     <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
     <script>
       window.OneSignalDeferred = window.OneSignalDeferred || [];
       OneSignalDeferred.push(async function(OneSignal) {
         await OneSignal.init({
           appId: "15bf381f-0de7-4e12-918b-57db8e55be92",
-          serviceWorkerPath: "sw.js",
-          serviceWorkerParam: { scope: "/" }
         });
 
-        // REGISTRO AUTOMÁTICO: Si el celular ya tiene permisos, vincula el teléfono a OneSignal de inmediato
+        // Si ya hay permiso en el celular, sincroniza la suscripción de inmediato
         if (Notification.permission === "granted") {
             try {
                 await OneSignal.User.PushSubscription.optIn();
-                console.log("Dispositivo vinculado con éxito a OneSignal.");
-            } catch(e) {
-                console.log("Error al sincronizar con OneSignal:", e);
+                console.log("Suscripción sincronizada en OneSignal");
+            } catch (err) {
+                console.error("Error al sincronizar:", err);
             }
         }
 
@@ -38,7 +36,6 @@
         OneSignal.User.PushSubscription.addEventListener("change", actualizarEstadoBoton);
       });
 
-      // LÓGICA DE ACTIVACIÓN MANUAL (Si aún no se habían concedido permisos)
       function toggleAlertas() {
         if (!("Notification" in window)) {
             alert("Tu dispositivo no soporta notificaciones.");
@@ -46,7 +43,7 @@
         }
 
         if (Notification.permission === "denied") {
-            alert("Las notificaciones están bloqueadas en tu teléfono.\n\nPara activarlas:\n1. Mantén presionado el ícono de la app Casino en tu pantalla de inicio.\n2. Toca en 'Info. de la aplicación' (ícono de la letra 'i').\n3. Entra a 'Notificaciones' y activa el interruptor.");
+            alert("Las notificaciones están bloqueadas en tu teléfono.\n\nPara activarlas:\n1. Mantén presionado el ícono de la app Casino en tu pantalla.\n2. Toca en 'Info. de la aplicación'.\n3. Entra a 'Notificaciones' y activa el interruptor.");
             return;
         }
 
@@ -60,8 +57,6 @@
             } else {
                 actualizarEstadoBoton();
             }
-        }).catch(err => {
-            console.log("Error al pedir permiso:", err);
         });
       }
 
@@ -75,17 +70,16 @@
             document.body.classList.add('modo-app');
         }
 
-        // 1. En navegador web nunca se muestra
+        // En navegador web se mantiene oculto
         if (!isStandalone) {
             btn.style.display = 'none';
             return;
         }
 
-        // 2. Si ya dio permiso, ocultar botón
+        // Si ya está concedido el permiso, ocultar botón
         if (Notification.permission === "granted") {
             btn.style.display = 'none';
         } else {
-            // 3. Si no ha respondido o están denegadas, mostrarlo en la app
             btn.style.display = 'block';
             btn.className = "btn-alertas-inactivo";
             btn.innerHTML = Notification.permission === "denied" 
@@ -112,7 +106,6 @@
         @keyframes blinkDot { 0% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(1.2); } 100% { opacity: 1; transform: scale(1); } }
         @keyframes pulseGlowPurple { 0% { box-shadow: 0 0 5px rgba(176,38,255,0.5); } 100% { box-shadow: 0 0 20px rgba(176,38,255,0.8); } }
 
-        /* Botón de alertas (oculto por defecto en navegador web) */
         #btn-alertas { display: none; width: 100%; padding: 12px; border-radius: 8px; font-weight: bold; font-size: 1.1em; margin-bottom: 25px; cursor: pointer; transition: 0.3s; text-align: center; }
         .btn-alertas-inactivo { background-color: var(--neon-purple); color: white; border: none; animation: pulseGlowPurple 2s infinite alternate; }
 
@@ -159,7 +152,6 @@
         #modal-instalar { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 9999; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; backdrop-filter: blur(5px); }
         .modal-content { background: #151722; border: 2px solid var(--neon-cyan); border-radius: 12px; padding: 25px; text-align: center; max-width: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
 
-        /* MODO APP (STANDALONE): Oculta botón de instalar */
         @media (display-mode: standalone) {
             .btn-instalar-top { display: none !important; }
         }
@@ -181,7 +173,6 @@
 
     <div class="header-logo"><img src="logo.png" alt="Casino" onerror="this.src='https://via.placeholder.com/120?text=LOGO'"></div>
 
-    <!-- BOTÓN DE NOTIFICACIONES: Solo se mostrará en la app instalada mientras no estén activas -->
     <button id="btn-alertas" class="btn-alertas-inactivo" onclick="toggleAlertas()">
         🔔 Activar Alertas
     </button>
@@ -306,12 +297,12 @@
         client.channel('public-changes').on('postgres_changes', { event: '*', schema: 'public' }, cargarDatos).subscribe();
         cargarDatos();
 
-        // REGISTRO DEL SERVICE WORKER
+        // Registro único y directo del Service Worker oficial
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => { 
-                navigator.serviceWorker.register('sw.js')
-                .then(reg => console.log('PWA Lista'))
-                .catch(err => console.log('Error PWA:', err)); 
+                navigator.serviceWorker.register('OneSignalSDKWorker.js')
+                .then(reg => console.log('Service Worker listo'))
+                .catch(err => console.log('Error SW:', err)); 
             });
         }
     </script>
