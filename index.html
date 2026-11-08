@@ -13,7 +13,7 @@
     <!-- Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <!-- OneSignal SDK para Notificaciones Push (BOTÓN INTELIGENTE) -->
+    <!-- OneSignal SDK para Notificaciones Push (BOTÓN NATIVO) -->
     <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
     <script>
       window.OneSignalDeferred = window.OneSignalDeferred || [];
@@ -34,20 +34,24 @@
         });
       });
 
-      // Lógica de encendido/apagado al tocar el botón
+      // Lógica de encendido/apagado usando el permiso NATIVO del celular
       function toggleAlertas() {
-        window.OneSignalDeferred.push(function(OneSignal) {
-            const isSubscribed = OneSignal.User.PushSubscription.optedIn;
-            if (isSubscribed) {
-                // Cancela la suscripción
-                OneSignal.User.PushSubscription.optOut();
-                alert("Notificaciones canceladas. Ya no recibirás alertas.");
-            } else {
-                // Pide los permisos
-                OneSignal.Slidedown.promptPush();
+        window.OneSignalDeferred.push(async function(OneSignal) {
+            try {
+                const isSubscribed = OneSignal.User.PushSubscription.optedIn;
+                if (isSubscribed) {
+                    // Cancela la suscripción
+                    await OneSignal.User.PushSubscription.optOut();
+                    alert("Notificaciones canceladas. Ya no recibirás alertas.");
+                } else {
+                    // Pide los permisos directamente al sistema operativo (Garantizado en móviles)
+                    await OneSignal.Notifications.requestPermission();
+                }
+                // Actualiza visualmente el botón
+                setTimeout(actualizarEstadoBoton, 500);
+            } catch (error) {
+                alert("Tu navegador bloqueó la solicitud. Intenta activar las notificaciones desde el candado en la barra de direcciones.");
             }
-            // Forzamos un pequeño retraso visual para que la interfaz se actualice
-            setTimeout(actualizarEstadoBoton, 500);
         });
       }
 
@@ -172,7 +176,7 @@
     <div id="mesas-container"><p style="text-align:center; color:#8892b0;">Conectando con las mesas...</p></div>
 
     <div class="flotantes-container">
-        <!-- El botón morado inferior fue removido -->
+        <!-- Botones flotantes inferiores -->
         <button class="btn-flotante" onclick="pedirMenu()">🍸 Menú Bar</button>
         <button class="btn-flotante wa" onclick="compartirAppCliente()">📱 Compartir</button>
     </div>
