@@ -195,20 +195,20 @@
             color: #c5c6c7;
             font-size: 0.85em;
             font-weight: 600;
-            margin-top: 12px;
-            margin-bottom: 6px;
+            margin-top: 10px;
+            margin-bottom: 4px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
         input, textarea, select {
             width: 100%;
-            padding: 12px;
+            padding: 11px;
             background: #0b0c10;
             border: 1px solid var(--border-color);
             border-radius: 8px;
             color: white;
-            font-size: 16px;
+            font-size: 15px;
             outline: none;
             font-family: inherit;
         }
@@ -348,7 +348,7 @@
 
         /* Mesas */
         .mesa-item {
-            background: #0e1017; border: 1px solid var(--border-color); border-radius: 10px; padding: 14px; margin-bottom: 14px;
+            background: #0e1017; border: 1px solid var(--border-color); border-radius: 10px; padding: 14px; margin-bottom: 16px;
         }
 
         .mesa-item-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
@@ -360,7 +360,7 @@
 
         .stepper-container {
             display: flex; align-items: center; background: #0b0c10; border: 1px solid var(--border-color);
-            border-radius: 8px; overflow: hidden; height: 48px;
+            border-radius: 8px; overflow: hidden; height: 46px;
         }
 
         .btn-step {
@@ -368,7 +368,7 @@
             font-size: 1.6em; font-weight: bold; cursor: pointer;
         }
 
-        .stepper-display { flex: 1; text-align: center; font-weight: bold; font-size: 1.25em; color: white; }
+        .stepper-display { flex: 1; text-align: center; font-weight: bold; font-size: 1.2em; color: white; }
         .preset-badge-group { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
 
         .btn-preset {
@@ -381,10 +381,9 @@
         .btn-preset.ultimos { background: rgba(255, 0, 60, 0.15); color: var(--neon-red); border-color: var(--neon-red); }
         .btn-preset.limpiar { background: rgba(255, 255, 255, 0.05); color: #8892b0; border-color: #444; }
 
-        .mesa-botones { display: grid; grid-template-columns: 1fr auto; gap: 10px; margin-top: 10px; }
+        .mesa-botones { display: grid; grid-template-columns: 1fr auto; gap: 10px; margin-top: 12px; }
         .btn-del-item { background: rgba(255, 0, 60, 0.15); color: var(--neon-red); border: 1px solid var(--neon-red); padding: 10px 14px; border-radius: 8px; font-weight: bold; cursor: pointer; }
 
-        /* SECCIÓN ESPECIAL 3 JACKPOTS EN ADMIN */
         .box-triple-jackpot-admin {
             background: #0a0c14;
             border: 1px solid var(--neon-gold);
@@ -396,6 +395,7 @@
 </head>
 <body>
 
+    <!-- PANTALLA LOGIN -->
     <div id="login-overlay">
         <div class="login-card">
             <img src="logo.jpg" alt="Casino BigBola" onerror="this.src='logo.png'">
@@ -420,6 +420,7 @@
         </div>
     </div>
 
+    <!-- PANEL ADMINISTRADOR -->
     <div id="admin-content">
         <div class="container">
             
@@ -531,7 +532,7 @@
                 <input type="text" id="push-titulo" placeholder="Ej. 🎁 ¡Torneo de Texas Hold'em Activo!">
 
                 <label>Mensaje</label>
-                <textarea id="push-mensaje" rows="2" placeholder="Ej. Mesas abiertas con 3 acumulados en sala. ¡Aparta tu lugar!"></textarea>
+                <textarea id="push-mensaje" rows="2" placeholder="Ej. Mesas abiertas con premios acumulados en sala. ¡Aparta tu lugar!"></textarea>
 
                 <button class="btn-action btn-push" id="btn-enviar-push" onclick="enviarPush()">
                     🚀 Enviar a Todos los Celulares
@@ -709,10 +710,10 @@
                 promosRotativas = data;
             } else {
                 promosRotativas = [
-                    { id: 1, titulo: "🎰 Torneo de Blackjack", descripcion: "Bolsa garantizada en premios. Válido a partir de las 8:00 PM." },
-                    { id: 2, titulo: "🎲 Noche de Ruleta", descripcion: "Jackpot progresivo acumulado al máximo listo para caer hoy." },
-                    { id: 3, titulo: "💰 Bono de Recarga", descripcion: "En recargas desde $3,000 hasta $20,000 llévate el 10% en fichas de cortesía." },
-                    { id: 4, titulo: "👑 Noche VIP Lounge", descripcion: "Barra libre, cócteles de bienvenida y botana fina en mesas abiertas." }
+                    { id: 1, titulo: "Torneo de Blackjack", descripcion: "Bolsa garantizada en premios. Válido a partir de las 8:00 PM." },
+                    { id: 2, titulo: "Noche de Ruleta", descripcion: "Premios y acumulados al máximo listos para caer hoy." },
+                    { id: 3, titulo: "Bono de Recarga", descripcion: "En recargas desde $3,000 hasta $20,000 llévate el 10% en fichas de cortesía." },
+                    { id: 4, titulo: "Noche VIP Lounge", descripcion: "Barra libre, cócteles de bienvenida y botana fina en mesas abiertas." }
                 ];
             }
             renderizarChipsPromociones();
@@ -765,11 +766,12 @@
             }
         }
 
+        // ================= PLANTILLA CON PICA (♠️) Y "MESAS ABIERTAS Y PREMIOS ACUMULADOS" =================
         function generarTextoWhatsApp(nombre, bonus) {
             const monto = Number(bonus) || 0;
             const promo = promosRotativas.find(p => p.id === idPromoActiva) || {
                 titulo: "Torneo Especial de Sala",
-                descripcion: "Mesas activas con Jackpot acumulado y premios en efectivo."
+                descripcion: "Mesas abiertas con premios acumulados en efectivo."
             };
 
             const tituloLimpio = promo.titulo.replace(/[\u{1F300}-\u{1F9FF}]/gu, '').trim();
@@ -784,7 +786,7 @@
                        `*${tituloLimpio}*\n` +
                        `${promo.descripcion}\n\n` +
                        `¿Te apartamos tu lugar favorito? Avísanos por aquí para tenerlo listo a tu llegada.\n\n` +
-                       `🎲 *Mesas abiertas y jackpots en sala:*\n` +
+                       `♠️ *Mesas abiertas y premios acumulados:*\n` +
                        `https://casino-three-rho.vercel.app`;
             } else {
                 return `*CASINO BIGBOLA* | Invitación Especial\n\n` +
@@ -794,7 +796,7 @@
                        `${promo.descripcion}\n\n` +
                        `🍸 Bebidas de cortesía en mesas abiertas.\n` +
                        `¿Te apartamos un lugar en tu mesa favorita? Avísanos por aquí.\n\n` +
-                       `🎲 *Mesas abiertas y jackpots en sala:*\n` +
+                       `♠️ *Mesas abiertas y premios acumulados:*\n` +
                        `https://casino-three-rho.vercel.app`;
             }
         }
@@ -811,6 +813,7 @@
             window.open(urlWhatsApp, '_blank');
         }
 
+        // ================= VIP =================
         let listaVipMemoria = [];
         let listaCompletaVisible = false;
 
@@ -979,6 +982,7 @@
             .on('postgres_changes', { event: '*', schema: 'public', table: 'clientes_vip' }, () => cargarJugadoresVIP())
             .subscribe();
 
+        // ================= PUSH & PROMOS APP =================
         async function enviarPush() {
             const titulo = document.getElementById('push-titulo').value.trim();
             const mensaje = document.getElementById('push-mensaje').value.trim();
@@ -1051,8 +1055,12 @@
             }
         }
 
-        async function cambiarJugadores(id, delta, maxCapacidad) {
+        // ================= GESTIÓN DE MESAS =================
+        async function cambiarJugadores(id, delta) {
             const display = document.getElementById(`val-jugadores-${id}`);
+            const capInput = document.getElementById(`capacidad-${id}`);
+            const maxCapacidad = capInput ? (parseInt(capInput.value) || 7) : 7;
+            
             let nuevo = (parseInt(display.innerText) || 0) + delta;
             if (nuevo < 0) nuevo = 0;
             if (nuevo > maxCapacidad) nuevo = maxCapacidad;
@@ -1085,52 +1093,77 @@
             const nombre = document.getElementById('nueva-mesa-nombre').value.trim();
             const juego = document.getElementById('nueva-mesa-juego').value;
             const capacidad = parseInt(document.getElementById('nueva-mesa-capacidad').value) || 7;
-            const apuesta_minima = parseInt(document.getElementById('nueva-mesa-apuesta-min').value) || 0;
+            const apuesta_minima = parseFloat(document.getElementById('nueva-mesa-apuesta-min').value) || 0;
             const estatus = document.getElementById('nueva-mesa-estatus').value;
             const crupier = document.getElementById('nueva-mesa-crupier').value.trim();
-            const jackpot = parseInt(document.getElementById('nueva-mesa-jackpot').value) || 0;
+            const jackpot = parseFloat(document.getElementById('nueva-mesa-jackpot').value) || 0;
             const promo = document.getElementById('nueva-mesa-promo').value.trim();
 
+            const esTexas = juego.toLowerCase().includes('texas');
+
             await client.from('mesas').insert([{
-                nombre, juego, capacidad_maxima: capacidad, jugadores_actuales: 0,
-                apuesta_minima, estatus, crupier, jackpot, promo_especial: promo,
-                jackpot_esc_real: juego.includes('Texas') ? 194742.40 : 0,
-                jackpot_esc_col: juego.includes('Texas') ? 19474.24 : 0,
-                jackpot_poker: juego.includes('Texas') ? 2500.00 : 0
+                nombre, 
+                juego, 
+                capacidad_maxima: capacidad, 
+                jugadores_actuales: 0,
+                apuesta_minima, 
+                estatus, 
+                crupier: crupier === '' ? null : crupier, 
+                jackpot, 
+                promo_especial: promo,
+                jackpot_esc_real: esTexas ? 194742.40 : 0,
+                jackpot_esc_col: esTexas ? 19474.24 : 0,
+                jackpot_poker: esTexas ? 2500.00 : 0
             }]);
 
-            alert("¡Mesa registrada!");
+            alert("¡Mesa registrada correctamente!");
             cargarMesas();
         }
 
-        // GUARDADO DE TODOS LOS CAMPOS DE LA MESA (INCLUIDOS LOS 3 ACUMULADOS)
         async function actualizarMesa(id) {
-            const crupier = document.getElementById(`crupier-${id}`).value.trim();
-            const apuesta_minima = parseFloat(document.getElementById(`apuesta-min-${id}`).value) || 0;
-            const jackpot = parseFloat(document.getElementById(`jackpot-${id}`).value) || 0;
-            const promo = document.getElementById(`promo-${id}`).value.trim();
+            try {
+                const crupierInput = document.getElementById(`crupier-${id}`);
+                const apuestaMinInput = document.getElementById(`apuesta-min-${id}`);
+                const capacidadInput = document.getElementById(`capacidad-${id}`);
+                const promoInput = document.getElementById(`promo-${id}`);
+                const jackpotInput = document.getElementById(`jackpot-${id}`);
 
-            const updateData = {
-                crupier,
-                apuesta_minima,
-                jackpot,
-                promo_especial: promo
-            };
+                const crupierTexto = crupierInput ? crupierInput.value.trim() : '';
+                const apuesta_minima = apuestaMinInput ? (parseFloat(apuestaMinInput.value) || 0) : 0;
+                const capacidad_maxima = capacidadInput ? (parseInt(capacidadInput.value) || 7) : 7;
+                const promo_especial = promoInput ? promoInput.value.trim() : '';
+                const jackpot = jackpotInput ? (parseFloat(jackpotInput.value) || 0) : 0;
 
-            // Si es mesa de Texas, guarda los 3 pozos
-            const inpReal = document.getElementById(`jackpot-real-${id}`);
-            const inpCol = document.getElementById(`jackpot-col-${id}`);
-            const inpPoker = document.getElementById(`jackpot-poker-${id}`);
+                const updateData = {
+                    crupier: crupierTexto === '' ? null : crupierTexto,
+                    apuesta_minima,
+                    capacidad_maxima,
+                    promo_especial
+                };
 
-            if (inpReal && inpCol && inpPoker) {
-                updateData.jackpot_esc_real = parseFloat(inpReal.value) || 0;
-                updateData.jackpot_esc_col = parseFloat(inpCol.value) || 0;
-                updateData.jackpot_poker = parseFloat(inpPoker.value) || 0;
+                if (jackpotInput) {
+                    updateData.jackpot = jackpot;
+                }
+
+                const inpReal = document.getElementById(`jackpot-real-${id}`);
+                const inpCol = document.getElementById(`jackpot-col-${id}`);
+                const inpPoker = document.getElementById(`jackpot-poker-${id}`);
+
+                if (inpReal) updateData.jackpot_esc_real = parseFloat(inpReal.value) || 0;
+                if (inpCol) updateData.jackpot_esc_col = parseFloat(inpCol.value) || 0;
+                if (inpPoker) updateData.jackpot_poker = parseFloat(inpPoker.value) || 0;
+
+                const { error } = await client.from('mesas').update(updateData).eq('id', id);
+
+                if (error) {
+                    alert("Error de Supabase: " + error.message);
+                } else {
+                    mostrarAvisoEnVivo(id);
+                }
+            } catch (err) {
+                alert("Error en el guardado: " + err.message);
+                console.error(err);
             }
-
-            const { error } = await client.from('mesas').update(updateData).eq('id', id);
-            if (error) alert("Error al guardar: " + error.message);
-            else mostrarAvisoEnVivo(id);
         }
 
         async function eliminarMesa(id, nombre) {
@@ -1141,8 +1174,13 @@
         }
 
         async function cargarMesas() {
-            const { data: mesas } = await client.from('mesas').select('*').order('juego').order('nombre');
+            const { data: mesas, error } = await client.from('mesas').select('*').order('juego').order('nombre');
             const cont = document.getElementById('contenedor-mesas-admin');
+
+            if (error) {
+                cont.innerHTML = `<p style="color: var(--neon-red); text-align: center;">Error: ${error.message}</p>`;
+                return;
+            }
 
             if (mesas && mesas.length > 0) {
                 cont.innerHTML = mesas.map(m => {
@@ -1165,27 +1203,31 @@
                                 </select>
                             </div>
                             <div>
-                                <label>Jugadores (${capMax} máx)</label>
+                                <label>Jugadores Actuales</label>
                                 <div class="stepper-container">
-                                    <button type="button" class="btn-step" onclick="cambiarJugadores('${m.id}', -1, ${capMax})">−</button>
+                                    <button type="button" class="btn-step" onclick="cambiarJugadores('${m.id}', -1)">−</button>
                                     <div class="stepper-display" id="val-jugadores-${m.id}">${m.jugadores_actuales || 0}</div>
-                                    <button type="button" class="btn-step" onclick="cambiarJugadores('${m.id}', 1, ${capMax})">+</button>
+                                    <button type="button" class="btn-step" onclick="cambiarJugadores('${m.id}', 1)">+</button>
                                 </div>
                             </div>
                         </div>
 
                         <div class="admin-grid-2" style="margin-top: 6px;">
                             <div>
+                                <label>Capacidad Máx.</label>
+                                <input type="number" id="capacidad-${m.id}" value="${capMax}" min="1" max="50">
+                            </div>
+                            <div>
                                 <label>Apuesta Mínima ($)</label>
                                 <input type="number" step="any" id="apuesta-min-${m.id}" value="${m.apuesta_minima || 0}">
                             </div>
-                            <div>
-                                <label>Crupier</label>
-                                <input type="text" id="crupier-${m.id}" value="${m.crupier || ''}" placeholder="Nombre">
-                            </div>
                         </div>
 
-                        <!-- EDICIÓN DE LOS 3 ACUMULADOS SI ES TEXAS HOLD'EM -->
+                        <div style="margin-top: 6px;">
+                            <label>Crupier (dejar vacío para "En rotación")</label>
+                            <input type="text" id="crupier-${m.id}" value="${m.crupier || ''}" placeholder="Nombre del crupier">
+                        </div>
+
                         ${esTexas ? `
                             <div class="box-triple-jackpot-admin">
                                 <span style="font-size: 0.78em; color: var(--neon-gold); font-weight: bold; text-transform: uppercase;">
@@ -1208,8 +1250,8 @@
                             </div>
                         ` : `
                             <div style="margin-top: 6px;">
-                                <label>Jackpot Acumulado ($)</label>
-                                <input type="number" id="jackpot-${m.id}" value="${m.jackpot || 0}">
+                                <label>Jackpot Regular ($)</label>
+                                <input type="number" step="any" id="jackpot-${m.id}" value="${m.jackpot || 0}">
                             </div>
                         `}
 
