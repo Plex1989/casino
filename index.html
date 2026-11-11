@@ -663,11 +663,11 @@
             <h1>CASINO BIGBOLA</h1>
             <p>Estado de Mesas & Jackpots en Sala</p>
 
-            <!-- CONTADOR DE VISITAS EN VIVO CON BASE -->
+            <!-- CONTADOR DE VISITAS CORREGIDO -->
             <div class="contador-visitas-bar">
-                <span><span class="contador-dot-live"></span> <strong id="visitas-hoy-val">11</strong> en sala hoy</span>
+                <span><span class="contador-dot-live"></span> <strong id="visitas-hoy-val">11</strong> visitas al portal hoy</span>
                 <span>•</span>
-                <span><strong id="visitas-totales-val">1,142</strong> visitas registradas</span>
+                <span><strong id="visitas-totales-val">1,142</strong> visitas históricas</span>
             </div>
         </header>
 
@@ -711,7 +711,7 @@
 
     </div>
 
-    <!-- MODAL CONSULTAR BONUS BACK (CON CELULAR O WHATSAPP) -->
+    <!-- MODAL CONSULTAR BONUS BACK (CON MÁSCARA DE PRIVACIDAD) -->
     <div id="modal-bonus-back" class="modal-overlay" onclick="cerrarModalBonusBack(event)">
         <div class="modal-box" onclick="event.stopPropagation()">
             <div style="font-size: 2em; margin-bottom: 4px;">💎</div>
@@ -744,7 +744,7 @@
         </div>
     </div>
 
-    <!-- MODAL GUÍA PARA IPHONE -->
+    <!-- MODAL GUÍA PARA IPHONE (SAFARI) -->
     <div id="modal-ios-install" class="modal-overlay">
         <div class="modal-box">
             <div style="font-size: 2.2em; margin-bottom: 8px;">📲</div>
@@ -816,7 +816,17 @@
             }
         }
 
-        // ================= MODAL DE CONSULTA BONUS BACK =================
+        // ================= MODAL DE CONSULTA BONUS BACK (CON MÁSCARA) =================
+        function enmascararNombre(nombreCompleto) {
+            if (!nombreCompleto) return 'Cliente VIP';
+            const partes = nombreCompleto.trim().split(' ');
+            const enmascarado = partes.map(p => {
+                if (p.length <= 1) return p;
+                return p.charAt(0) + '*'.repeat(p.length - 1);
+            });
+            return enmascarado.join(' ');
+        }
+
         function abrirModalBonusBack() {
             document.getElementById('modal-bonus-back').style.display = 'flex';
             document.getElementById('input-phone-consulta').value = '';
@@ -850,15 +860,15 @@
                 return;
             }
 
-            // Busca coincidencia en los últimos 10 dígitos
             const cliente = vips.find(v => (v.telefono || '').endsWith(rawPhone));
 
             if (cliente) {
-                document.getElementById('vip-res-nombre').innerText = `⭐ ¡Hola, ${cliente.nombre}!`;
+                const nombreSeguro = enmascararNombre(cliente.nombre);
+                document.getElementById('vip-res-nombre').innerText = `⭐ ¡Hola, ${nombreSeguro}!`;
                 document.getElementById('vip-res-monto').innerText = `$${Number(cliente.bonus_back || 0).toLocaleString('es-MX')} MXN`;
                 boxResultado.style.display = 'block';
 
-                const msgWa = encodeURIComponent(`Hola, soy ${cliente.nombre}. Acabo de consultar en la app y tengo $${cliente.bonus_back} de Bonus Back. ¿Me pueden apartar un lugar en mesa para hoy?`);
+                const msgWa = encodeURIComponent(`Hola, acabo de consultar mi saldo en el portal y tengo $${cliente.bonus_back} en Bonus Back. ¿Me podrían confirmar y apartar un lugar en mesa para hoy?`);
                 document.getElementById('link-wa-consulta-directa').href = `https://wa.me/${NUMERO_WHATSAPP_CASINO}?text=${msgWa}`;
             } else {
                 boxResultado.style.display = 'none';
@@ -944,6 +954,7 @@
             return 'logo.jpg';
         }
 
+        // ================= QR Y COMPARTIR =================
         let qrGenerado = false;
         function abrirModalQR() {
             const modal = document.getElementById('modal-qr');
@@ -1060,7 +1071,7 @@
                             <img src="${fotoJuego}" 
                                  alt="${m.juego}" 
                                  class="mesa-banner-img"
-                                 onerror="if(!this.src.endsWith('.png')){this.src=this.src.replace('.jpg','.png');}else{this.style.display='none';}">
+                                 onerror="if(this.src.includes('.jpg')){this.src=this.src.replace('.jpg','.gif');}else if(this.src.includes('.gif')){this.src=this.src.replace('.gif','.png');}else{this.style.display='none';}">
                             <div class="mesa-banner-overlay"></div>
                             <div class="mesa-banner-title">
                                 <div>
