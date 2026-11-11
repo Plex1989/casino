@@ -199,7 +199,7 @@
             gap: 10px;
         }
 
-        /* SELECTOR DE PROMOCIONES ROTATIVAS CON SUPABASE */
+        /* SELECTOR DE PROMOCIONES ROTATIVAS GUARDADAS EN SUPABASE */
         .promo-selector-box {
             background: #0e1017;
             border: 1px solid #3d351b;
@@ -425,13 +425,14 @@
             border-radius: 8px;
             font-weight: bold;
             font-size: 0.9em;
-            text-decoration: none;
+            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.3);
             width: 100%;
+            transition: 0.15s;
         }
 
         .btn-wa-direct:active {
@@ -829,7 +830,6 @@
                 .order('orden', { ascending: true });
 
             if (error || !data || data.length === 0) {
-                // Respaldo de contingencia si no se ha ejecutado el SQL
                 promosRotativas = [
                     { id: 1, titulo: "🎰 Torneo de Blackjack", descripcion: "Bolsa garantizada en premios. Válido a partir de las 8:00 PM." },
                     { id: 2, titulo: "🎲 Noche de Ruleta", descripcion: "Jackpot progresivo acumulado al máximo listo para caer hoy." },
@@ -863,7 +863,6 @@
         function seleccionarChipPromo(id) {
             idPromoActiva = id;
             renderizarChipsPromociones();
-            actualizarTodosLosLinksWhatsApp();
         }
 
         function toggleEditorPromo() {
@@ -892,7 +891,6 @@
                 badge.style.display = 'block';
                 setTimeout(() => badge.style.display = 'none', 2500);
 
-                // Actualizar memoria local
                 const item = promosRotativas.find(p => p.id === idPromoActiva);
                 if (item) {
                     item.titulo = nuevoTitulo;
@@ -900,11 +898,10 @@
                 }
 
                 renderizarChipsPromociones();
-                actualizarTodosLosLinksWhatsApp();
             }
         }
 
-        // ================= PLANTILLA DE MENSAJE 100% COLOR (EMOJIS NATIVOS) =================
+        // ================= PLANTILLA DE MENSAJE 100% COMPATIBLE (METODO INDEX) =================
         function generarTextoWhatsApp(nombre, bonus) {
             const monto = Number(bonus) || 0;
             const promo = promosRotativas.find(p => p.id === idPromoActiva) || {
@@ -913,7 +910,7 @@
             };
 
             if (monto > 0) {
-                // CON BONUS BACK (> $0)
+                // CLIENTE CON BONUS BACK (> $0)
                 return `🎰 *CASINO BIGBOLA* 🎰\n` +
                        `👑 *INVITACIÓN VIP EXCLUSIVA* 👑\n\n` +
                        `Hola *${nombre}*, es un placer saludarte. 🥂✨\n\n` +
@@ -927,7 +924,7 @@
                        `📲 *¿Te apartamos tu lugar favorito en la mesa?*\n` +
                        `✨ ¡Te esperamos hoy para ganar en grande! 🎰🔥`;
             } else {
-                // SIN SALDO ($0)
+                // CLIENTE SIN SALDO ($0)
                 return `🎰 *CASINO BIGBOLA* 🎰\n` +
                        `👑 *INVITACIÓN VIP EXCLUSIVA* 👑\n\n` +
                        `Hola *${nombre}*, es un gusto saludarte. 🥂✨\n\n` +
@@ -939,6 +936,21 @@
                        `📲 *¿Te reservamos un lugar en tu mesa favorita?*\n` +
                        `✨ ¡Te esperamos hoy en CASINO BIGBOLA! 🎰🎲`;
             }
+        }
+
+        // ================= DISPARADOR DIRECTO DE WHATSAPP (IGUAL QUE INDEX.HTML) =================
+        function enviarWhatsAppVIP(id) {
+            const cliente = listaVipMemoria.find(v => v.id == id);
+            if (!cliente) return;
+
+            const inputMonto = document.getElementById(`bonus-val-${id}`);
+            const bonus = inputMonto ? inputMonto.value : (cliente.bonus_back || 0);
+
+            const textoMensaje = generarTextoWhatsApp(cliente.nombre, bonus);
+            
+            // Usamos api.whatsapp.com/send directo para no pasar por el acortador wa.me que corrompe los emojis
+            const urlWhatsApp = `https://api.whatsapp.com/send?phone=${cliente.telefono}&text=${encodeURIComponent(textoMensaje)}`;
+            window.open(urlWhatsApp, '_blank');
         }
 
         // ================= JUGADORES VIP CON PERSIANA =================
@@ -1017,9 +1029,6 @@
         }
 
         function renderTarjetaVIPHTML(v, esDestacado = false) {
-            const textoMensaje = generarTextoWhatsApp(v.nombre, v.bonus_back || 0);
-            const urlWa = `https://wa.me/${v.telefono}?text=${encodeURIComponent(textoMensaje)}`;
-
             return `
             <div class="vip-item ${esDestacado ? 'destacado' : ''}">
                 <div class="vip-header">
@@ -1041,9 +1050,9 @@
                     </button>
                 </div>
 
-                <a href="${urlWa}" id="btn-wa-${v.id}" data-id="${v.id}" data-nombre="${v.nombre}" data-tel="${v.telefono}" target="_blank" class="btn-wa-direct">
-                    <span>📲</span> Enviar WhatsApp con Emojis a Color
-                </a>
+                <button type="button" onclick="enviarWhatsAppVIP('${v.id}')" class="btn-wa-direct">
+                    <span>📲</span> Enviar WhatsApp Elegante
+                </button>
             </div>
             `;
         }
@@ -1078,28 +1087,7 @@
                 
                 const item = listaVipMemoria.find(x => x.id == id);
                 if (item) item.bonus_back = bonus;
-                actualizarLinkWhatsApp(id);
             }
-        }
-
-        function actualizarLinkWhatsApp(id) {
-            const btnWa = document.getElementById(`btn-wa-${id}`);
-            if (!btnWa) return;
-
-            const nombre = btnWa.getAttribute('data-nombre');
-            const tel = btnWa.getAttribute('data-tel');
-            const inputMonto = document.getElementById(`bonus-val-${id}`);
-            const bonus = inputMonto ? inputMonto.value : 0;
-
-            const textoMensaje = generarTextoWhatsApp(nombre, bonus);
-            btnWa.href = `https://wa.me/${tel}?text=${encodeURIComponent(textoMensaje)}`;
-        }
-
-        function actualizarTodosLosLinksWhatsApp() {
-            document.querySelectorAll('.btn-wa-direct').forEach(btn => {
-                const id = btn.getAttribute('data-id');
-                if (id) actualizarLinkWhatsApp(id);
-            });
         }
 
         async function crearJugadorVIP() {
