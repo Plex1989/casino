@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CASINO BIGBOLA - Mesas & Promociones en Vivo</title>
+    <title>CASINO BIGBOLA - Mesas & Promociones en Sala</title>
 
     <meta name="theme-color" content="#0b0c10">
     <link rel="manifest" href="manifest.json">
@@ -97,7 +97,6 @@
             letter-spacing: 0.5px;
         }
 
-        /* BANNER DE INSTALACIÓN */
         .banner-instalacion {
             display: none;
             background: linear-gradient(135deg, rgba(0, 240, 255, 0.15), rgba(176, 38, 255, 0.2));
@@ -137,10 +136,6 @@
             cursor: pointer;
             white-space: nowrap;
             transition: 0.2s;
-        }
-
-        .btn-instalar-app:active {
-            transform: scale(0.95);
         }
 
         /* MODALES */
@@ -191,23 +186,6 @@
             box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
         }
 
-        .qr-wrapper img, .qr-wrapper canvas {
-            display: block;
-            margin: 0 auto;
-        }
-
-        .modal-pasos {
-            text-align: left;
-            background: #0b0c10;
-            padding: 14px;
-            border-radius: 10px;
-            font-size: 0.85em;
-            color: white;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
         .btn-cerrar-modal {
             margin-top: 14px;
             width: 100%;
@@ -221,12 +199,12 @@
             cursor: pointer;
         }
 
-        /* ACCIONES RÁPIDAS */
+        /* ACCIONES RÁPIDAS: 3 BOTONES (SIN GRUPO VIP) */
         .quick-actions-bar {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 6px;
-            margin-bottom: 15px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 18px;
         }
 
         .btn-quick {
@@ -235,9 +213,9 @@
             align-items: center;
             justify-content: center;
             gap: 4px;
-            padding: 10px 4px;
+            padding: 12px 6px;
             border-radius: 10px;
-            font-size: 0.75em;
+            font-size: 0.8em;
             font-weight: bold;
             text-decoration: none;
             text-align: center;
@@ -249,17 +227,11 @@
         }
 
         .btn-quick span:first-child {
-            font-size: 1.3em;
+            font-size: 1.4em;
         }
 
         .btn-quick:active {
             transform: scale(0.95);
-        }
-
-        .btn-quick-wa {
-            background: linear-gradient(135deg, rgba(37, 211, 102, 0.2), rgba(18, 140, 126, 0.3));
-            color: var(--neon-green);
-            border: 1px solid var(--neon-green);
         }
 
         .btn-quick-menu {
@@ -280,7 +252,6 @@
             border: 1px solid var(--neon-gold);
         }
 
-        /* Marquesina y Promos */
         .marquesina-flash {
             background: linear-gradient(90deg, #ff003c, #990024);
             color: white;
@@ -329,15 +300,15 @@
             padding-bottom: 6px;
         }
 
-        /* Mesas */
+        /* TARJETA DE MESA CON FOTO */
         .mesa-card {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 14px;
-            padding: 16px;
-            margin-bottom: 14px;
+            padding: 0;
+            margin-bottom: 18px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-            transition: 0.2s;
+            overflow: hidden;
             position: relative;
         }
 
@@ -361,22 +332,40 @@
             100% { box-shadow: 0 0 22px rgba(255, 102, 0, 0.55); }
         }
 
-        .mesa-header {
+        /* BANNER DE IMAGEN DEL JUEGO */
+        .mesa-banner-box {
+            position: relative;
+            width: 100%;
+            height: 110px;
+            background: #000;
+            overflow: hidden;
+        }
+
+        .mesa-banner-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.75;
+        }
+
+        .mesa-banner-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(21,23,34,0.95) 100%);
+        }
+
+        .mesa-banner-title {
+            position: absolute;
+            bottom: 8px;
+            left: 14px;
+            right: 14px;
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
+            align-items: flex-end;
         }
 
-        .mesa-info h3 {
-            margin: 0;
-            font-size: 1.1em;
-            color: white;
-        }
-
-        .mesa-info span {
-            font-size: 0.8em;
-            color: #8892b0;
+        .mesa-body {
+            padding: 12px 14px 14px 14px;
         }
 
         .badge-estatus {
@@ -385,26 +374,26 @@
             gap: 7px;
             padding: 6px 12px;
             border-radius: 20px;
-            font-size: 0.8em;
+            font-size: 0.78em;
             font-weight: bold;
             letter-spacing: 0.5px;
         }
 
         .badge-estatus.abierta {
-            background: rgba(37, 211, 102, 0.12);
+            background: rgba(37, 211, 102, 0.15);
             color: #25D366;
             border: 1px solid #25D366;
         }
 
         .badge-estatus.cerrada {
-            background: rgba(255, 0, 60, 0.12);
+            background: rgba(255, 0, 60, 0.15);
             color: #ff003c;
             border: 1px solid #ff003c;
         }
 
         .foco-rojo-blink {
-            width: 10px;
-            height: 10px;
+            width: 9px;
+            height: 9px;
             background-color: #ff003c;
             border-radius: 50%;
             display: inline-block;
@@ -413,16 +402,8 @@
         }
 
         @keyframes parpadeoFoco {
-            0% {
-                opacity: 0.25;
-                transform: scale(0.85);
-                box-shadow: 0 0 2px #ff003c;
-            }
-            100% {
-                opacity: 1;
-                transform: scale(1.25);
-                box-shadow: 0 0 12px #ff003c, 0 0 20px #ff003c;
-            }
+            0% { opacity: 0.25; transform: scale(0.85); box-shadow: 0 0 2px #ff003c; }
+            100% { opacity: 1; transform: scale(1.25); box-shadow: 0 0 12px #ff003c; }
         }
 
         .mesa-stats {
@@ -442,7 +423,7 @@
 
         .stat-label {
             color: #8892b0;
-            font-size: 0.75em;
+            font-size: 0.72em;
             text-transform: uppercase;
         }
 
@@ -458,6 +439,83 @@
 
         .stat-val.cyan {
             color: var(--neon-cyan);
+        }
+
+        /* PANTALLA ESPECIAL DE 3 ACUMULADOS (TEXAS HOLD'EM) */
+        .texas-jackpot-screen {
+            background: linear-gradient(180deg, #090a10, #141624);
+            border: 2px solid #b38728;
+            border-radius: 10px;
+            padding: 12px;
+            margin-top: 10px;
+            text-align: center;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.8), 0 0 12px rgba(212, 175, 55, 0.25);
+        }
+
+        .texas-jackpot-title {
+            color: var(--neon-gold);
+            font-size: 0.8em;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .jackpot-tier {
+            background: #06070a;
+            border: 1px solid #332d18;
+            border-radius: 6px;
+            padding: 6px;
+            margin-bottom: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-left: 12px;
+            padding-right: 12px;
+        }
+
+        .jackpot-tier.tier-1 {
+            border-color: #ffd700;
+            background: linear-gradient(90deg, rgba(255, 215, 0, 0.08), rgba(0,0,0,0.6));
+        }
+
+        .jackpot-tier.tier-2 {
+            border-color: #00f0ff;
+        }
+
+        .jackpot-tier.tier-3 {
+            border-color: #8892b0;
+        }
+
+        .tier-label {
+            font-size: 0.78em;
+            font-weight: 800;
+            letter-spacing: 0.8px;
+        }
+
+        .tier-1 .tier-label { color: #ffd700; }
+        .tier-2 .tier-label { color: #00f0ff; }
+        .tier-3 .tier-label { color: #d9dadb; }
+
+        .tier-monto {
+            font-size: 1.15em;
+            font-weight: 900;
+            color: white;
+            letter-spacing: 0.5px;
+            font-family: monospace, sans-serif;
+        }
+
+        .tier-1 .tier-monto { color: #fff; text-shadow: 0 0 8px rgba(255,215,0,0.5); }
+
+        .texas-paytable-hint {
+            font-size: 0.68em;
+            color: #8892b0;
+            margin-top: 6px;
+            letter-spacing: 0.5px;
         }
 
         .mesa-promo-tag {
@@ -517,7 +575,7 @@
         <header>
             <img src="logo.jpg" alt="Casino BigBola" onerror="this.src='logo.png'">
             <h1>CASINO BIGBOLA</h1>
-            <p>Estado de Mesas & Jackpots en Vivo</p>
+            <p>Estado de Mesas & Jackpots en Sala</p>
         </header>
 
         <div id="banner-instalacion" class="banner-instalacion">
@@ -530,18 +588,15 @@
             </button>
         </div>
 
+        <!-- 3 ACCIONES LIMPIAS (SIN GRUPO VIP) -->
         <div class="quick-actions-bar">
-            <a href="https://chat.whatsapp.com/TU_GRUPO_AQUI" id="link-grupo-vip" target="_blank" class="btn-quick btn-quick-wa">
-                <span>💬</span>
-                <span>Grupo VIP</span>
-            </a>
             <a href="menu.html" class="btn-quick btn-quick-menu">
                 <span>🍸</span>
-                <span>Menú</span>
+                <span>Menú de Sala</span>
             </a>
             <button type="button" class="btn-quick btn-quick-share" onclick="compartirApp()">
                 <span>📤</span>
-                <span>Enviar</span>
+                <span>Compartir</span>
             </button>
             <button type="button" class="btn-quick btn-quick-qr" onclick="abrirModalQR()">
                 <span>📷</span>
@@ -553,10 +608,10 @@
         <div id="promos-container"></div>
 
         <h2 class="section-title">
-            <span>🎲</span> Mesas de Juego
+            <span>🎲</span> Mesas de Juego en Sala
         </h2>
         <div id="mesas-container">
-            <p style="text-align: center; color: #8892b0;">Cargando mesas en vivo...</p>
+            <p style="text-align: center; color: #8892b0;">Cargando mesas en sala...</p>
         </div>
 
     </div>
@@ -566,7 +621,7 @@
         <div class="modal-box" onclick="event.stopPropagation()">
             <div style="font-size: 1.8em; margin-bottom: 4px;">🎰</div>
             <h3>Escanea para Entrar</h3>
-            <p>Abre la cámara de tu celular y apunta al código para abrir la app de <strong>CASINO BIGBOLA</strong>.</p>
+            <p>Apunta con la cámara de tu celular para abrir la app de <strong>CASINO BIGBOLA</strong>.</p>
             
             <div class="qr-wrapper">
                 <div id="contenedor-qr"></div>
@@ -578,28 +633,20 @@
         </div>
     </div>
 
-    <!-- MODAL GUÍA PARA IPHONE -->
-    <div id="modal-ios-install" class="modal-overlay">
-        <div class="modal-box">
-            <div style="font-size: 2.2em; margin-bottom: 8px;">📲</div>
-            <h3>Instalar en tu iPhone</h3>
-            <p>
-                Para recibir notificaciones de mesas abiertas en tu iPhone, agrega la app a tu pantalla de inicio:
-            </p>
-            <div class="modal-pasos">
-                <div><strong>1.</strong> Toca el botón <strong>Compartir</strong> (el cuadro con la flecha hacia arriba <span style="color: var(--neon-cyan); font-size: 1.1em;">⎙</span> en la barra inferior de Safari).</div>
-                <div><strong>2.</strong> Desliza hacia abajo en el menú y selecciona <strong>"Agregar a pantalla de inicio" ➕</strong>.</div>
-                <div><strong>3.</strong> Pulsa <strong>"Agregar"</strong> arriba a la derecha.</div>
-                <div><strong>4.</strong> Abre la app desde tu pantalla para confirmar las alertas.</div>
-            </div>
-            <button class="btn-cerrar-modal" onclick="cerrarModalIos()">
-                Entendido
-            </button>
-        </div>
-    </div>
-
     <script>
         const NUMERO_WHATSAPP_CASINO = "522282311773";
+
+        // ASIGNADOR DE FOTOS CON FALLBACK AUTOMÁTICO A .PNG O .JPG
+        function resolverFotoJuego(juego) {
+            const j = (juego || '').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+            if (j.includes('black')) return 'blackjack.jpg';
+            if (j.includes('rulet')) return 'ruleta.jpg';
+            if (j.includes('texas') || j.includes('hold')) return 'texas.jpg';
+            if (j.includes('poker')) return 'poker.jpg';
+            if (j.includes('baca')) return 'bacara.jpg';
+            if (j.includes('crap')) return 'craps.jpg';
+            return 'logo.jpg';
+        }
 
         let qrGenerado = false;
         function abrirModalQR() {
@@ -629,7 +676,7 @@
 
         async function compartirApp() {
             const urlApp = window.location.origin || "https://casino-three-rho.vercel.app";
-            const textoCompartir = `🎰 *CASINO BIGBOLA* 🎲\n\n¡Entra a checar el estatus de las mesas en vivo, jackpots acumulados, promociones y menú de sala!\n\n👉 ${urlApp}`;
+            const textoCompartir = `🎰 *CASINO BIGBOLA* 🎲\n\n¡Consulta el estatus de las mesas abiertas en sala, jackpots acumulados y promociones!\n\n👉 ${urlApp}`;
 
             if (navigator.share) {
                 try {
@@ -642,47 +689,6 @@
 
             window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(textoCompartir)}`, '_blank');
         }
-
-        const esModoApp = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true || document.referrer.includes('android-app://');
-        const esIphone = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-        let promptInstalacionAndroid = null;
-
-        function verificarEstadoInstalacion() {
-            const banner = document.getElementById('banner-instalacion');
-            if (!banner) return;
-            if (esModoApp) { banner.style.display = 'none'; return; }
-            if (esIphone) {
-                banner.style.display = 'flex';
-                document.getElementById('texto-banner-titulo').innerText = '📲 Instala la App en tu iPhone';
-                document.getElementById('texto-banner-sub').innerText = 'Toca aquí para ver los pasos';
-            }
-        }
-
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            promptInstalacionAndroid = e;
-            if (!esModoApp) document.getElementById('banner-instalacion').style.display = 'flex';
-        });
-
-        window.addEventListener('appinstalled', () => {
-            promptInstalacionAndroid = null;
-            document.getElementById('banner-instalacion').style.display = 'none';
-        });
-
-        async function ejecutarInstalacionApp() {
-            if (window.OneSignal) try { await OneSignal.Notifications.requestPermission(); } catch(e) {}
-            if (esIphone) { document.getElementById('modal-ios-install').style.display = 'flex'; return; }
-            if (promptInstalacionAndroid) {
-                promptInstalacionAndroid.prompt();
-                const { outcome } = await promptInstalacionAndroid.userChoice;
-                if (outcome === 'accepted') document.getElementById('banner-instalacion').style.display = 'none';
-                promptInstalacionAndroid = null;
-            } else {
-                alert("Toca los 3 puntos (⋮) en tu navegador y selecciona 'Instalar aplicación'.");
-            }
-        }
-
-        function cerrarModalIos() { document.getElementById('modal-ios-install').style.display = 'none'; }
 
         const SUPABASE_URL = "https://kqgtyzsxwrkomdtuktkk.supabase.co";
         const SUPABASE_ANON_KEY = "sb_publishable_on1rkqvAIhSQonTODdk5fA_qTpEo_8H";
@@ -713,20 +719,91 @@
                     const esHot = promoTexto.includes('CALIENTE') || promoTexto.includes('FUERTE') || promoTexto.includes('ÚLTIMOS');
                     const urlWaMesa = `https://wa.me/${NUMERO_WHATSAPP_CASINO}?text=${encodeURIComponent(`Hola, voy en camino a Casino BigBola. ¿Me pueden apartar un lugar en la mesa "${m.nombre}" (${m.juego})? ¡Gracias!`)}`;
 
+                    const fotoJuego = resolverFotoJuego(m.juego);
+                    const esTexas = (m.juego || '').toLowerCase().includes('texas') || (m.jackpot_esc_real && m.jackpot_esc_real > 0);
+
+                    // Formateador con decimales
+                    const fmt = (num) => Number(num || 0).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
                     return `
                         <div class="mesa-card ${estaAbierta ? 'abierta' : 'cerrada'} ${esHot && estaAbierta ? 'mesa-hot-glow' : ''}">
-                            <div class="mesa-header">
-                                <div class="mesa-info"><h3>${m.nombre}</h3><span>${m.juego}</span></div>
-                                <div>${estaAbierta ? `<div class="badge-estatus abierta"><span class="foco-rojo-blink"></span> MESA ABIERTA</div>` : `<div class="badge-estatus cerrada">MESA CERRADA</div>`}</div>
+                            
+                            <!-- FOTO DE ENCABEZADO DE LA MESA -->
+                            <div class="mesa-banner-box">
+                                <img src="${fotoJuego}" 
+                                     alt="${m.juego}" 
+                                     class="mesa-banner-img"
+                                     onerror="if(!this.src.endsWith('.png')){this.src=this.src.replace('.jpg','.png');}else{this.style.display='none';}">
+                                <div class="mesa-banner-overlay"></div>
+                                <div class="mesa-banner-title">
+                                    <div>
+                                        <h3 style="margin:0; font-size: 1.15em; color: white; text-shadow: 0 2px 6px #000;">${m.nombre}</h3>
+                                        <span style="font-size: 0.82em; color: var(--neon-cyan); font-weight: bold;">${m.juego}</span>
+                                    </div>
+                                    <div>
+                                        ${estaAbierta 
+                                            ? `<div class="badge-estatus abierta"><span class="foco-rojo-blink"></span> ABIERTA</div>` 
+                                            : `<div class="badge-estatus cerrada">CERRADA</div>`}
+                                    </div>
+                                </div>
                             </div>
-                            <div class="mesa-stats">
-                                <div class="stat-item"><span class="stat-label">Apuesta Mínima</span><span class="stat-val cyan">$${m.apuesta_minima || 0}</span></div>
-                                <div class="stat-item"><span class="stat-label">Jugadores</span><span class="stat-val">${m.jugadores_actuales || 0} / ${m.capacidad_maxima} (${lugares > 0 ? lugares + ' libres' : 'Llena'})</span></div>
-                                <div class="stat-item" style="margin-top: 6px;"><span class="stat-label">Crupier</span><span class="stat-val">${m.crupier || 'En rotación'}</span></div>
-                                <div class="stat-item" style="margin-top: 6px;"><span class="stat-label">Jackpot Acumulado</span><span class="stat-val gold">$${m.jackpot || 0}</span></div>
+
+                            <div class="mesa-body">
+                                <div class="mesa-stats">
+                                    <div class="stat-item">
+                                        <span class="stat-label">Apuesta Mínima</span>
+                                        <span class="stat-val cyan">$${m.apuesta_minima || 0}</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-label">Lugares</span>
+                                        <span class="stat-val">${m.jugadores_actuales || 0} / ${m.capacidad_maxima} (${lugares > 0 ? lugares + ' libres' : 'Llena'})</span>
+                                    </div>
+                                    <div class="stat-item" style="margin-top: 6px;">
+                                        <span class="stat-label">Crupier</span>
+                                        <span class="stat-val">${m.crupier || 'En rotación'}</span>
+                                    </div>
+                                    <div class="stat-item" style="margin-top: 6px;">
+                                        <span class="stat-label">Acumulado Regular</span>
+                                        <span class="stat-val gold">$${Number(m.jackpot || 0).toLocaleString('es-MX')}</span>
+                                    </div>
+                                </div>
+
+                                <!-- CAJA DE 3 ACUMULADOS PARA TEXAS HOLD'EM -->
+                                ${esTexas ? `
+                                    <div class="texas-jackpot-screen">
+                                        <div class="texas-jackpot-title">
+                                            <span>★</span> ACUMULADOS PROGRESIVOS TEXAS <span>★</span>
+                                        </div>
+                                        <div class="jackpot-tier tier-1">
+                                            <span class="tier-label">ESC REAL</span>
+                                            <span class="tier-monto">$${fmt(m.jackpot_esc_real)}</span>
+                                        </div>
+                                        <div class="jackpot-tier tier-2">
+                                            <span class="tier-label">ESC COL</span>
+                                            <span class="tier-monto">$${fmt(m.jackpot_esc_col)}</span>
+                                        </div>
+                                        <div class="jackpot-tier tier-3">
+                                            <span class="tier-label">POKER</span>
+                                            <span class="tier-monto">$${fmt(m.jackpot_poker)}</span>
+                                        </div>
+                                        <div class="texas-paytable-hint">
+                                            FULL HOUSE 100 A 1 • COLOR 50 A 1 • CORRIDA 5 A 1
+                                        </div>
+                                    </div>
+                                ` : ''}
+
+                                ${m.promo_especial ? `
+                                    <div class="mesa-promo-tag ${esHot ? 'hot-alert' : ''}">
+                                        ${esHot ? '🔥' : '✨'} <strong>Estado:</strong> ${m.promo_especial}
+                                    </div>
+                                ` : ''}
+
+                                ${estaAbierta ? `
+                                    <a href="${urlWaMesa}" target="_blank" class="btn-mesa-whatsapp">
+                                        <span>📲</span> Voy en camino (Apartar lugar)
+                                    </a>
+                                ` : ''}
                             </div>
-                            ${m.promo_especial ? `<div class="mesa-promo-tag ${esHot ? 'hot-alert' : ''}">${esHot ? '🔥' : '✨'} <strong>Estado:</strong> ${m.promo_especial}</div>` : ''}
-                            ${estaAbierta ? `<a href="${urlWaMesa}" target="_blank" class="btn-mesa-whatsapp"><span>📲</span> Voy en camino (Apartar lugar)</a>` : ''}
                         </div>
                     `;
                 }).join('');
@@ -735,9 +812,13 @@
             }
         }
 
-        client.channel('cambios-casino-publico').on('postgres_changes', { event: '*', schema: 'public', table: 'mesas' }, () => cargarMesas()).on('postgres_changes', { event: '*', schema: 'public', table: 'promociones' }, () => cargarPromociones()).subscribe();
+        client.channel('cambios-casino-publico')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'mesas' }, () => cargarMesas())
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'promociones' }, () => cargarPromociones())
+            .subscribe();
+
         setInterval(() => { cargarMesas(); cargarPromociones(); }, 3000);
-        window.addEventListener('DOMContentLoaded', () => { verificarEstadoInstalacion(); cargarPromociones(); cargarMesas(); });
+        window.addEventListener('DOMContentLoaded', () => { cargarPromociones(); cargarMesas(); });
     </script>
 </body>
 </html>
