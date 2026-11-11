@@ -20,6 +20,7 @@
             --neon-gold: #d4af37;
             --neon-purple: #b026ff;
             --neon-green: #25D366;
+            --neon-orange: #ff6600;
             --silver-metal: #d9dadb;
             --border-color: #2a2d3d;
         }
@@ -198,14 +199,14 @@
             gap: 10px;
         }
 
-        /* BUSCADOR EN TIEMPO REAL */
+        /* BUSCADOR CON PERSIANA (DROPDOWN) */
         .search-box-vip {
             position: relative;
             margin-bottom: 14px;
         }
 
         .search-box-vip input {
-            padding-left: 40px;
+            padding-left: 42px;
             border-color: #443c22;
             background: #0e1017;
             color: var(--neon-gold);
@@ -219,14 +220,72 @@
 
         .search-icon-fixed {
             position: absolute;
-            left: 12px;
+            left: 14px;
             top: 50%;
             transform: translateY(-50%);
             font-size: 1.1em;
             pointer-events: none;
+            z-index: 2;
         }
 
-        /* TARJETAS VIP ADAPTADAS A CELULAR (AMPLIAS) */
+        /* PERSIANA DESPLEGABLE */
+        .vip-dropdown-persiana {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: #151722;
+            border: 1px solid var(--neon-gold);
+            border-radius: 0 0 12px 12px;
+            max-height: 250px;
+            overflow-y: auto;
+            z-index: 100;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.8);
+        }
+
+        .vip-dropdown-item {
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+
+        .vip-dropdown-item:last-child {
+            border-bottom: none;
+        }
+
+        .vip-dropdown-item:active, .vip-dropdown-item:hover {
+            background: rgba(212, 175, 55, 0.18);
+        }
+
+        /* BOTÓN TOGGLE MOSTRAR/OCULTAR LISTA */
+        .btn-toggle-lista {
+            background: rgba(212, 175, 55, 0.1);
+            color: var(--neon-gold);
+            border: 1px dashed var(--neon-gold);
+            padding: 10px 16px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: 0.2s;
+            margin: 12px 0;
+        }
+
+        .btn-toggle-lista:active {
+            background: rgba(212, 175, 55, 0.25);
+            transform: scale(0.98);
+        }
+
+        /* TARJETAS VIP (AMPLIAS PARA CELULAR) */
         .vip-item {
             background: #0e1017;
             border: 1px solid #332d18;
@@ -235,6 +294,13 @@
             padding: 14px;
             margin-bottom: 14px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+        }
+
+        .vip-item.destacado {
+            border: 1px solid var(--neon-gold);
+            border-left: 6px solid var(--neon-gold);
+            background: #12141d;
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.25);
         }
 
         .vip-header {
@@ -472,17 +538,31 @@
                 <h2>Gestión de Bonus Back (VIP)</h2>
             </div>
             <p style="color: #8892b0; font-size: 0.85em; margin-top: 0;">
-                Busca al cliente por nombre, actualiza sus puntos y envíale su saldo a WhatsApp en 1 toque.
+                Escribe una letra o nombre para desplegar la persiana y elegir al cliente.
             </p>
 
-            <!-- BUSCADOR EN TIEMPO REAL -->
+            <!-- BUSCADOR CON PERSIANA (DROPDOWN) -->
             <div class="search-box-vip">
                 <span class="search-icon-fixed">🔍</span>
-                <input type="text" id="input-buscar-vip" oninput="filtrarJugadoresVIP()" placeholder="Buscar cliente por nombre o teléfono...">
+                <input type="text" id="input-buscar-vip" oninput="manejarBusquedaPersiana()" placeholder="Teclea una letra o nombre (ej. J, Enrique)..." autocomplete="off">
+                <div id="vip-dropdown-persiana" class="vip-dropdown-persiana" style="display: none;"></div>
+            </div>
+
+            <!-- TARJETA DEL CLIENTE SELECCIONADO DESDE LA PERSIANA -->
+            <div id="vip-seleccionado-card" style="display: none; margin-bottom: 14px;"></div>
+
+            <!-- BOTÓN PARA MOSTRAR/OCULTAR LA LISTA COMPLETA -->
+            <button type="button" class="btn-toggle-lista" id="btn-toggle-vip" onclick="toggleListaCompletaVIP()">
+                👁️ Mostrar todos los clientes (<span id="vip-contador-toggle">0</span>)
+            </button>
+
+            <!-- CONTENEDOR DE LA LISTA COMPLETA (OCULTO POR DEFECTO) -->
+            <div id="contenedor-vip-admin" style="display: none;">
+                <p style="text-align: center; color: #8892b0;">Cargando jugadores VIP...</p>
             </div>
 
             <!-- FORMULARIO REGISTRAR JUGADOR VIP -->
-            <div class="sub-box-form gold-dashed">
+            <div class="sub-box-form gold-dashed" style="margin-top: 18px; margin-bottom: 0;">
                 <h3 style="color: var(--neon-gold); margin: 0 0 10px 0; font-size: 1em; display: flex; align-items: center; gap: 6px;">
                     <span>➕</span> Registrar Nuevo Jugador VIP
                 </h3>
@@ -504,15 +584,6 @@
                 <button class="btn-action btn-add-table" onclick="crearJugadorVIP()">
                     ➕ Registrar en Cartera VIP
                 </button>
-            </div>
-
-            <!-- LISTA DE JUGADORES FILTRADOS -->
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                <h3 style="color: var(--neon-gold); font-size: 0.95em; margin: 0;">Cartera de Clientes</h3>
-                <span id="vip-contador" style="font-size: 0.8em; color: #8892b0;">0 registrados</span>
-            </div>
-            <div id="contenedor-vip-admin">
-                <p style="text-align: center; color: #8892b0;">Cargando jugadores VIP...</p>
             </div>
         </section>
 
@@ -648,8 +719,161 @@
         const SUPABASE_ANON_KEY = "sb_publishable_on1rkqvAIhSQonTODdk5fA_qTpEo_8H";
         const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // ================= JUGADORES VIP CON FILTRO EN VIVO =================
+        // ================= JUGADORES VIP CON PERSIANA Y SELECCIÓN =================
         let listaVipMemoria = [];
+        let listaCompletaVisible = false;
+
+        function manejarBusquedaPersiana() {
+            const termino = (document.getElementById('input-buscar-vip').value || '').toLowerCase().trim();
+            const persiana = document.getElementById('vip-dropdown-persiana');
+
+            if (!termino) {
+                persiana.style.display = 'none';
+                persiana.innerHTML = '';
+                return;
+            }
+
+            const coincidencias = listaVipMemoria.filter(v => 
+                v.nombre.toLowerCase().includes(termino) || v.telefono.includes(termino)
+            );
+
+            if (coincidencias.length > 0) {
+                persiana.innerHTML = coincidencias.map(v => `
+                    <div class="vip-dropdown-item" onclick="seleccionarClienteVIP('${v.id}')">
+                        <div>
+                            <strong style="color: white; display: block; font-size: 0.95em;">⭐ ${v.nombre}</strong>
+                            <small style="color: #8892b0;">📱 +${v.telefono}</small>
+                        </div>
+                        <span style="color: var(--neon-gold); font-weight: bold; font-size: 0.9em;">
+                            $${Number(v.bonus_back || 0).toLocaleString('es-MX')}
+                        </span>
+                    </div>
+                `).join('');
+                persiana.style.display = 'block';
+            } else {
+                persiana.innerHTML = `
+                    <div style="padding: 12px; color: #8892b0; font-size: 0.85em; text-align: center;">
+                        Sin coincidencias con "${termino}"
+                    </div>
+                `;
+                persiana.style.display = 'block';
+            }
+        }
+
+        function seleccionarClienteVIP(id) {
+            const cliente = listaVipMemoria.find(v => v.id == id);
+            if (!cliente) return;
+
+            // Cierra la persiana
+            document.getElementById('vip-dropdown-persiana').style.display = 'none';
+            document.getElementById('input-buscar-vip').value = cliente.nombre;
+
+            // Renderiza únicamente la tarjeta del cliente seleccionado
+            const contSeleccionado = document.getElementById('vip-seleccionado-card');
+            contSeleccionado.innerHTML = renderTarjetaVIPHTML(cliente, true);
+            contSeleccionado.style.display = 'block';
+        }
+
+        function toggleListaCompletaVIP() {
+            const cont = document.getElementById('contenedor-vip-admin');
+            const btn = document.getElementById('btn-toggle-vip');
+            const total = listaVipMemoria.length;
+
+            listaCompletaVisible = !listaCompletaVisible;
+
+            if (listaCompletaVisible) {
+                cont.style.display = 'block';
+                btn.innerHTML = `🙈 Ocultar lista (${total})`;
+                renderizarListaCompletaVIP(listaVipMemoria);
+            } else {
+                cont.style.display = 'none';
+                btn.innerHTML = `👁️ Mostrar todos los clientes (${total})`;
+            }
+        }
+
+        function renderTarjetaVIPHTML(v, esDestacado = false) {
+            const mensaje = `Hola *${v.nombre}*, te escribe la gerencia de *CASINO BIGBOLA* 🎰.\n\n` +
+                            `Te informamos que tienes acumulados *$${Number(v.bonus_back || 0).toLocaleString('es-MX')} MXN* en *Bonus Back* listos para jugar en mesas este fin de semana.\n\n` +
+                            `¿Te apartamos un lugar en tu mesa favorita? ¡Te esperamos!`;
+            
+            const urlWa = `https://wa.me/${v.telefono}?text=${encodeURIComponent(mensaje)}`;
+
+            return `
+            <div class="vip-item ${esDestacado ? 'destacado' : ''}">
+                <div class="vip-header">
+                    <div>
+                        <span class="vip-name">⭐ ${v.nombre}</span>
+                        <span class="vip-phone">📱 +${v.telefono}</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 6px;">
+                        <span id="vip-badge-${v.id}" style="color: var(--neon-green); font-size: 0.78em; display: none; font-weight: bold;">✓ Guardado</span>
+                        <button onclick="eliminarJugadorVIP('${v.id}', '${v.nombre}')" style="background: none; border: none; color: #8892b0; font-size: 1.1em; cursor: pointer; padding: 2px;" title="Eliminar cliente">🗑️</button>
+                    </div>
+                </div>
+
+                <label style="margin-top: 0; margin-bottom: 4px; font-size: 0.75em; color: var(--neon-gold);">Bonus Back Acumulado ($ MXN):</label>
+                <div class="vip-input-row">
+                    <input type="number" id="bonus-val-${v.id}" value="${v.bonus_back || 0}" min="0" onchange="guardarBonusBack('${v.id}')">
+                    <button class="btn-guardar-bonus" onclick="guardarBonusBack('${v.id}')">
+                        💾 Guardar
+                    </button>
+                </div>
+
+                <a href="${urlWa}" id="btn-wa-${v.id}" data-nombre="${v.nombre}" data-tel="${v.telefono}" target="_blank" class="btn-wa-direct">
+                    <span>📲</span> Enviar Saldo por WhatsApp
+                </a>
+            </div>
+            `;
+        }
+
+        function renderizarListaCompletaVIP(vips) {
+            const cont = document.getElementById('contenedor-vip-admin');
+            if (vips && vips.length > 0) {
+                cont.innerHTML = vips.map(v => renderTarjetaVIPHTML(v, false)).join('');
+            } else {
+                cont.innerHTML = '<p style="text-align: center; color: #8892b0; font-size: 0.9em; padding: 10px 0;">No hay jugadores registrados.</p>';
+            }
+        }
+
+        async function guardarBonusBack(id) {
+            const inputBonus = document.getElementById(`bonus-val-${id}`);
+            const bonus = parseInt(inputBonus.value) || 0;
+
+            const { error } = await client.from('clientes_vip').update({
+                bonus_back: bonus,
+                fecha_actualizacion: new Date().toISOString()
+            }).eq('id', id);
+
+            if (error) {
+                alert("Error al guardar: " + error.message);
+            } else {
+                const badge = document.getElementById(`vip-badge-${id}`);
+                if (badge) {
+                    badge.innerText = "✓ Guardado";
+                    badge.style.display = "inline";
+                    setTimeout(() => badge.style.display = "none", 1800);
+                }
+                
+                const item = listaVipMemoria.find(x => x.id == id);
+                if (item) item.bonus_back = bonus;
+                actualizarLinkWhatsApp(id);
+            }
+        }
+
+        function actualizarLinkWhatsApp(id) {
+            const btnWa = document.getElementById(`btn-wa-${id}`);
+            if (!btnWa) return;
+
+            const nombre = btnWa.getAttribute('data-nombre');
+            const tel = btnWa.getAttribute('data-tel');
+            const bonus = document.getElementById(`bonus-val-${id}`).value || 0;
+
+            const mensaje = `Hola *${nombre}*, te escribe la gerencia de *CASINO BIGBOLA* 🎰.\n\n` +
+                            `Te informamos que tienes acumulados *$${Number(bonus).toLocaleString('es-MX')} MXN* en *Bonus Back* listos para jugar en mesas este fin de semana.\n\n` +
+                            `¿Te apartamos un lugar en tu mesa favorita? ¡Te esperamos!`;
+
+            btnWa.href = `https://wa.me/${tel}?text=${encodeURIComponent(mensaje)}`;
+        }
 
         async function crearJugadorVIP() {
             const nombre = document.getElementById('vip-nuevo-nombre').value.trim();
@@ -674,6 +898,7 @@
             if (error) {
                 alert("Error al registrar: " + error.message);
             } else {
+                alert("¡Jugador registrado correctamente!");
                 document.getElementById('vip-nuevo-nombre').value = '';
                 document.getElementById('vip-nuevo-telefono').value = '';
                 document.getElementById('vip-nuevo-bonus').value = '0';
@@ -681,121 +906,40 @@
             }
         }
 
-        async function guardarBonusBack(id) {
-            const inputBonus = document.getElementById(`bonus-val-${id}`);
-            const bonus = parseInt(inputBonus.value) || 0;
-
-            const { error } = await client.from('clientes_vip').update({
-                bonus_back: bonus,
-                fecha_actualizacion: new Date().toISOString()
-            }).eq('id', id);
-
-            if (error) {
-                alert("Error al guardar: " + error.message);
-            } else {
-                const badge = document.getElementById(`vip-badge-${id}`);
-                if (badge) {
-                    badge.innerText = "✓ Guardado";
-                    badge.style.display = "inline";
-                    setTimeout(() => badge.style.display = "none", 1800);
-                }
-                
-                // Actualiza en memoria local y el link de WhatsApp
-                const item = listaVipMemoria.find(x => x.id == id);
-                if (item) item.bonus_back = bonus;
-                actualizarLinkWhatsApp(id);
-            }
-        }
-
-        function actualizarLinkWhatsApp(id) {
-            const btnWa = document.getElementById(`btn-wa-${id}`);
-            if (!btnWa) return;
-
-            const nombre = btnWa.getAttribute('data-nombre');
-            const tel = btnWa.getAttribute('data-tel');
-            const bonus = document.getElementById(`bonus-val-${id}`).value || 0;
-
-            const mensaje = `Hola *${nombre}*, te escribe la gerencia de *CASINO BIGBOLA* 🎰.\n\n` +
-                            `Te informamos que tienes acumulados *$${Number(bonus).toLocaleString('es-MX')} MXN* en *Bonus Back* listos para jugar en mesas este fin de semana.\n\n` +
-                            `¿Te apartamos un lugar en tu mesa favorita? ¡Te esperamos!`;
-
-            btnWa.href = `https://wa.me/${tel}?text=${encodeURIComponent(mensaje)}`;
-        }
-
         async function eliminarJugadorVIP(id, nombre) {
             if (confirm(`¿Eliminar a ${nombre} de la lista VIP?`)) {
                 const { error } = await client.from('clientes_vip').delete().eq('id', id);
                 if (error) alert("Error: " + error.message);
-                else cargarJugadoresVIP();
-            }
-        }
-
-        function filtrarJugadoresVIP() {
-            const termino = (document.getElementById('input-buscar-vip').value || '').toLowerCase().trim();
-            const filtrados = listaVipMemoria.filter(v => 
-                v.nombre.toLowerCase().includes(termino) || v.telefono.includes(termino)
-            );
-            renderizarListaVIP(filtrados);
-        }
-
-        function renderizarListaVIP(vips) {
-            const cont = document.getElementById('contenedor-vip-admin');
-            const contador = document.getElementById('vip-contador');
-
-            contador.innerText = `${vips.length} mostrado${vips.length === 1 ? '' : 's'}`;
-
-            if (vips && vips.length > 0) {
-                cont.innerHTML = vips.map(v => {
-                    const mensaje = `Hola *${v.nombre}*, te escribe la gerencia de *CASINO BIGBOLA* 🎰.\n\n` +
-                                    `Te informamos que tienes acumulados *$${Number(v.bonus_back || 0).toLocaleString('es-MX')} MXN* en *Bonus Back* listos para jugar en mesas este fin de semana.\n\n` +
-                                    `¿Te apartamos un lugar en tu mesa favorita? ¡Te esperamos!`;
-                    
-                    const urlWa = `https://wa.me/${v.telefono}?text=${encodeURIComponent(mensaje)}`;
-
-                    return `
-                    <div class="vip-item">
-                        <div class="vip-header">
-                            <div>
-                                <span class="vip-name">⭐ ${v.nombre}</span>
-                                <span class="vip-phone">📱 +${v.telefono}</span>
-                            </div>
-                            <div style="display: flex; align-items: center; gap: 6px;">
-                                <span id="vip-badge-${v.id}" style="color: var(--neon-green); font-size: 0.78em; display: none; font-weight: bold;">✓ Guardado</span>
-                                <button onclick="eliminarJugadorVIP('${v.id}', '${v.nombre}')" style="background: none; border: none; color: #8892b0; font-size: 1.1em; cursor: pointer; padding: 2px;">🗑️</button>
-                            </div>
-                        </div>
-
-                        <!-- INPUT ESPACIOSO PARA BONUS BACK -->
-                        <label style="margin-top: 0; margin-bottom: 4px; font-size: 0.75em; color: var(--neon-gold);">Bonus Back Acumulado ($ MXN):</label>
-                        <div class="vip-input-row">
-                            <input type="number" id="bonus-val-${v.id}" value="${v.bonus_back || 0}" min="0" onchange="guardarBonusBack('${v.id}')">
-                            <button class="btn-guardar-bonus" onclick="guardarBonusBack('${v.id}')">
-                                💾 Guardar
-                            </button>
-                        </div>
-
-                        <!-- BOTÓN DISPARADOR DE WHATSAPP -->
-                        <a href="${urlWa}" id="btn-wa-${v.id}" data-nombre="${v.nombre}" data-tel="${v.telefono}" target="_blank" class="btn-wa-direct">
-                            <span>📲</span> Enviar Saldo por WhatsApp
-                        </a>
-                    </div>
-                    `;
-                }).join('');
-            } else {
-                cont.innerHTML = '<p style="text-align: center; color: #8892b0; font-size: 0.9em; padding: 10px 0;">No se encontraron clientes con ese nombre.</p>';
+                else {
+                    document.getElementById('vip-seleccionado-card').style.display = 'none';
+                    cargarJugadoresVIP();
+                }
             }
         }
 
         async function cargarJugadoresVIP() {
             const { data: vips, error } = await client.from('clientes_vip').select('*').order('nombre', { ascending: true });
             if (error) {
-                document.getElementById('contenedor-vip-admin').innerHTML = `<p style="color: var(--neon-red); text-align: center;">Error: ${error.message}</p>`;
+                console.error("Error al cargar VIP:", error);
                 return;
             }
 
             listaVipMemoria = vips || [];
-            filtrarJugadoresVIP();
+            document.getElementById('vip-contador-toggle').innerText = listaVipMemoria.length;
+
+            if (listaCompletaVisible) {
+                renderizarListaCompletaVIP(listaVipMemoria);
+            }
         }
+
+        // Cierra la persiana al hacer clic fuera del buscador
+        document.addEventListener('click', (e) => {
+            const searchBox = document.querySelector('.search-box-vip');
+            if (searchBox && !searchBox.contains(e.target)) {
+                const persiana = document.getElementById('vip-dropdown-persiana');
+                if (persiana) persiana.style.display = 'none';
+            }
+        });
 
         // ================= MÓDULO PUSH =================
         async function enviarPush() {
