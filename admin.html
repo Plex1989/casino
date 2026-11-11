@@ -300,6 +300,44 @@
             text-decoration: underline;
         }
 
+        /* TARJETA Y EDITOR DE PROMOCIONES APP */
+        .promo-app-card {
+            background: #0b0c10;
+            padding: 12px;
+            border-radius: 10px;
+            margin-top: 10px;
+            border: 1px solid var(--border-color);
+        }
+
+        .promo-app-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .promo-app-actions {
+            display: flex;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        .btn-promo-mini {
+            background: none;
+            padding: 6px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+
+        .promo-app-edit-box {
+            display: none;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px dashed var(--neon-cyan);
+        }
+
         .search-box-vip { position: relative; margin-bottom: 14px; }
         .search-box-vip input { padding-left: 42px; border-color: #443c22; background: #0e1017; color: var(--neon-gold); font-weight: bold; }
         .search-icon-fixed { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 1.1em; pointer-events: none; }
@@ -579,7 +617,7 @@
                 </button>
             </section>
 
-            <!-- 3. PROMOS APP -->
+            <!-- 3. PROMOS APP (CON EDICIÓN DIRECTA) -->
             <section class="admin-card">
                 <div class="card-header">
                     <span style="font-size: 1.4em;">🏷️</span>
@@ -595,7 +633,7 @@
                 <input type="text" id="promo-titulo" placeholder="Ej. 2x1 en Bebidas">
 
                 <label>Descripción</label>
-                <textarea id="promo-descripcion" rows="2"></textarea>
+                <textarea id="promo-descripcion" rows="2" placeholder="Ej. Válido este viernes y sábado en sala."></textarea>
 
                 <button class="btn-action btn-save" onclick="crearPromocion()">
                     ➕ Publicar en App
@@ -738,6 +776,15 @@
         const SUPABASE_URL = "https://kqgtyzsxwrkomdtuktkk.supabase.co";
         const SUPABASE_ANON_KEY = "sb_publishable_on1rkqvAIhSQonTODdk5fA_qTpEo_8H";
         const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        function escaparHTML(texto) {
+            return String(texto || '')
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
 
         function cambiarTipoJuegoNuevo() {
             const juego = (document.getElementById('nueva-mesa-juego').value || '').toLowerCase();
@@ -997,7 +1044,7 @@
                     </div>
                     <div style="display: flex; align-items: center; gap: 6px;">
                         <span id="vip-badge-${v.id}" style="color: var(--neon-green); font-size: 0.78em; display: none; font-weight: bold;">✓ Guardado</span>
-                        <button onclick="eliminarJugadorVIP('${v.id}', '${v.nombre}')" style="background: none; border: none; color: #8892b0; font-size: 1.1em; cursor: pointer;" title="Eliminar">🗑️</button>
+                        <button onclick="eliminarJugadorVIP('${v.id}', '${escaparHTML(v.nombre)}')" style="background: none; border: none; color: #8892b0; font-size: 1.1em; cursor: pointer;" title="Eliminar">🗑️</button>
                     </div>
                 </div>
 
@@ -1088,7 +1135,7 @@
             .on('postgres_changes', { event: '*', schema: 'public', table: 'clientes_vip' }, () => cargarJugadoresVIP())
             .subscribe();
 
-        // ================= PUSH & PROMOS APP =================
+        // ================= PUSH =================
         async function enviarPush() {
             const titulo = document.getElementById('push-titulo').value.trim();
             const mensaje = document.getElementById('push-mensaje').value.trim();
@@ -1116,15 +1163,50 @@
             }
         }
 
+        // ================= PROMOS APP (CREAR, EDITAR, PAUSAR, ELIMINAR) =================
         async function crearPromocion() {
             const tipo = document.getElementById('promo-tipo').value;
             const titulo = document.getElementById('promo-titulo').value.trim();
             const descripcion = document.getElementById('promo-descripcion').value.trim();
 
+            if (!titulo || !descripcion) {
+                alert("Completa el título y la descripción de la promoción.");
+                return;
+            }
+
             await client.from('promociones').insert([{ tipo, titulo, descripcion, activa: true }]);
             document.getElementById('promo-titulo').value = '';
             document.getElementById('promo-descripcion').value = '';
             cargarPromociones();
+        }
+
+        function toggleEditarPromoApp(id) {
+            const box = document.getElementById(`edit-promo-box-${id}`);
+            if (box) {
+                box.style.display = box.style.display === 'block' ? 'none' : 'block';
+            }
+        }
+
+        async function guardarEdicionPromoApp(id) {
+            const tipo = document.getElementById(`edit-promo-tipo-${id}`).value;
+            const titulo = document.getElementById(`edit-promo-titulo-${id}`).value.trim();
+            const descripcion = document.getElementById(`edit-promo-desc-${id}`).value.trim();
+
+            if (!titulo || !descripcion) {
+                alert("Completa el título y la descripción para guardar.");
+                return;
+            }
+
+            const { error } = await client
+                .from('promociones')
+                .update({ tipo, titulo, descripcion })
+                .eq('id', id);
+
+            if (error) {
+                alert("Error al actualizar promoción: " + error.message);
+            } else {
+                cargarPromociones();
+            }
         }
 
         async function togglePromo(id, estadoActual) {
@@ -1144,15 +1226,42 @@
             const contenedor = document.getElementById('lista-promos');
             if (promos && promos.length > 0) {
                 contenedor.innerHTML = promos.map(p => `
-                    <div style="background: #0b0c10; padding: 12px; border-radius: 8px; margin-top: 10px; border: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
-                        <div>
-                            <strong style="color: ${p.tipo === 'Flash' ? 'var(--neon-red)' : 'var(--neon-purple)'}; font-size: 0.85em;">[${p.tipo}]</strong>
-                            <strong style="color: white; display: block; font-size: 0.95em;">${p.titulo}</strong>
-                            <span style="color: #8892b0; font-size: 0.8em;">${p.descripcion}</span>
+                    <div class="promo-app-card">
+                        <div class="promo-app-top">
+                            <div>
+                                <strong style="color: ${p.tipo === 'Flash' ? 'var(--neon-red)' : 'var(--neon-purple)'}; font-size: 0.85em;">[${escaparHTML(p.tipo)}]</strong>
+                                <strong style="color: white; display: block; font-size: 0.95em;">${escaparHTML(p.titulo)}</strong>
+                                <span style="color: #8892b0; font-size: 0.82em; display: block; margin-top: 2px;">${escaparHTML(p.descripcion)}</span>
+                            </div>
+                            <div class="promo-app-actions">
+                                <button type="button" onclick="togglePromo('${p.id}', ${p.activa})" class="btn-promo-mini" style="border: 1px solid ${p.activa ? 'var(--neon-green)' : '#555'}; color: ${p.activa ? 'var(--neon-green)' : '#888'};">${p.activa ? 'Activa' : 'Pausa'}</button>
+                                <button type="button" onclick="toggleEditarPromoApp('${p.id}')" class="btn-promo-mini" style="border: 1px solid var(--neon-cyan); color: var(--neon-cyan);" title="Editar promoción">✏️</button>
+                                <button type="button" onclick="eliminarPromo('${p.id}')" class="btn-promo-mini" style="border: 1px solid var(--neon-red); color: var(--neon-red);" title="Eliminar">🗑️</button>
+                            </div>
                         </div>
-                        <div style="display: flex; gap: 6px;">
-                            <button onclick="togglePromo('${p.id}', ${p.activa})" style="background: none; border: 1px solid ${p.activa ? 'var(--neon-green)' : '#555'}; color: ${p.activa ? 'var(--neon-green)' : '#888'}; padding: 6px 10px; border-radius: 6px; cursor: pointer;">${p.activa ? 'Activa' : 'Pausa'}</button>
-                            <button onclick="eliminarPromo('${p.id}')" style="background: none; border: 1px solid var(--neon-red); color: var(--neon-red); padding: 6px 10px; border-radius: 6px; cursor: pointer;">🗑️</button>
+
+                        <!-- FORMULARIO PLEGABLE DE EDICIÓN DE PROMOCIÓN -->
+                        <div id="edit-promo-box-${p.id}" class="promo-app-edit-box">
+                            <label style="margin-top: 0;">Tipo de Promoción</label>
+                            <select id="edit-promo-tipo-${p.id}">
+                                <option value="General" ${p.tipo === 'General' ? 'selected' : ''}>📢 General (Tarjeta fija)</option>
+                                <option value="Flash" ${p.tipo === 'Flash' ? 'selected' : ''}>⚡ Oferta Flash (Marquesina roja)</option>
+                            </select>
+
+                            <label>Título</label>
+                            <input type="text" id="edit-promo-titulo-${p.id}" value="${escaparHTML(p.titulo)}">
+
+                            <label>Descripción / Fechas</label>
+                            <textarea id="edit-promo-desc-${p.id}" rows="3">${escaparHTML(p.descripcion)}</textarea>
+
+                            <div class="admin-grid-2" style="margin-top: 10px;">
+                                <button type="button" class="btn-action btn-save" onclick="guardarEdicionPromoApp('${p.id}')" style="margin-top: 0; padding: 10px; font-size: 0.88em;">
+                                    💾 Guardar Cambios
+                                </button>
+                                <button type="button" class="btn-action" onclick="toggleEditarPromoApp('${p.id}')" style="margin-top: 0; padding: 10px; font-size: 0.88em; background: #1c1f2e; color: #c5c6c7; border: 1px solid #444;">
+                                    Cancelar
+                                </button>
+                            </div>
                         </div>
                     </div>
                 `).join('');
@@ -1195,7 +1304,6 @@
             const contTodas = document.getElementById('contenedor-mesas-admin');
             const btnTodas = document.getElementById('btn-toggle-todas-mesas');
 
-            // Si la lista completa estaba abierta, la cerramos para evitar duplicar controles en pantalla
             if (todasMesasVisibles) {
                 todasMesasVisibles = false;
                 contTodas.style.display = 'none';
@@ -1225,7 +1333,6 @@
             todasMesasVisibles = !todasMesasVisibles;
 
             if (todasMesasVisibles) {
-                // Ocultar vista individual para evitar IDs duplicados
                 idMesaSeleccionada = "";
                 if (selector) selector.value = "";
                 contSeleccionada.style.display = 'none';
@@ -1291,7 +1398,7 @@
 
                 <div style="margin-top: 6px;">
                     <label>Crupier (dejar vacío para "En rotación")</label>
-                    <input type="text" id="crupier-${m.id}" value="${m.crupier || ''}" placeholder="Nombre del crupier">
+                    <input type="text" id="crupier-${m.id}" value="${escaparHTML(m.crupier || '')}" placeholder="Nombre del crupier">
                 </div>
 
                 ${esTexas ? `
@@ -1323,7 +1430,7 @@
 
                 <div style="margin-top: 6px;">
                     <label>Promo o Frase de Alerta</label>
-                    <input type="text" id="promo-${m.id}" value="${m.promo_especial || ''}" placeholder="Frase especial">
+                    <input type="text" id="promo-${m.id}" value="${escaparHTML(m.promo_especial || '')}" placeholder="Frase especial">
                 </div>
 
                 <div style="margin-top: 8px;">
@@ -1340,7 +1447,7 @@
                     <button class="btn-action btn-save" onclick="actualizarMesa('${m.id}')" style="margin-top: 0; padding: 10px; font-size: 0.9em;">
                         💾 Guardar Cambios de Mesa / Acumulados
                     </button>
-                    <button class="btn-del-item" onclick="eliminarMesa('${m.id}', '${m.nombre}')" title="Eliminar">
+                    <button class="btn-del-item" onclick="eliminarMesa('${m.id}', '${escaparHTML(m.nombre)}')" title="Eliminar">
                         🗑️
                     </button>
                 </div>
