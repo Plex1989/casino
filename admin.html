@@ -40,6 +40,69 @@
             font-size: 16px;
         }
 
+        /* PANTALLA DE ACCESO (LOGIN) */
+        #login-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(11, 12, 16, 0.98);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-card {
+            background: var(--card-bg);
+            border: 1px solid var(--neon-gold);
+            border-radius: 16px;
+            padding: 30px 24px;
+            width: 100%;
+            max-width: 380px;
+            text-align: center;
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.25);
+        }
+
+        .login-card img {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--silver-metal);
+            margin-bottom: 12px;
+            box-shadow: 0 0 15px rgba(217, 218, 219, 0.3);
+        }
+
+        .login-card h2 {
+            margin: 0 0 6px 0;
+            color: var(--silver-metal);
+            font-size: 1.25em;
+            letter-spacing: 1px;
+        }
+
+        .login-card p {
+            margin: 0 0 20px 0;
+            color: #8892b0;
+            font-size: 0.82em;
+        }
+
+        .login-error {
+            display: none;
+            background: rgba(255, 0, 60, 0.15);
+            color: var(--neon-red);
+            border: 1px solid var(--neon-red);
+            padding: 8px 10px;
+            border-radius: 8px;
+            font-size: 0.82em;
+            font-weight: bold;
+            margin-bottom: 14px;
+        }
+
+        /* CONTENIDO DEL PANEL */
+        #admin-content {
+            display: none;
+        }
+
         .container {
             max-width: 650px;
             margin: 0 auto;
@@ -48,11 +111,17 @@
         /* Encabezado */
         .admin-header {
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            gap: 12px;
             padding: 10px 0 16px 0;
             border-bottom: 1px solid var(--border-color);
             margin-bottom: 20px;
+        }
+
+        .admin-header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
 
         .admin-logo {
@@ -76,6 +145,23 @@
             color: var(--neon-cyan);
             text-transform: uppercase;
             letter-spacing: 1px;
+        }
+
+        .btn-logout {
+            background: rgba(255, 0, 60, 0.15);
+            color: var(--neon-red);
+            border: 1px solid var(--neon-red);
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.8em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+
+        .btn-logout:hover {
+            background: var(--neon-red);
+            color: white;
         }
 
         /* Tarjetas */
@@ -586,238 +672,325 @@
 </head>
 <body>
 
-    <div class="container">
-        
-        <!-- ENCABEZADO -->
-        <header class="admin-header">
-            <img src="logo.jpg" alt="Casino BigBola" class="admin-logo" onerror="this.src='logo.png'">
-            <div class="admin-title-box">
-                <h1>CASINO BIGBOLA</h1>
-                <span>Panel de Administración</span>
+    <!-- PANTALLA DE ACCESO (LOGIN) -->
+    <div id="login-overlay">
+        <div class="login-card">
+            <img src="logo.jpg" alt="Casino BigBola" onerror="this.src='logo.png'">
+            <h2>CASINO BIGBOLA</h2>
+            <p>Acceso a Panel Administrativo</p>
+            
+            <div id="login-error-msg" class="login-error">
+                Usuario o contraseña incorrectos
             </div>
-        </header>
 
-        <!-- 1. MÓDULO JUGADORES VIP & BONUS BACK -->
-        <section class="admin-card vip-card">
-            <div class="card-header">
-                <span style="font-size: 1.4em;">💎</span>
-                <h2>Gestión de Bonus Back (VIP)</h2>
-            </div>
-            <p style="color: #8892b0; font-size: 0.85em; margin-top: 0;">
-                Elige la promoción activa, busca al cliente y envíale la invitación directa a su WhatsApp.
-            </p>
+            <form onsubmit="ejecutarLogin(event)">
+                <label style="text-align: left;">Usuario</label>
+                <input type="text" id="login-user" placeholder="admin" required autocomplete="username">
 
-            <!-- SELECTOR DE PROMOCIONES ROTATIVAS GUARDADAS EN SUPABASE -->
-            <div class="promo-selector-box">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <span style="font-size: 0.78em; color: var(--neon-gold); text-transform: uppercase; font-weight: bold; letter-spacing: 0.5px;">
-                        🎯 Promoción para el mensaje:
-                    </span>
-                    <button type="button" class="btn-toggle-edit-promo" onclick="toggleEditorPromo()">
-                        ✏️ Editar esta promoción
+                <label style="text-align: left;">Contraseña</label>
+                <input type="password" id="login-pass" placeholder="••••" required autocomplete="current-password">
+
+                <button type="submit" id="btn-submit-login" class="btn-action btn-save" style="margin-top: 20px;">
+                    🔓 Iniciar Sesión
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- CONTENIDO GENERAL DEL PANEL (OCULTO HASTA VALIDAR ACCESO) -->
+    <div id="admin-content">
+        <div class="container">
+            
+            <!-- ENCABEZADO -->
+            <header class="admin-header">
+                <div class="admin-header-left">
+                    <img src="logo.jpg" alt="Casino BigBola" class="admin-logo" onerror="this.src='logo.png'">
+                    <div class="admin-title-box">
+                        <h1>CASINO BIGBOLA</h1>
+                        <span>Panel de Administración</span>
+                    </div>
+                </div>
+                <button type="button" class="btn-logout" onclick="cerrarSesion()">
+                    🔒 Salir
+                </button>
+            </header>
+
+            <!-- 1. MÓDULO JUGADORES VIP & BONUS BACK -->
+            <section class="admin-card vip-card">
+                <div class="card-header">
+                    <span style="font-size: 1.4em;">💎</span>
+                    <h2>Gestión de Bonus Back (VIP)</h2>
+                </div>
+                <p style="color: #8892b0; font-size: 0.85em; margin-top: 0;">
+                    Elige la promoción activa, busca al cliente y envíale la invitación directa a su WhatsApp.
+                </p>
+
+                <!-- SELECTOR DE PROMOCIONES ROTATIVAS GUARDADAS EN SUPABASE -->
+                <div class="promo-selector-box">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-size: 0.78em; color: var(--neon-gold); text-transform: uppercase; font-weight: bold; letter-spacing: 0.5px;">
+                            🎯 Promoción para el mensaje:
+                        </span>
+                        <button type="button" class="btn-toggle-edit-promo" onclick="toggleEditorPromo()">
+                            ✏️ Editar esta promoción
+                        </button>
+                    </div>
+
+                    <div class="promo-chips-grid" id="contenedor-chips-promos">
+                        <p style="color: #8892b0; font-size: 0.8em;">Cargando promociones...</p>
+                    </div>
+
+                    <!-- CAJA DE EDICIÓN PLEGABLE -->
+                    <div id="caja-edicion-promo" class="promo-edit-box">
+                        <label style="margin-top: 0;">Título de la Promo (se muestra en botón y mensaje)</label>
+                        <input type="text" id="edit-promo-titulo">
+
+                        <label>Explicación / Reglas (va detallado en el mensaje)</label>
+                        <textarea id="edit-promo-desc" rows="2"></textarea>
+                        
+                        <button type="button" class="btn-action btn-save" onclick="guardarEdicionPromoEnSupabase()" style="margin-top: 10px; padding: 10px; font-size: 0.88em;">
+                            💾 Guardar cambios en Supabase
+                        </button>
+                        <span id="badge-promo-guardada" style="font-size: 0.75em; color: var(--neon-cyan); margin-top: 4px; display: none; font-weight: bold;">
+                            ⚡ Actualizado para todos los gerentes.
+                        </span>
+                    </div>
+                </div>
+
+                <!-- BUSCADOR CON PERSIANA (DROPDOWN) -->
+                <div class="search-box-vip">
+                    <span class="search-icon-fixed">🔍</span>
+                    <input type="text" id="input-buscar-vip" oninput="manejarBusquedaPersiana()" placeholder="Teclea una letra o nombre (ej. J, Enrique)..." autocomplete="off">
+                    <div id="vip-dropdown-persiana" class="vip-dropdown-persiana" style="display: none;"></div>
+                </div>
+
+                <!-- TARJETA DEL CLIENTE SELECCIONADO -->
+                <div id="vip-seleccionado-card" style="display: none; margin-bottom: 14px;"></div>
+
+                <!-- BOTONES PLEGABLES PARA MANTENER LA PANTALLA LIMPIA -->
+                <button type="button" class="btn-toggle-lista" id="btn-toggle-vip" onclick="toggleListaCompletaVIP()">
+                    👁️ Ver todos los clientes registrados (<span id="vip-contador-toggle">0</span>)
+                </button>
+
+                <!-- CONTENEDOR DE LA LISTA COMPLETA (OCULTO POR DEFECTO) -->
+                <div id="contenedor-vip-admin" style="display: none;">
+                    <p style="text-align: center; color: #8892b0;">Cargando jugadores VIP...</p>
+                </div>
+
+                <button type="button" class="btn-toggle-lista" style="border-color: #555; color: #aaa; margin-top: 6px;" onclick="toggleFormNuevoCliente()">
+                    ➕ Agregar un nuevo cliente al padrón
+                </button>
+
+                <!-- FORMULARIO REGISTRAR JUGADOR VIP (PLEGABLE) -->
+                <div id="form-nuevo-cliente-box" class="sub-box-form gold-dashed" style="display: none; margin-top: 14px; margin-bottom: 0;">
+                    <h3 style="color: var(--neon-gold); margin: 0 0 10px 0; font-size: 1em; display: flex; align-items: center; gap: 6px;">
+                        <span>➕</span> Registrar Nuevo Jugador VIP
+                    </h3>
+
+                    <div class="admin-grid-2">
+                        <div>
+                            <label>Nombre del Jugador</label>
+                            <input type="text" id="vip-nuevo-nombre" placeholder="Ej. Enrique Morales">
+                        </div>
+                        <div>
+                            <label>Celular (10 dígitos)</label>
+                            <input type="tel" id="vip-nuevo-telefono" placeholder="Ej. 2281234567">
+                        </div>
+                    </div>
+
+                    <label>Bonus Back Inicial ($)</label>
+                    <input type="number" id="vip-nuevo-bonus" value="0" min="0">
+
+                    <button class="btn-action btn-add-table" onclick="crearJugadorVIP()">
+                        ➕ Guardar Cliente
+                    </button>
+                </div>
+            </section>
+
+            <!-- 2. MÓDULO PUSH -->
+            <section class="admin-card push-card">
+                <div class="card-header">
+                    <span style="font-size: 1.4em;">📢</span>
+                    <h2>Enviar Notificación Push</h2>
+                </div>
+                <p style="color: #8892b0; font-size: 0.85em; margin-top: 0;">
+                    Llega de inmediato a la pantalla de bloqueo de los clientes suscritos.
+                </p>
+
+                <label>Título de la Alerta</label>
+                <input type="text" id="push-titulo" placeholder="Ej. 🎁 ¡Ruleta con Jackpot al Máximo!">
+
+                <label>Mensaje</label>
+                <textarea id="push-mensaje" rows="2" placeholder="Ej. La mesa ya está abierta. ¡Entra y aparta tu lugar ahora!"></textarea>
+
+                <button class="btn-action btn-push" id="btn-enviar-push" onclick="enviarPush()">
+                    🚀 Enviar a Todos los Celulares
+                </button>
+            </section>
+
+            <!-- 3. GESTOR DE PROMOCIONES WEB -->
+            <section class="admin-card">
+                <div class="card-header">
+                    <span style="font-size: 1.4em;">🏷️</span>
+                    <h2>Nueva Promoción en App</h2>
+                </div>
+
+                <label>Tipo de Promoción</label>
+                <select id="promo-tipo">
+                    <option value="General">📢 General (Tarjeta fija)</option>
+                    <option value="Flash">⚡ Oferta Flash (Marquesina roja)</option>
+                </select>
+
+                <label>Título</label>
+                <input type="text" id="promo-titulo" placeholder="Ej. 2x1 en Bebidas VIP">
+
+                <label>Descripción</label>
+                <textarea id="promo-descripcion" rows="2" placeholder="Ej. Válido en mesas abiertas hasta las 11:00 PM."></textarea>
+
+                <button class="btn-action btn-save" onclick="crearPromocion()">
+                    ➕ Publicar en App
+                </button>
+
+                <div id="lista-promos" style="margin-top: 20px;"></div>
+            </section>
+
+            <!-- 4. GESTOR DE MESAS -->
+            <section class="admin-card">
+                <div class="card-header">
+                    <span style="font-size: 1.4em;">🎲</span>
+                    <h2>Gestión de Mesas</h2>
+                </div>
+
+                <div class="sub-box-form">
+                    <h3 style="color: var(--neon-gold); margin: 0 0 10px 0; font-size: 1.05em; display: flex; align-items: center; gap: 6px;">
+                        <span>➕</span> Agregar Nueva Mesa
+                    </h3>
+
+                    <div class="admin-grid-2">
+                        <div>
+                            <label>Nombre de la Mesa</label>
+                            <input type="text" id="nueva-mesa-nombre" placeholder="Ej. Mesa VIP 1">
+                        </div>
+                        <div>
+                            <label>Juego</label>
+                            <select id="nueva-mesa-juego">
+                                <option value="Blackjack">Blackjack</option>
+                                <option value="Ruleta">Ruleta</option>
+                                <option value="Texas Hold'em">Texas Hold'em</option>
+                                <option value="Bacará">Bacará</option>
+                                <option value="Craps">Craps</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="admin-grid-2" style="margin-top: 6px;">
+                        <div>
+                            <label>Capacidad Máx.</label>
+                            <input type="number" id="nueva-mesa-capacidad" value="7" min="1" max="50">
+                        </div>
+                        <div>
+                            <label>Apuesta Mínima ($)</label>
+                            <input type="number" id="nueva-mesa-apuesta-min" value="50" min="0">
+                        </div>
+                    </div>
+
+                    <div class="admin-grid-2" style="margin-top: 6px;">
+                        <div>
+                            <label>Crupier</label>
+                            <input type="text" id="nueva-mesa-crupier" placeholder="Ej. Carlos M.">
+                        </div>
+                        <div>
+                            <label>Estatus Inicial</label>
+                            <select id="nueva-mesa-estatus">
+                                <option value="Abierta">🟢 Abierta</option>
+                                <option value="Cerrada" selected>🔴 Cerrada</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="admin-grid-2" style="margin-top: 6px;">
+                        <div>
+                            <label>Jackpot Inicial ($)</label>
+                            <input type="number" id="nueva-mesa-jackpot" value="0">
+                        </div>
+                        <div>
+                            <label>Promo / Estado</label>
+                            <input type="text" id="nueva-mesa-promo" placeholder="Ej. Bono de $500">
+                        </div>
+                    </div>
+
+                    <button class="btn-action btn-add-table" onclick="crearMesa()">
+                        ➕ Registrar Mesa
                     </button>
                 </div>
 
-                <div class="promo-chips-grid" id="contenedor-chips-promos">
-                    <p style="color: #8892b0; font-size: 0.8em;">Cargando promociones...</p>
+                <h3 style="color: var(--neon-cyan); font-size: 1em; margin-bottom: 12px;">Mesas en Operación</h3>
+                <div id="contenedor-mesas-admin">
+                    <p style="text-align: center; color: #8892b0;">Cargando mesas...</p>
                 </div>
+            </section>
 
-                <!-- CAJA DE EDICIÓN PLEGABLE -->
-                <div id="caja-edicion-promo" class="promo-edit-box">
-                    <label style="margin-top: 0;">Título de la Promo (se muestra en botón y mensaje)</label>
-                    <input type="text" id="edit-promo-titulo">
-
-                    <label>Explicación / Reglas (va detallado en el mensaje)</label>
-                    <textarea id="edit-promo-desc" rows="2"></textarea>
-                    
-                    <button type="button" class="btn-action btn-save" onclick="guardarEdicionPromoEnSupabase()" style="margin-top: 10px; padding: 10px; font-size: 0.88em;">
-                        💾 Guardar cambios en Supabase
-                    </button>
-                    <span id="badge-promo-guardada" style="font-size: 0.75em; color: var(--neon-cyan); margin-top: 4px; display: none; font-weight: bold;">
-                        ⚡ Actualizado para todos los gerentes.
-                    </span>
-                </div>
-            </div>
-
-            <!-- BUSCADOR CON PERSIANA (DROPDOWN) -->
-            <div class="search-box-vip">
-                <span class="search-icon-fixed">🔍</span>
-                <input type="text" id="input-buscar-vip" oninput="manejarBusquedaPersiana()" placeholder="Teclea una letra o nombre (ej. J, Enrique)..." autocomplete="off">
-                <div id="vip-dropdown-persiana" class="vip-dropdown-persiana" style="display: none;"></div>
-            </div>
-
-            <!-- TARJETA DEL CLIENTE SELECCIONADO -->
-            <div id="vip-seleccionado-card" style="display: none; margin-bottom: 14px;"></div>
-
-            <!-- BOTONES PLEGABLES PARA MANTENER LA PANTALLA LIMPIA -->
-            <button type="button" class="btn-toggle-lista" id="btn-toggle-vip" onclick="toggleListaCompletaVIP()">
-                👁️ Ver todos los clientes registrados (<span id="vip-contador-toggle">0</span>)
-            </button>
-
-            <!-- CONTENEDOR DE LA LISTA COMPLETA (OCULTO POR DEFECTO) -->
-            <div id="contenedor-vip-admin" style="display: none;">
-                <p style="text-align: center; color: #8892b0;">Cargando jugadores VIP...</p>
-            </div>
-
-            <button type="button" class="btn-toggle-lista" style="border-color: #555; color: #aaa; margin-top: 6px;" onclick="toggleFormNuevoCliente()">
-                ➕ Agregar un nuevo cliente al padrón
-            </button>
-
-            <!-- FORMULARIO REGISTRAR JUGADOR VIP (PLEGABLE) -->
-            <div id="form-nuevo-cliente-box" class="sub-box-form gold-dashed" style="display: none; margin-top: 14px; margin-bottom: 0;">
-                <h3 style="color: var(--neon-gold); margin: 0 0 10px 0; font-size: 1em; display: flex; align-items: center; gap: 6px;">
-                    <span>➕</span> Registrar Nuevo Jugador VIP
-                </h3>
-
-                <div class="admin-grid-2">
-                    <div>
-                        <label>Nombre del Jugador</label>
-                        <input type="text" id="vip-nuevo-nombre" placeholder="Ej. Enrique Morales">
-                    </div>
-                    <div>
-                        <label>Celular (10 dígitos)</label>
-                        <input type="tel" id="vip-nuevo-telefono" placeholder="Ej. 2281234567">
-                    </div>
-                </div>
-
-                <label>Bonus Back Inicial ($)</label>
-                <input type="number" id="vip-nuevo-bonus" value="0" min="0">
-
-                <button class="btn-action btn-add-table" onclick="crearJugadorVIP()">
-                    ➕ Guardar Cliente
-                </button>
-            </div>
-        </section>
-
-        <!-- 2. MÓDULO PUSH -->
-        <section class="admin-card push-card">
-            <div class="card-header">
-                <span style="font-size: 1.4em;">📢</span>
-                <h2>Enviar Notificación Push</h2>
-            </div>
-            <p style="color: #8892b0; font-size: 0.85em; margin-top: 0;">
-                Llega de inmediato a la pantalla de bloqueo de los clientes suscritos.
-            </p>
-
-            <label>Título de la Alerta</label>
-            <input type="text" id="push-titulo" placeholder="Ej. 🎁 ¡Ruleta con Jackpot al Máximo!">
-
-            <label>Mensaje</label>
-            <textarea id="push-mensaje" rows="2" placeholder="Ej. La mesa ya está abierta. ¡Entra y aparta tu lugar ahora!"></textarea>
-
-            <button class="btn-action btn-push" id="btn-enviar-push" onclick="enviarPush()">
-                🚀 Enviar a Todos los Celulares
-            </button>
-        </section>
-
-        <!-- 3. GESTOR DE PROMOCIONES WEB -->
-        <section class="admin-card">
-            <div class="card-header">
-                <span style="font-size: 1.4em;">🏷️</span>
-                <h2>Nueva Promoción en App</h2>
-            </div>
-
-            <label>Tipo de Promoción</label>
-            <select id="promo-tipo">
-                <option value="General">📢 General (Tarjeta fija)</option>
-                <option value="Flash">⚡ Oferta Flash (Marquesina roja)</option>
-            </select>
-
-            <label>Título</label>
-            <input type="text" id="promo-titulo" placeholder="Ej. 2x1 en Bebidas VIP">
-
-            <label>Descripción</label>
-            <textarea id="promo-descripcion" rows="2" placeholder="Ej. Válido en mesas abiertas hasta las 11:00 PM."></textarea>
-
-            <button class="btn-action btn-save" onclick="crearPromocion()">
-                ➕ Publicar en App
-            </button>
-
-            <div id="lista-promos" style="margin-top: 20px;"></div>
-        </section>
-
-        <!-- 4. GESTOR DE MESAS -->
-        <section class="admin-card">
-            <div class="card-header">
-                <span style="font-size: 1.4em;">🎲</span>
-                <h2>Gestión de Mesas</h2>
-            </div>
-
-            <div class="sub-box-form">
-                <h3 style="color: var(--neon-gold); margin: 0 0 10px 0; font-size: 1.05em; display: flex; align-items: center; gap: 6px;">
-                    <span>➕</span> Agregar Nueva Mesa
-                </h3>
-
-                <div class="admin-grid-2">
-                    <div>
-                        <label>Nombre de la Mesa</label>
-                        <input type="text" id="nueva-mesa-nombre" placeholder="Ej. Mesa VIP 1">
-                    </div>
-                    <div>
-                        <label>Juego</label>
-                        <select id="nueva-mesa-juego">
-                            <option value="Blackjack">Blackjack</option>
-                            <option value="Ruleta">Ruleta</option>
-                            <option value="Texas Hold'em">Texas Hold'em</option>
-                            <option value="Bacará">Bacará</option>
-                            <option value="Craps">Craps</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="admin-grid-2" style="margin-top: 6px;">
-                    <div>
-                        <label>Capacidad Máx.</label>
-                        <input type="number" id="nueva-mesa-capacidad" value="7" min="1" max="50">
-                    </div>
-                    <div>
-                        <label>Apuesta Mínima ($)</label>
-                        <input type="number" id="nueva-mesa-apuesta-min" value="50" min="0">
-                    </div>
-                </div>
-
-                <div class="admin-grid-2" style="margin-top: 6px;">
-                    <div>
-                        <label>Crupier</label>
-                        <input type="text" id="nueva-mesa-crupier" placeholder="Ej. Carlos M.">
-                    </div>
-                    <div>
-                        <label>Estatus Inicial</label>
-                        <select id="nueva-mesa-estatus">
-                            <option value="Abierta">🟢 Abierta</option>
-                            <option value="Cerrada" selected>🔴 Cerrada</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="admin-grid-2" style="margin-top: 6px;">
-                    <div>
-                        <label>Jackpot Inicial ($)</label>
-                        <input type="number" id="nueva-mesa-jackpot" value="0">
-                    </div>
-                    <div>
-                        <label>Promo / Estado</label>
-                        <input type="text" id="nueva-mesa-promo" placeholder="Ej. Bono de $500">
-                    </div>
-                </div>
-
-                <button class="btn-action btn-add-table" onclick="crearMesa()">
-                    ➕ Registrar Mesa
-                </button>
-            </div>
-
-            <h3 style="color: var(--neon-cyan); font-size: 1em; margin-bottom: 12px;">Mesas en Operación</h3>
-            <div id="contenedor-mesas-admin">
-                <p style="text-align: center; color: #8892b0;">Cargando mesas...</p>
-            </div>
-        </section>
-
+        </div>
     </div>
 
     <script>
         const SUPABASE_URL = "https://kqgtyzsxwrkomdtuktkk.supabase.co";
         const SUPABASE_ANON_KEY = "sb_publishable_on1rkqvAIhSQonTODdk5fA_qTpEo_8H";
         const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // ================= CONTROL DE ACCESO (LOGIN) =================
+        function verificarSesionActiva() {
+            const sesion = sessionStorage.getItem('bigbola_admin_logged');
+            if (sesion === 'true') {
+                document.getElementById('login-overlay').style.display = 'none';
+                document.getElementById('admin-content').style.display = 'block';
+                iniciarCargaPanel();
+            } else {
+                document.getElementById('login-overlay').style.display = 'flex';
+                document.getElementById('admin-content').style.display = 'none';
+            }
+        }
+
+        async function ejecutarLogin(event) {
+            event.preventDefault();
+            const userInput = document.getElementById('login-user').value.trim();
+            const passInput = document.getElementById('login-pass').value.trim();
+            const errorMsg = document.getElementById('login-error-msg');
+            const btn = document.getElementById('btn-submit-login');
+
+            errorMsg.style.display = 'none';
+            btn.disabled = true;
+            btn.innerText = "⏳ Verificando...";
+
+            try {
+                const { data, error } = await client
+                    .from('usuarios_admin')
+                    .select('*')
+                    .eq('usuario', userInput)
+                    .eq('password', passInput)
+                    .single();
+
+                if (error || !data) {
+                    errorMsg.style.display = 'block';
+                } else {
+                    sessionStorage.setItem('bigbola_admin_logged', 'true');
+                    document.getElementById('login-overlay').style.display = 'none';
+                    document.getElementById('admin-content').style.display = 'block';
+                    iniciarCargaPanel();
+                }
+            } catch (err) {
+                errorMsg.innerText = "Error de conexión: " + err.message;
+                errorMsg.style.display = 'block';
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "🔓 Iniciar Sesión";
+            }
+        }
+
+        function cerrarSesion() {
+            sessionStorage.removeItem('bigbola_admin_logged');
+            window.location.reload();
+        }
 
         // ================= PROMOCIONES GUARDADAS EN SUPABASE =================
         let promosRotativas = [];
@@ -912,7 +1085,6 @@
             const tituloLimpio = promo.titulo.replace(/[\u{1F300}-\u{1F9FF}]/gu, '').trim();
 
             if (monto > 0) {
-                // CLIENTE CON BONUS BACK (> $0): ENFOQUE EN SALDO Y JUEGO EN SALA
                 return `*CASINO BIGBOLA* | Membresía VIP\n\n` +
                        `Hola *${nombre}*, tienes saldo disponible para jugar hoy:\n\n` +
                        `💰 *BONUS BACK ACUMULADO:*\n` +
@@ -925,7 +1097,6 @@
                        `🎲 *Mesas abiertas y jackpots en sala:*\n` +
                        `https://casino-three-rho.vercel.app`;
             } else {
-                // CLIENTE SIN SALDO ($0): INVITACIÓN AL EVENTO EN SALA
                 return `*CASINO BIGBOLA* | Invitación Especial\n\n` +
                        `Hola *${nombre}*, te compartimos el evento activo de hoy en sala:\n\n` +
                        `🔥 *PROMO DE HOY:*\n` +
@@ -947,7 +1118,6 @@
             const bonus = inputMonto ? inputMonto.value : (cliente.bonus_back || 0);
 
             const textoMensaje = generarTextoWhatsApp(cliente.nombre, bonus);
-            
             const urlWhatsApp = `https://api.whatsapp.com/send?phone=${cliente.telefono}&text=${encodeURIComponent(textoMensaje)}`;
             window.open(urlWhatsApp, '_blank');
         }
@@ -1473,11 +1643,15 @@
             }
         }
 
-        window.addEventListener('DOMContentLoaded', () => {
+        function iniciarCargaPanel() {
             cargarPromosDesdeSupabase();
             cargarJugadoresVIP();
             cargarPromociones();
             cargarMesas();
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            verificarSesionActiva();
         });
     </script>
 </body>
