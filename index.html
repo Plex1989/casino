@@ -337,6 +337,7 @@
             animation: cintaMarquesina 16s linear infinite;
             font-size: 0.88em;
             font-weight: bold;
+            will-change: transform;
         }
 
         .marquesina-flash:hover .marquesina-track,
@@ -1047,20 +1048,47 @@
             window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(textoCompartir)}`, '_blank');
         }
 
+        // ================= PROMOCIONES SIN REINICIO DE ANIMACIÓN =================
+        let ultimoHTMLMarquesina = null;
+        let ultimoHTMLPromos = null;
+
         async function cargarPromociones() {
             const { data: promos } = await client.from('promociones').select('*').eq('activa', true).order('fecha_creacion', { ascending: false });
             const contMarquesina = document.getElementById('marquesina-container');
             const contPromos = document.getElementById('promos-container');
 
-            if (!promos || promos.length === 0) { contMarquesina.innerHTML = ''; contPromos.innerHTML = ''; return; }
+            if (!promos || promos.length === 0) {
+                if (ultimoHTMLMarquesina !== '') {
+                    contMarquesina.innerHTML = '';
+                    ultimoHTMLMarquesina = '';
+                }
+                if (ultimoHTMLPromos !== '') {
+                    contPromos.innerHTML = '';
+                    ultimoHTMLPromos = '';
+                }
+                return;
+            }
 
             const promoFlash = promos.find(p => p.tipo === 'Flash');
-            contMarquesina.innerHTML = promoFlash
+            const nuevoHTMLMarquesina = promoFlash
                 ? `<div class="marquesina-flash"><div class="marquesina-track">⚡ <strong>${promoFlash.titulo}:</strong> ${promoFlash.descripcion}</div></div>`
                 : '';
 
+            // Solo actualiza el DOM si el contenido realmente cambió (evita reiniciar la animación)
+            if (nuevoHTMLMarquesina !== ultimoHTMLMarquesina) {
+                contMarquesina.innerHTML = nuevoHTMLMarquesina;
+                ultimoHTMLMarquesina = nuevoHTMLMarquesina;
+            }
+
             const promosRegulares = promos.filter(p => p.tipo !== 'Flash');
-            contPromos.innerHTML = promosRegulares.length > 0 ? promosRegulares.map(p => `<div class="promo-banner"><h3>🎁 ${p.titulo}</h3><p>${p.descripcion}</p></div>`).join('') : '';
+            const nuevoHTMLPromos = promosRegulares.length > 0
+                ? promosRegulares.map(p => `<div class="promo-banner"><h3>🎁 ${p.titulo}</h3><p>${p.descripcion}</p></div>`).join('')
+                : '';
+
+            if (nuevoHTMLPromos !== ultimoHTMLPromos) {
+                contPromos.innerHTML = nuevoHTMLPromos;
+                ultimoHTMLPromos = nuevoHTMLPromos;
+            }
         }
 
         async function cargarMesas() {
