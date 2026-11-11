@@ -65,7 +65,7 @@
             margin: 0 auto;
         }
 
-        /* ENCABEZADO CON BOTÓN DE INSTALACIÓN EN LA ESQUINA */
+        /* ENCABEZADO */
         header {
             position: relative;
             text-align: center;
@@ -299,12 +299,12 @@
             padding-bottom: 6px;
         }
 
-        /* ESTRUCTURA BASE DE TARJETA CON SEPARACIÓN AMPLIA */
+        /* ESTRUCTURA BASE DE MESA */
         .mesa-card {
             background: var(--card-bg);
             border-radius: 16px;
             padding: 0;
-            margin-bottom: 24px; /* Separación marcada entre mesas */
+            margin-bottom: 24px;
             overflow: hidden;
             position: relative;
             transition: 0.3s;
@@ -315,67 +315,40 @@
             filter: grayscale(40%);
         }
 
-        /* 🟣 TEMA BLACKJACK (MORADO NEÓN CON RESPLANDOR) */
+        /* 🟣 MARCO MORADO NEÓN: BLACKJACK */
         .mesa-card.tema-blackjack {
-            border: 1px solid rgba(176, 38, 255, 0.45);
-            box-shadow: 0 6px 25px rgba(176, 38, 255, 0.18), inset 0 0 15px rgba(176, 38, 255, 0.05);
-        }
-        .mesa-card.tema-blackjack.abierta {
-            border-color: rgba(176, 38, 255, 0.8);
-            box-shadow: 0 8px 30px rgba(176, 38, 255, 0.28), inset 0 0 15px rgba(176, 38, 255, 0.08);
+            border: 2px solid #b026ff !important;
+            box-shadow: 0 0 20px rgba(176, 38, 255, 0.4), inset 0 0 12px rgba(176, 38, 255, 0.08) !important;
         }
         .mesa-card.tema-blackjack .juego-tag-label {
             color: #d67bff;
         }
 
-        /* 🔴 TEMA RULETA (ROJO NEÓN CON RESPLANDOR) */
+        /* 🔴 MARCO ROJO NEÓN: RULETA */
         .mesa-card.tema-ruleta {
-            border: 1px solid rgba(255, 0, 60, 0.45);
-            box-shadow: 0 6px 25px rgba(255, 0, 60, 0.18), inset 0 0 15px rgba(255, 0, 60, 0.05);
-        }
-        .mesa-card.tema-ruleta.abierta {
-            border-color: rgba(255, 0, 60, 0.8);
-            box-shadow: 0 8px 30px rgba(255, 0, 60, 0.28), inset 0 0 15px rgba(255, 0, 60, 0.08);
+            border: 2px solid #ff003c !important;
+            box-shadow: 0 0 20px rgba(255, 0, 60, 0.4), inset 0 0 12px rgba(255, 0, 60, 0.08) !important;
         }
         .mesa-card.tema-ruleta .juego-tag-label {
-            color: #ff4d6d;
+            color: #ff3b69;
         }
 
-        /* 🟢 TEMA TEXAS / ULTIMATE (VERDE ESMERALDA NEÓN CON RESPLANDOR) */
+        /* 🟢 MARCO VERDE NEÓN: TEXAS HOLD'EM / ULTIMATE */
         .mesa-card.tema-texas {
-            border: 1px solid rgba(0, 255, 136, 0.45);
-            box-shadow: 0 6px 25px rgba(0, 255, 136, 0.18), inset 0 0 15px rgba(0, 255, 136, 0.05);
-        }
-        .mesa-card.tema-texas.abierta {
-            border-color: rgba(0, 255, 136, 0.8);
-            box-shadow: 0 8px 30px rgba(0, 255, 136, 0.28), inset 0 0 15px rgba(0, 255, 136, 0.08);
+            border: 2px solid #00ff88 !important;
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.4), inset 0 0 12px rgba(0, 255, 136, 0.08) !important;
         }
         .mesa-card.tema-texas .juego-tag-label {
             color: #00ff88;
         }
 
-        /* 🔵 TEMA OTROS JUEGOS (CYAN NEÓN) */
+        /* 🔵 MARCO CYAN NEÓN: OTROS JUEGOS */
         .mesa-card.tema-general {
-            border: 1px solid rgba(0, 240, 255, 0.45);
-            box-shadow: 0 6px 25px rgba(0, 240, 255, 0.18);
-        }
-        .mesa-card.tema-general.abierta {
-            border-color: rgba(0, 240, 255, 0.8);
-            box-shadow: 0 8px 30px rgba(0, 240, 255, 0.28);
+            border: 2px solid #00f0ff !important;
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.4) !important;
         }
         .mesa-card.tema-general .juego-tag-label {
             color: #00f0ff;
-        }
-
-        /* RESPLANDOR ESPECIAL MESA CALIENTE */
-        .mesa-card.mesa-hot-glow {
-            border-color: #ff6600 !important;
-            animation: resplandorMesa 2s infinite alternate;
-        }
-
-        @keyframes resplandorMesa {
-            0% { box-shadow: 0 0 12px rgba(255, 102, 0, 0.35); }
-            100% { box-shadow: 0 0 28px rgba(255, 102, 0, 0.65); }
         }
 
         .mesa-banner-box {
@@ -472,7 +445,7 @@
         .stat-val.gold { color: var(--neon-gold); }
         .stat-val.cyan { color: var(--neon-cyan); }
 
-        /* 3 ACUMULADOS TEXAS */
+        /* 3 ACUMULADOS TEXAS HOLD'EM */
         .texas-jackpot-screen {
             background: linear-gradient(180deg, #090a10, #141624);
             border: 2px solid #b38728;
@@ -539,6 +512,7 @@
             letter-spacing: 0.5px;
         }
 
+        /* ETIQUETA INTERNA DE ALERTA (NO ALTERA EL MARCO DE LA TARJETA) */
         .mesa-promo-tag {
             margin-top: 10px;
             background: rgba(212, 175, 55, 0.12);
@@ -551,9 +525,9 @@
         }
 
         .mesa-promo-tag.hot-alert {
-            background: linear-gradient(90deg, rgba(255, 102, 0, 0.22), rgba(255, 0, 60, 0.18));
+            background: linear-gradient(90deg, rgba(255, 102, 0, 0.25), rgba(255, 0, 60, 0.2));
             border: 1px solid #ff6600;
-            color: #ffb833;
+            color: #ffc44d;
             box-shadow: 0 0 12px rgba(255, 102, 0, 0.35);
             animation: pulsoTextoHot 1.4s infinite alternate;
             letter-spacing: 0.5px;
@@ -818,10 +792,10 @@
                 return;
             }
 
-            // ORDENAMIENTO ESTRICTO: AGRUPA JUEGOS IGUALES JUNTOS (1. Blackjack, 2. Ruleta, 3. Texas, etc.)
+            // ORDENAMIENTO POR GRUPOS: 1. Ruleta, 2. Blackjack, 3. Texas, etc.
             const ordenJuegos = {
-                'blackjack': 1,
-                'ruleta': 2,
+                'ruleta': 1,
+                'blackjack': 2,
                 'texas': 3,
                 'bacara': 4,
                 'craps': 5,
@@ -834,11 +808,9 @@
                 const prioridadA = ordenJuegos[tipoA] || 50;
                 const prioridadB = ordenJuegos[tipoB] || 50;
 
-                // Si son de diferente tipo, ordena por la prioridad del juego
                 if (prioridadA !== prioridadB) {
                     return prioridadA - prioridadB;
                 }
-                // Si son del mismo juego, las ordena por nombre natural (Ej. Ruleta 1, Ruleta 2)
                 return (a.nombre || '').localeCompare(b.nombre || '', undefined, { numeric: true, sensitivity: 'base' });
             });
 
@@ -859,14 +831,14 @@
                 const crupierTexto = (m.crupier && m.crupier.trim().length > 0) ? m.crupier.trim() : 'En rotación';
                 const fmt = (num) => Number(num || 0).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-                // Asignación de clase neón por categoría
+                // ASIGNACIÓN DE COLOR NEÓN DIRECTO AL MARCO
                 let claseTema = 'tema-general';
                 if (tipoJuego === 'blackjack') claseTema = 'tema-blackjack';
                 else if (tipoJuego === 'ruleta') claseTema = 'tema-ruleta';
                 else if (tipoJuego === 'texas') claseTema = 'tema-texas';
 
                 return `
-                    <div class="mesa-card ${claseTema} ${estaAbierta ? 'abierta' : 'cerrada'} ${esHot && estaAbierta ? 'mesa-hot-glow' : ''}">
+                    <div class="mesa-card ${claseTema} ${estaAbierta ? 'abierta' : 'cerrada'}">
                         
                         <div class="mesa-banner-box">
                             <img src="${fotoJuego}" 
