@@ -156,12 +156,12 @@
             box-shadow: 0 0 6px var(--neon-green);
         }
 
-        /* BANNER BOTÓN VIP BONUS BACK */
+        /* BANNER BOTÓN VIP BONUS BACK CON FOTO DE FICHAS */
         .btn-banner-vip {
             background: linear-gradient(90deg, rgba(212, 175, 55, 0.18), rgba(255, 102, 0, 0.15));
             border: 1px solid var(--neon-gold);
             border-radius: 12px;
-            padding: 12px 14px;
+            padding: 10px 14px;
             margin-bottom: 16px;
             display: flex;
             justify-content: space-between;
@@ -177,7 +177,17 @@
         .btn-banner-vip-text {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
+        }
+
+        .vip-chips-thumb {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--neon-gold);
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.4);
+            flex-shrink: 0;
         }
 
         .btn-banner-vip-text strong {
@@ -474,6 +484,7 @@
             100% { opacity: 1; transform: scale(1.25); box-shadow: 0 0 12px #ff003c; }
         }
 
+        /* ESTADÍSTICAS CON APUESTA MÍNIMA Y MÁXIMA */
         .mesa-stats {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -685,13 +696,13 @@
             </div>
         </header>
 
-        <!-- BANNER DE CONSULTA BONUS BACK -->
+        <!-- BANNER DE CONSULTA BONUS BACK CON LAS FICHAS DE TEXAS -->
         <div class="btn-banner-vip" onclick="abrirModalBonusBack()">
             <div class="btn-banner-vip-text">
-                <span style="font-size: 1.7em;">💎</span>
+                <img src="texas.jpg" alt="Fichas de Sala" class="vip-chips-thumb" onerror="this.src='texas.png'">
                 <div>
                     <strong>Consultar mi Saldo Bonus Back</strong>
-                    <span>Consulta tus puntos acumulados para jugar hoy</span>
+                    <span>Consulta tus fichas acumuladas para jugar hoy</span>
                 </div>
             </div>
             <div class="btn-banner-vip-arrow">➔</div>
@@ -716,7 +727,7 @@
         <div id="marquesina-container"></div>
         <div id="promos-container"></div>
 
-        <!-- TÍTULO DE SECCIÓN CON PICA DE BARAJA EN LUGAR DE DADO -->
+        <!-- TÍTULO DE SECCIÓN -->
         <h2 class="section-title">
             <span style="color: var(--neon-cyan); font-size: 1.2em;">♠️</span> Mesas de Juego Abiertas
         </h2>
@@ -729,7 +740,7 @@
     <!-- MODAL CONSULTAR BONUS BACK -->
     <div id="modal-bonus-back" class="modal-overlay" onclick="cerrarModalBonusBack(event)">
         <div class="modal-box" onclick="event.stopPropagation()">
-            <div style="font-size: 2em; margin-bottom: 4px;">💎</div>
+            <img src="texas.jpg" alt="Fichas" style="width: 55px; height: 55px; border-radius: 50%; object-fit: cover; border: 2px solid var(--neon-gold); margin-bottom: 8px; box-shadow: 0 0 12px rgba(212,175,55,0.4);" onerror="this.src='texas.png'">
             <h3 style="color: var(--neon-gold);">Consulta de Bonus Back</h3>
             <p>Ingresa tu número de celular registrado para consultar tus fichas de cortesía:</p>
             
@@ -965,7 +976,6 @@
             return 'general';
         }
 
-        // ASIGNADOR DE FOTO: RULETA CARGA PNG DIRECTO
         function resolverFotoJuego(juego) {
             const tipo = obtenerTipoJuego(juego);
             if (tipo === 'blackjack') return 'blackjack.jpg';
@@ -1109,12 +1119,17 @@
                         </div>
 
                         <div class="mesa-body">
+                            <!-- ESTADÍSTICAS CON APUESTA MÍNIMA Y MÁXIMA -->
                             <div class="mesa-stats">
                                 <div class="stat-item">
                                     <span class="stat-label">Apuesta Mínima</span>
                                     <span class="stat-val cyan">$${Number(m.apuesta_minima || 0).toLocaleString('es-MX')}</span>
                                 </div>
                                 <div class="stat-item">
+                                    <span class="stat-label">Apuesta Máxima</span>
+                                    <span class="stat-val cyan">$${Number(m.apuesta_maxima || 0).toLocaleString('es-MX')}</span>
+                                </div>
+                                <div class="stat-item" style="margin-top: 6px;">
                                     <span class="stat-label">Lugares</span>
                                     <span class="stat-val">${jugadores} / ${capMax} (${lugares > 0 ? lugares + ' libres' : 'Llena'})</span>
                                 </div>
@@ -1122,10 +1137,12 @@
                                     <span class="stat-label">Crupier</span>
                                     <span class="stat-val">${crupierTexto}</span>
                                 </div>
-                                <div class="stat-item" style="margin-top: 6px;">
-                                    <span class="stat-label">${esTexas ? 'Modalidad' : 'Acumulado'}</span>
-                                    <span class="stat-val gold">${esTexas ? '3 Pozos en Sala' : '$' + Number(m.jackpot || 0).toLocaleString('es-MX')}</span>
+                                ${!esTexas ? `
+                                <div class="stat-item" style="grid-column: span 2; margin-top: 6px; border-top: 1px solid #1a1d2b; padding-top: 6px; display: flex; justify-content: space-between; flex-direction: row; align-items: center;">
+                                    <span class="stat-label">Jackpot Acumulado</span>
+                                    <span class="stat-val gold">$${Number(m.jackpot || 0).toLocaleString('es-MX')}</span>
                                 </div>
+                                ` : ''}
                             </div>
 
                             ${esTexas ? `
