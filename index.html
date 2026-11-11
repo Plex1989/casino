@@ -260,19 +260,19 @@
 
         .modal-box {
             background: var(--card-bg);
-            border: 1px solid var(--neon-gold);
+            border: 1px solid var(--neon-cyan);
             border-radius: 16px;
             padding: 22px;
             max-width: 380px;
             width: 100%;
             text-align: center;
-            box-shadow: 0 0 30px rgba(212, 175, 55, 0.3);
+            box-shadow: 0 0 30px rgba(0,240,255,0.25);
         }
 
         .modal-box h3 {
-            color: var(--neon-gold);
-            margin: 0 0 8px 0;
-            font-size: 1.25em;
+            color: var(--neon-cyan);
+            margin: 0 0 10px 0;
+            font-size: 1.2em;
         }
 
         .modal-box p {
@@ -293,16 +293,28 @@
             box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
         }
 
+        .modal-pasos {
+            text-align: left;
+            background: #0b0c10;
+            padding: 14px;
+            border-radius: 10px;
+            font-size: 0.85em;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
         .btn-cerrar-modal {
             margin-top: 14px;
             width: 100%;
             padding: 12px;
-            background: #232738;
-            color: #c5c6c7;
-            border: 1px solid #444;
+            background: linear-gradient(90deg, #0070f3, var(--neon-cyan));
+            color: black;
+            border: none;
             border-radius: 8px;
             font-weight: bold;
-            font-size: 0.9em;
+            font-size: 0.95em;
             cursor: pointer;
         }
 
@@ -649,6 +661,18 @@
             margin: 6px 0;
             display: block;
         }
+
+        .vip-resultado-box-error {
+            display: none;
+            background: rgba(255, 0, 60, 0.1);
+            border: 1px solid var(--neon-red);
+            border-radius: 10px;
+            padding: 14px;
+            margin-top: 14px;
+            text-align: center;
+            color: #ffb3c1;
+            font-size: 0.85em;
+        }
     </style>
 </head>
 <body>
@@ -664,7 +688,7 @@
             <h1>CASINO BIGBOLA</h1>
             <p>Estado de Mesas & Jackpots en Sala</p>
 
-            <!-- CONTADOR DE VISITAS CORREGIDO -->
+            <!-- CONTADOR DE VISITAS (PORTAL Y TOTAES) -->
             <div class="contador-visitas-bar">
                 <span><span class="contador-dot-live"></span> <strong id="visitas-hoy-val">11</strong> visitas al portal hoy</span>
                 <span>•</span>
@@ -712,11 +736,11 @@
 
     </div>
 
-    <!-- MODAL CONSULTAR BONUS BACK (CON MÁSCARA DE PRIVACIDAD) -->
+    <!-- MODAL CONSULTAR BONUS BACK (CON MÁSCARA DE PRIVACIDAD BANCARIA) -->
     <div id="modal-bonus-back" class="modal-overlay" onclick="cerrarModalBonusBack(event)">
         <div class="modal-box" onclick="event.stopPropagation()">
             <div style="font-size: 2em; margin-bottom: 4px;">💎</div>
-            <h3>Consulta de Bonus Back</h3>
+            <h3 style="color: var(--neon-gold);">Consulta de Bonus Back</h3>
             <p>Ingresa tu número de celular registrado para consultar tus fichas de cortesía:</p>
             
             <input type="tel" id="input-phone-consulta" class="vip-input-phone" placeholder="Ej. 2281234567" maxlength="10">
@@ -724,23 +748,28 @@
                 🔍 Consultar Saldo
             </button>
 
-            <!-- RESULTADO EN PANTALLA -->
+            <!-- RESULTADO EXITOSO EN PANTALLA -->
             <div id="vip-resultado-box" class="vip-resultado-box">
-                <span id="vip-res-nombre" style="color: white; font-weight: bold; font-size: 1.05em;"></span>
+                <span id="vip-res-nombre" style="color: white; font-weight: bold; font-size: 1.05em; letter-spacing: 2px;"></span>
                 <span style="color: #8892b0; font-size: 0.78em; display: block; margin-top: 2px;">Tienes acumulado en sala:</span>
                 <span id="vip-res-monto" class="vip-resultado-monto"></span>
                 <span style="color: var(--neon-green); font-size: 0.75em; font-weight: bold;">✓ Listo para canjear en mesas</span>
             </div>
 
+            <!-- RESULTADO DE ERROR (NO ENCONTRADO) -->
+            <div id="vip-resultado-error" class="vip-resultado-box-error">
+                Tu número no aparece en el padrón de Bonus Back todavía. Toca el botón de abajo para que un gerente te ayude.
+            </div>
+
             <div style="margin-top: 16px; border-top: 1px solid #2a2d3d; padding-top: 14px;">
-                <span style="color: #8892b0; font-size: 0.78em; display: block; margin-bottom: 8px;">¿Prefieres que te atienda un gerente?</span>
-                <a href="#" id="link-wa-consulta-directa" target="_blank" class="btn-mesa-whatsapp" style="margin-top: 0;">
-                    <span>📲</span> Preguntar por WhatsApp
+                <span style="color: #8892b0; font-size: 0.78em; display: block; margin-bottom: 8px;">¿Necesitas ayuda o no apareces registrado?</span>
+                <a href="#" id="link-wa-consulta-directa" target="_blank" class="btn-mesa-whatsapp" style="margin-top: 0; background: transparent; border-color: var(--silver-metal); color: var(--silver-metal);">
+                    <span>📲</span> Preguntar a Gerencia
                 </a>
             </div>
 
             <button class="btn-cerrar-modal" onclick="cerrarModalBonusBack()">
-                Cerrar
+                Volver a Mesas
             </button>
         </div>
     </div>
@@ -819,7 +848,7 @@
 
         // ================= MODAL DE CONSULTA BONUS BACK (CON MÁSCARA) =================
         function enmascararNombre(nombreCompleto) {
-            if (!nombreCompleto) return 'Cliente VIP';
+            if (!nombreCompleto) return 'C******';
             const partes = nombreCompleto.trim().split(' ');
             const enmascarado = partes.map(p => {
                 if (p.length <= 1) return p;
@@ -832,6 +861,7 @@
             document.getElementById('modal-bonus-back').style.display = 'flex';
             document.getElementById('input-phone-consulta').value = '';
             document.getElementById('vip-resultado-box').style.display = 'none';
+            document.getElementById('vip-resultado-error').style.display = 'none';
 
             const msgWa = encodeURIComponent("Hola, me gustaría consultar mi saldo de Bonus Back acumulado en CASINO BIGBOLA 🎰.");
             document.getElementById('link-wa-consulta-directa').href = `https://wa.me/${NUMERO_WHATSAPP_CASINO}?text=${msgWa}`;
@@ -846,6 +876,10 @@
         async function ejecutarConsultaBonusBack() {
             const rawPhone = document.getElementById('input-phone-consulta').value.replace(/\D/g, '');
             const boxResultado = document.getElementById('vip-resultado-box');
+            const boxError = document.getElementById('vip-resultado-error');
+
+            boxResultado.style.display = 'none';
+            boxError.style.display = 'none';
 
             if (rawPhone.length < 10) {
                 alert("Por favor ingresa tu número de celular a 10 dígitos.");
@@ -872,8 +906,7 @@
                 const msgWa = encodeURIComponent(`Hola, acabo de consultar mi saldo en el portal y tengo $${cliente.bonus_back} en Bonus Back. ¿Me podrían confirmar y apartar un lugar en mesa para hoy?`);
                 document.getElementById('link-wa-consulta-directa').href = `https://wa.me/${NUMERO_WHATSAPP_CASINO}?text=${msgWa}`;
             } else {
-                boxResultado.style.display = 'none';
-                alert("Tu número no aparece en el padrón VIP todavía. Toca el botón de WhatsApp abajo para que gerencia te agregue.");
+                boxError.style.display = 'block';
             }
         }
 
@@ -945,17 +978,18 @@
             return 'general';
         }
 
-        // CAMBIO: SE DA PRIORIDAD A RULETA.GIF SI ES RULETA
+        // FOTOS 100% FIJAS POR DEFECTO PARA MEJOR RENDIMIENTO Y COMPATIBILIDAD
         function resolverFotoJuego(juego) {
             const tipo = obtenerTipoJuego(juego);
             if (tipo === 'blackjack') return 'blackjack.jpg';
-            if (tipo === 'ruleta') return 'ruleta.gif';
+            if (tipo === 'ruleta') return 'ruleta.jpg';
             if (tipo === 'texas') return 'texas.jpg';
             if (tipo === 'bacara') return 'bacara.jpg';
             if (tipo === 'craps') return 'craps.jpg';
             return 'logo.jpg';
         }
 
+        // ================= QR Y COMPARTIR =================
         let qrGenerado = false;
         function abrirModalQR() {
             const modal = document.getElementById('modal-qr');
@@ -1021,6 +1055,7 @@
                 return;
             }
 
+            // ORDENAMIENTO POR GRUPOS (Ruleta, Blackjack, Texas)
             const ordenJuegos = {
                 'ruleta': 1,
                 'blackjack': 2,
@@ -1071,7 +1106,7 @@
                             <img src="${fotoJuego}" 
                                  alt="${m.juego}" 
                                  class="mesa-banner-img"
-                                 onerror="if(this.src.includes('.gif')){this.src=this.src.replace('.gif','.jpg');}else if(this.src.includes('.jpg')){this.src=this.src.replace('.jpg','.png');}else{this.style.display='none';}">
+                                 onerror="if(this.src.includes('.jpg')){this.src=this.src.replace('.jpg','.png');}else{this.style.display='none';}">
                             <div class="mesa-banner-overlay"></div>
                             <div class="mesa-banner-title">
                                 <div>
