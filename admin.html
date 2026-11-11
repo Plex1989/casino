@@ -901,7 +901,7 @@
             }
         }
 
-        // ================= PLANTILLA CONCRETA, SIN SATURACIÓN Y CON FOCO EN SALDO =================
+        // ================= PLANTILLA CONCRETA Y ENFOCADA EN SALDO (SIN "EN VIVO") =================
         function generarTextoWhatsApp(nombre, bonus) {
             const monto = Number(bonus) || 0;
             const promo = promosRotativas.find(p => p.id === idPromoActiva) || {
@@ -909,28 +909,32 @@
                 descripcion: "Mesas activas con Jackpot acumulado y premios en efectivo."
             };
 
-            // Quita emojis del título de la promo en caso de que vengan de la base de datos
             const tituloLimpio = promo.titulo.replace(/[\u{1F300}-\u{1F9FF}]/gu, '').trim();
 
             if (monto > 0) {
-                // FOCO DIRECTO: BONUS BACK EN PRIMERA LÍNEA + PROMO CONCRETA
+                // CLIENTE CON BONUS BACK (> $0): ENFOQUE EN SALDO Y JUEGO EN SALA
                 return `*CASINO BIGBOLA* | Membresía VIP\n\n` +
                        `Hola *${nombre}*, tienes saldo disponible para jugar hoy:\n\n` +
                        `💰 *BONUS BACK ACUMULADO:*\n` +
-                       `👉 *$${monto.toLocaleString('es-MX')} MXN* en fichas\n\n` +
+                       `👉 *$${monto.toLocaleString('es-MX')} MXN* en fichas\n` +
+                       `_(Listas para jugar en nuestras mesas en sala)_\n\n` +
                        `🔥 *PROMO DE HOY:*\n` +
                        `*${tituloLimpio}*\n` +
                        `${promo.descripcion}\n\n` +
-                       `¿Te apartamos tu lugar favorito? Avísanos por aquí para tenerlo listo a tu llegada.`;
+                       `¿Te apartamos tu lugar favorito? Avísanos por aquí para tenerlo listo a tu llegada.\n\n` +
+                       `🎲 *Mesas abiertas y jackpots en sala:*\n` +
+                       `https://casino-three-rho.vercel.app`;
             } else {
-                // INVITACIÓN DIRECTA A LA PROMO DE HOY (SIN MENCIONAR SALDO)
+                // CLIENTE SIN SALDO ($0): INVITACIÓN AL EVENTO EN SALA
                 return `*CASINO BIGBOLA* | Invitación Especial\n\n` +
                        `Hola *${nombre}*, te compartimos el evento activo de hoy en sala:\n\n` +
                        `🔥 *PROMO DE HOY:*\n` +
                        `*${tituloLimpio}*\n` +
                        `${promo.descripcion}\n\n` +
                        `🍸 Bebidas de cortesía en mesas abiertas.\n` +
-                       `¿Te apartamos un lugar en tu mesa favorita? Avísanos por aquí.`;
+                       `¿Te apartamos un lugar en tu mesa favorita? Avísanos por aquí.\n\n` +
+                       `🎲 *Mesas abiertas y jackpots en sala:*\n` +
+                       `https://casino-three-rho.vercel.app`;
             }
         }
 
