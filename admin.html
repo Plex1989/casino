@@ -199,6 +199,45 @@
             gap: 10px;
         }
 
+        /* SELECTOR DE PROMOCIÓN ROTATIVA PARA EL WHATSAPP */
+        .promo-selector-box {
+            background: #0a0b10;
+            border: 1px solid #3d351b;
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 16px;
+        }
+
+        .promo-chips-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+            margin-top: 8px;
+        }
+
+        .btn-chip-promo {
+            padding: 8px 10px;
+            border-radius: 8px;
+            font-size: 0.78em;
+            font-weight: bold;
+            cursor: pointer;
+            border: 1px solid var(--border-color);
+            background: #151722;
+            color: #8892b0;
+            text-align: left;
+            transition: 0.15s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-chip-promo.active {
+            background: rgba(212, 175, 55, 0.18);
+            color: var(--neon-gold);
+            border-color: var(--neon-gold);
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.25);
+        }
+
         /* Buscador con persiana */
         .search-box-vip {
             position: relative;
@@ -236,10 +275,10 @@
             background: #151722;
             border: 1px solid var(--neon-gold);
             border-radius: 0 0 12px 12px;
-            max-height: 250px;
+            max-height: 260px;
             overflow-y: auto;
             z-index: 100;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.8);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.85);
         }
 
         .vip-dropdown-item {
@@ -257,7 +296,7 @@
         }
 
         .vip-dropdown-item:active, .vip-dropdown-item:hover {
-            background: rgba(212, 175, 55, 0.18);
+            background: rgba(212, 175, 55, 0.2);
         }
 
         .btn-toggle-lista {
@@ -298,7 +337,7 @@
             border: 1px solid var(--neon-gold);
             border-left: 6px solid var(--neon-gold);
             background: #12141d;
-            box-shadow: 0 0 15px rgba(212, 175, 55, 0.25);
+            box-shadow: 0 0 16px rgba(212, 175, 55, 0.25);
         }
 
         .vip-header {
@@ -540,10 +579,31 @@
                 <h2>Gestión de Bonus Back (VIP)</h2>
             </div>
             <p style="color: #8892b0; font-size: 0.85em; margin-top: 0;">
-                Escribe una letra o nombre para desplegar la persiana y elegir al cliente.
+                Elige la promoción activa, busca al cliente y envíale la invitación formal a su WhatsApp.
             </p>
 
-            <!-- BUSCADOR CON PERSIANA -->
+            <!-- SELECTOR DE PROMOCIÓN DE SALA (SE ADJUNTA AL MENSAJE) -->
+            <div class="promo-selector-box">
+                <span style="font-size: 0.78em; color: var(--neon-gold); text-transform: uppercase; font-weight: bold; letter-spacing: 0.5px;">
+                    🎯 Promoción de hoy (se incluye en el mensaje):
+                </span>
+                <div class="promo-chips-grid">
+                    <button type="button" class="btn-chip-promo active" onclick="seleccionarPromoMensaje('🎰 Torneo de Blackjack con Bolsa Garantizada', this)">
+                        ♠️ Torneo Blackjack
+                    </button>
+                    <button type="button" class="btn-chip-promo" onclick="seleccionarPromoMensaje('🎡 Noche de Ruleta con Jackpot Progresivo al Máximo', this)">
+                        🔴 Ruleta & Jackpot
+                    </button>
+                    <button type="button" class="btn-chip-promo" onclick="seleccionarPromoMensaje('🎁 10% Extra en Fichas de Cortesía en tus Recargas', this)">
+                        💰 10% Bonus Back
+                    </button>
+                    <button type="button" class="btn-chip-promo" onclick="seleccionarPromoMensaje('🍾 Noche VIP con Barra Libre y Bebidas de Cortesía', this)">
+                        🥂 Noche VIP Lounge
+                    </button>
+                </div>
+            </div>
+
+            <!-- BUSCADOR CON PERSIANA (DROPDOWN) -->
             <div class="search-box-vip">
                 <span class="search-icon-fixed">🔍</span>
                 <input type="text" id="input-buscar-vip" oninput="manejarBusquedaPersiana()" placeholder="Teclea una letra o nombre (ej. J, Enrique)..." autocomplete="off">
@@ -719,9 +779,53 @@
         const SUPABASE_ANON_KEY = "sb_publishable_on1rkqvAIhSQonTODdk5fA_qTpEo_8H";
         const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // ================= JUGADORES VIP =================
+        // ================= JUGADORES VIP CON PERSIANA Y SELECCIÓN =================
         let listaVipMemoria = [];
         let listaCompletaVisible = false;
+        let promoMensajeActiva = '🎰 Torneo de Blackjack con Bolsa Garantizada';
+
+        function seleccionarPromoMensaje(textoPromo, btnElement) {
+            promoMensajeActiva = textoPromo;
+            document.querySelectorAll('.btn-chip-promo').forEach(b => b.classList.remove('active'));
+            btnElement.classList.add('active');
+
+            // Actualiza los links de WhatsApp activos
+            document.querySelectorAll('.btn-wa-direct').forEach(btn => {
+                const id = btn.getAttribute('data-id');
+                if (id) actualizarLinkWhatsApp(id);
+            });
+        }
+
+        // GENERADOR DE MENSAJE ELEGANTE A TODO COLOR (CON O SIN BONUS)
+        function generarTextoWhatsApp(nombre, bonus) {
+            const monto = Number(bonus) || 0;
+
+            if (monto > 0) {
+                // CASO A: TIENE BONUS BACK ACUMULADO
+                return `♠️ ♥️  *CASINO BIGBOLA*  ♦️ ♣️\n` +
+                       `👑  *INVITACIÓN VIP EXCLUSIVA*  👑\n\n` +
+                       `Hola *${nombre}*, es un placer saludarte. 🥂✨\n\n` +
+                       `Te informamos que tienes disponible tu saldo en sala:\n` +
+                       `💎 *Bonus Back:* *$${monto.toLocaleString('es-MX')} MXN* 💰🔥\n` +
+                       `_(Listos para redimir y jugar en mesas en vivo)_\n\n` +
+                       `🎯 *EVENTO ESPECIAL DE HOY:*\n` +
+                       `⚡ *${promoMensajeActiva}*\n\n` +
+                       `🃏 Disfruta de la mejor adrenalina, crupieres en rotación y servicio de bebidas de cortesía en sala.\n\n` +
+                       `📲 *¿Te apartamos tu lugar favorito en la mesa?*\n` +
+                       `¡Te esperamos hoy en CASINO BIGBOLA! 🎰🥂`;
+            } else {
+                // CASO B: TIENE $0 (INVITACIÓN DIRECTA A LA PROMOCIÓN)
+                return `♠️ ♥️  *CASINO BIGBOLA*  ♦️ ♣️\n` +
+                       `👑  *INVITACIÓN VIP EXCLUSIVA*  👑\n\n` +
+                       `Hola *${nombre}*, es un gusto saludarte. 🥂✨\n\n` +
+                       `Queremos invitarte cordialmente a vivir una noche especial en nuestras mesas en vivo:\n\n` +
+                       `🎯 *PROMOCIÓN DE LA NOCHE:*\n` +
+                       `⚡ *${promoMensajeActiva}*\n\n` +
+                       `🍸 Tendremos servicio de barra, cócteles de cortesía y las mejores mesas activas con Jackpot acumulado.\n\n` +
+                       `📲 *¿Te reservamos un lugar en tu mesa favorita?*\n` +
+                       `¡Te esperamos hoy en CASINO BIGBOLA! 🎰🎲`;
+            }
+        }
 
         function manejarBusquedaPersiana() {
             const termino = (document.getElementById('input-buscar-vip').value || '').toLowerCase().trim();
@@ -790,15 +894,8 @@
         }
 
         function renderTarjetaVIPHTML(v, esDestacado = false) {
-            const mensaje = `🎰 *CASINO BIGBOLA* | Invitación VIP 🎰\n\n` +
-                            `Hola *${v.nombre}*, nos da gusto saludarte.\n\n` +
-                            `Queremos informarte que tienes un saldo a favor de:\n` +
-                            `💎 *$${Number(v.bonus_back || 0).toLocaleString('es-MX')} MXN* en *Bonus Back*\n\n` +
-                            `Este saldo está listo para que lo redimas en nuestras mesas de juego.\n\n` +
-                            `🥂 ¿Te apartamos tu lugar favorito o te preparamos algo de la barra a tu llegada?\n\n` +
-                            `¡Te esperamos en la sala!`;
-            
-            const urlWa = `https://wa.me/${v.telefono}?text=${encodeURIComponent(mensaje)}`;
+            const textoMensaje = generarTextoWhatsApp(v.nombre, v.bonus_back || 0);
+            const urlWa = `https://wa.me/${v.telefono}?text=${encodeURIComponent(textoMensaje)}`;
 
             return `
             <div class="vip-item ${esDestacado ? 'destacado' : ''}">
@@ -821,8 +918,8 @@
                     </button>
                 </div>
 
-                <a href="${urlWa}" id="btn-wa-${v.id}" data-nombre="${v.nombre}" data-tel="${v.telefono}" target="_blank" class="btn-wa-direct">
-                    <span>📲</span> Enviar Saldo por WhatsApp
+                <a href="${urlWa}" id="btn-wa-${v.id}" data-id="${v.id}" data-nombre="${v.nombre}" data-tel="${v.telefono}" target="_blank" class="btn-wa-direct">
+                    <span>📲</span> Enviar WhatsApp Elegante
                 </a>
             </div>
             `;
@@ -868,17 +965,11 @@
 
             const nombre = btnWa.getAttribute('data-nombre');
             const tel = btnWa.getAttribute('data-tel');
-            const bonus = document.getElementById(`bonus-val-${id}`).value || 0;
+            const inputMonto = document.getElementById(`bonus-val-${id}`);
+            const bonus = inputMonto ? inputMonto.value : 0;
 
-            const mensaje = `🎰 *CASINO BIGBOLA* | Invitación VIP 🎰\n\n` +
-                            `Hola *${nombre}*, nos da gusto saludarte.\n\n` +
-                            `Queremos informarte que tienes un saldo a favor de:\n` +
-                            `💎 *$${Number(bonus).toLocaleString('es-MX')} MXN* en *Bonus Back*\n\n` +
-                            `Este saldo está listo para que lo redimas en nuestras mesas de juego.\n\n` +
-                            `🥂 ¿Te apartamos tu lugar favorito o te preparamos algo de la barra a tu llegada?\n\n` +
-                            `¡Te esperamos en la sala!`;
-
-            btnWa.href = `https://wa.me/${tel}?text=${encodeURIComponent(mensaje)}`;
+            const textoMensaje = generarTextoWhatsApp(nombre, bonus);
+            btnWa.href = `https://wa.me/${tel}?text=${encodeURIComponent(textoMensaje)}`;
         }
 
         async function crearJugadorVIP() {
