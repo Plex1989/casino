@@ -406,6 +406,7 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+            object-position: center center;
             opacity: 0.8;
         }
 
@@ -944,17 +945,17 @@
             return 'general';
         }
 
+        // CAMBIO: SE DA PRIORIDAD A RULETA.GIF SI ES RULETA
         function resolverFotoJuego(juego) {
             const tipo = obtenerTipoJuego(juego);
             if (tipo === 'blackjack') return 'blackjack.jpg';
-            if (tipo === 'ruleta') return 'ruleta.jpg';
+            if (tipo === 'ruleta') return 'ruleta.gif';
             if (tipo === 'texas') return 'texas.jpg';
             if (tipo === 'bacara') return 'bacara.jpg';
             if (tipo === 'craps') return 'craps.jpg';
             return 'logo.jpg';
         }
 
-        // ================= QR Y COMPARTIR =================
         let qrGenerado = false;
         function abrirModalQR() {
             const modal = document.getElementById('modal-qr');
@@ -1020,7 +1021,6 @@
                 return;
             }
 
-            // ORDENAMIENTO POR GRUPOS (Ruleta, Blackjack, Texas)
             const ordenJuegos = {
                 'ruleta': 1,
                 'blackjack': 2,
@@ -1071,7 +1071,7 @@
                             <img src="${fotoJuego}" 
                                  alt="${m.juego}" 
                                  class="mesa-banner-img"
-                                 onerror="if(this.src.includes('.jpg')){this.src=this.src.replace('.jpg','.gif');}else if(this.src.includes('.gif')){this.src=this.src.replace('.gif','.png');}else{this.style.display='none';}">
+                                 onerror="if(this.src.includes('.gif')){this.src=this.src.replace('.gif','.jpg');}else if(this.src.includes('.jpg')){this.src=this.src.replace('.jpg','.png');}else{this.style.display='none';}">
                             <div class="mesa-banner-overlay"></div>
                             <div class="mesa-banner-title">
                                 <div>
