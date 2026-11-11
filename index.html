@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CASINO BIGBOLA - Mesas & Promociones en Sala</title>
+    <title>CASINO BIGBOLA - Mesas Abiertas & Premios Acumulados</title>
 
     <meta name="theme-color" content="#0b0c10">
     <link rel="manifest" href="manifest.json">
@@ -122,8 +122,9 @@
         header p {
             margin: 4px 0 0 0;
             color: var(--neon-cyan);
-            font-size: 0.85em;
+            font-size: 0.9em;
             letter-spacing: 0.5px;
+            font-weight: 600;
         }
 
         /* CONTADOR DE VISITAS */
@@ -260,19 +261,19 @@
 
         .modal-box {
             background: var(--card-bg);
-            border: 1px solid var(--neon-cyan);
+            border: 1px solid var(--neon-gold);
             border-radius: 16px;
             padding: 22px;
             max-width: 380px;
             width: 100%;
             text-align: center;
-            box-shadow: 0 0 30px rgba(0,240,255,0.25);
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.3);
         }
 
         .modal-box h3 {
-            color: var(--neon-cyan);
-            margin: 0 0 10px 0;
-            font-size: 1.2em;
+            color: var(--neon-gold);
+            margin: 0 0 8px 0;
+            font-size: 1.25em;
         }
 
         .modal-box p {
@@ -293,28 +294,16 @@
             box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
         }
 
-        .modal-pasos {
-            text-align: left;
-            background: #0b0c10;
-            padding: 14px;
-            border-radius: 10px;
-            font-size: 0.85em;
-            color: white;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
         .btn-cerrar-modal {
             margin-top: 14px;
             width: 100%;
             padding: 12px;
-            background: linear-gradient(90deg, #0070f3, var(--neon-cyan));
-            color: black;
-            border: none;
+            background: #232738;
+            color: #c5c6c7;
+            border: 1px solid #444;
             border-radius: 8px;
             font-weight: bold;
-            font-size: 0.95em;
+            font-size: 0.9em;
             cursor: pointer;
         }
 
@@ -686,9 +675,9 @@
 
             <img src="logo.jpg" alt="Casino BigBola" onerror="this.src='logo.png'">
             <h1>CASINO BIGBOLA</h1>
-            <p>Estado de Mesas & Jackpots en Sala</p>
+            <p>Mesas Abiertas & Premios Acumulados</p>
 
-            <!-- CONTADOR DE VISITAS (PORTAL Y TOTAES) -->
+            <!-- CONTADOR DE VISITAS -->
             <div class="contador-visitas-bar">
                 <span><span class="contador-dot-live"></span> <strong id="visitas-hoy-val">11</strong> visitas al portal hoy</span>
                 <span>•</span>
@@ -727,16 +716,17 @@
         <div id="marquesina-container"></div>
         <div id="promos-container"></div>
 
+        <!-- TÍTULO DE SECCIÓN CON PICA DE BARAJA EN LUGAR DE DADO -->
         <h2 class="section-title">
-            <span>🎲</span> Mesas de Juego en Sala
+            <span style="color: var(--neon-cyan); font-size: 1.2em;">♠️</span> Mesas de Juego Abiertas
         </h2>
         <div id="mesas-container">
-            <p style="text-align: center; color: #8892b0;">Cargando mesas en sala...</p>
+            <p style="text-align: center; color: #8892b0;">Cargando mesas abiertas...</p>
         </div>
 
     </div>
 
-    <!-- MODAL CONSULTAR BONUS BACK (CON MÁSCARA DE PRIVACIDAD BANCARIA) -->
+    <!-- MODAL CONSULTAR BONUS BACK -->
     <div id="modal-bonus-back" class="modal-overlay" onclick="cerrarModalBonusBack(event)">
         <div class="modal-box" onclick="event.stopPropagation()">
             <div style="font-size: 2em; margin-bottom: 4px;">💎</div>
@@ -821,7 +811,6 @@
 
                 let { visitas_totales, visitas_hoy, fecha_hoy } = data;
 
-                // Si cambió el día, reinicia hoy en 10 + 1 (11)
                 if (fecha_hoy !== hoyStr) {
                     visitas_hoy = 11;
                     visitas_totales += 1;
@@ -831,14 +820,12 @@
                     visitas_totales += 1;
                 }
 
-                // Actualiza en Supabase
                 await client.from('contador_visitas').update({
                     visitas_totales,
                     visitas_hoy,
                     fecha_hoy
                 }).eq('id', 1);
 
-                // Renderiza en pantalla
                 document.getElementById('visitas-hoy-val').innerText = visitas_hoy;
                 document.getElementById('visitas-totales-val').innerText = Number(visitas_totales).toLocaleString('es-MX');
             } catch (e) {
@@ -978,11 +965,11 @@
             return 'general';
         }
 
-        // FOTOS 100% FIJAS POR DEFECTO PARA MEJOR RENDIMIENTO Y COMPATIBILIDAD
+        // ASIGNADOR DE FOTO: RULETA CARGA PNG DIRECTO
         function resolverFotoJuego(juego) {
             const tipo = obtenerTipoJuego(juego);
             if (tipo === 'blackjack') return 'blackjack.jpg';
-            if (tipo === 'ruleta') return 'ruleta.jpg';
+            if (tipo === 'ruleta') return 'ruleta.png';
             if (tipo === 'texas') return 'texas.jpg';
             if (tipo === 'bacara') return 'bacara.jpg';
             if (tipo === 'craps') return 'craps.jpg';
@@ -1018,7 +1005,7 @@
 
         async function compartirApp() {
             const urlApp = window.location.origin || "https://casino-three-rho.vercel.app";
-            const textoCompartir = `🎰 *CASINO BIGBOLA* 🎲\n\n¡Consulta el estatus de las mesas abiertas en sala, jackpots acumulados y promociones!\n\n👉 ${urlApp}`;
+            const textoCompartir = `🎰 *CASINO BIGBOLA*\n\n¡Consulta las mesas abiertas y premios acumulados de hoy!\n\n👉 ${urlApp}`;
 
             if (navigator.share) {
                 try {
@@ -1106,7 +1093,7 @@
                             <img src="${fotoJuego}" 
                                  alt="${m.juego}" 
                                  class="mesa-banner-img"
-                                 onerror="if(this.src.includes('.jpg')){this.src=this.src.replace('.jpg','.png');}else{this.style.display='none';}">
+                                 onerror="if(this.src.includes('.png')){this.src=this.src.replace('.png','.jpg');}else if(this.src.includes('.jpg')){this.src=this.src.replace('.jpg','.png');}else{this.style.display='none';}">
                             <div class="mesa-banner-overlay"></div>
                             <div class="mesa-banner-title">
                                 <div>
