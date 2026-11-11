@@ -199,26 +199,26 @@
             gap: 10px;
         }
 
-        /* SELECTOR DE PROMOCIÓN ROTATIVA PARA EL WHATSAPP */
+        /* SELECTOR DE PROMOCIONES ROTATIVAS Y EDITABLES */
         .promo-selector-box {
-            background: #0a0b10;
+            background: #0e1017;
             border: 1px solid #3d351b;
-            border-radius: 10px;
-            padding: 12px;
+            border-radius: 12px;
+            padding: 14px;
             margin-bottom: 16px;
         }
 
         .promo-chips-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 6px;
+            gap: 8px;
             margin-top: 8px;
         }
 
         .btn-chip-promo {
-            padding: 8px 10px;
+            padding: 10px;
             border-radius: 8px;
-            font-size: 0.78em;
+            font-size: 0.8em;
             font-weight: bold;
             cursor: pointer;
             border: 1px solid var(--border-color);
@@ -238,7 +238,31 @@
             box-shadow: 0 0 10px rgba(212, 175, 55, 0.25);
         }
 
-        /* Buscador con persiana */
+        /* EDITOR PLEGABLE DE LA PROMOCIÓN */
+        .promo-edit-box {
+            display: none;
+            background: #151722;
+            border: 1px dashed var(--neon-gold);
+            border-radius: 10px;
+            padding: 12px;
+            margin-top: 10px;
+        }
+
+        .btn-toggle-edit-promo {
+            background: none;
+            border: none;
+            color: var(--neon-gold);
+            font-size: 0.82em;
+            font-weight: bold;
+            cursor: pointer;
+            padding: 6px 0;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            text-decoration: underline;
+        }
+
+        /* BUSCADOR CON PERSIANA (DROPDOWN) */
         .search-box-vip {
             position: relative;
             margin-bottom: 14px;
@@ -314,7 +338,7 @@
             justify-content: center;
             gap: 8px;
             transition: 0.2s;
-            margin: 12px 0;
+            margin: 10px 0;
         }
 
         .btn-toggle-lista:active {
@@ -322,7 +346,7 @@
             transform: scale(0.98);
         }
 
-        /* Tarjetas VIP */
+        /* TARJETAS VIP */
         .vip-item {
             background: #0e1017;
             border: 1px solid #332d18;
@@ -582,24 +606,30 @@
                 Elige la promoción activa, busca al cliente y envíale la invitación formal a su WhatsApp.
             </p>
 
-            <!-- SELECTOR DE PROMOCIÓN DE SALA (SE ADJUNTA AL MENSAJE) -->
+            <!-- SELECTOR DE PROMOCIONES DEL DÍA (EDITABLES) -->
             <div class="promo-selector-box">
-                <span style="font-size: 0.78em; color: var(--neon-gold); text-transform: uppercase; font-weight: bold; letter-spacing: 0.5px;">
-                    🎯 Promoción de hoy (se incluye en el mensaje):
-                </span>
-                <div class="promo-chips-grid">
-                    <button type="button" class="btn-chip-promo active" onclick="seleccionarPromoMensaje('🎰 Torneo de Blackjack con Bolsa Garantizada', this)">
-                        ♠️ Torneo Blackjack
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-size: 0.78em; color: var(--neon-gold); text-transform: uppercase; font-weight: bold; letter-spacing: 0.5px;">
+                        🎯 Promoción para el mensaje:
+                    </span>
+                    <button type="button" class="btn-toggle-edit-promo" onclick="toggleEditorPromo()">
+                        ✏️ Editar texto de esta promo
                     </button>
-                    <button type="button" class="btn-chip-promo" onclick="seleccionarPromoMensaje('🎡 Noche de Ruleta con Jackpot Progresivo al Máximo', this)">
-                        🔴 Ruleta & Jackpot
-                    </button>
-                    <button type="button" class="btn-chip-promo" onclick="seleccionarPromoMensaje('🎁 10% Extra en Fichas de Cortesía en tus Recargas', this)">
-                        💰 10% Bonus Back
-                    </button>
-                    <button type="button" class="btn-chip-promo" onclick="seleccionarPromoMensaje('🍾 Noche VIP con Barra Libre y Bebidas de Cortesía', this)">
-                        🥂 Noche VIP Lounge
-                    </button>
+                </div>
+
+                <div class="promo-chips-grid" id="contenedor-chips-promos"></div>
+
+                <!-- CAJA DE EDICIÓN PLEGABLE -->
+                <div id="caja-edicion-promo" class="promo-edit-box">
+                    <label style="margin-top: 0;">Título de la Promo (se ve en el botón y WhatsApp)</label>
+                    <input type="text" id="edit-promo-titulo" oninput="guardarEdicionPromoLive()">
+
+                    <label>Explicación / Restricciones (va en el mensaje de WhatsApp)</label>
+                    <textarea id="edit-promo-desc" rows="2" oninput="guardarEdicionPromoLive()"></textarea>
+                    
+                    <span style="font-size: 0.72em; color: var(--neon-cyan); margin-top: 4px; display: block;">
+                        ⚡ Los cambios se guardan automáticamente en tu navegador.
+                    </span>
                 </div>
             </div>
 
@@ -613,18 +643,22 @@
             <!-- TARJETA DEL CLIENTE SELECCIONADO -->
             <div id="vip-seleccionado-card" style="display: none; margin-bottom: 14px;"></div>
 
-            <!-- BOTÓN PARA MOSTRAR/OCULTAR LA LISTA COMPLETA -->
+            <!-- BOTONES PLEGABLES PARA MANTENER LA PANTALLA LIMPIA -->
             <button type="button" class="btn-toggle-lista" id="btn-toggle-vip" onclick="toggleListaCompletaVIP()">
-                👁️ Mostrar todos los clientes (<span id="vip-contador-toggle">0</span>)
+                👁️ Ver todos los clientes registrados (<span id="vip-contador-toggle">0</span>)
             </button>
 
-            <!-- CONTENEDOR DE LA LISTA COMPLETA -->
+            <!-- CONTENEDOR DE LA LISTA COMPLETA (OCULTO POR DEFECTO) -->
             <div id="contenedor-vip-admin" style="display: none;">
                 <p style="text-align: center; color: #8892b0;">Cargando jugadores VIP...</p>
             </div>
 
-            <!-- FORMULARIO REGISTRAR JUGADOR VIP -->
-            <div class="sub-box-form gold-dashed" style="margin-top: 18px; margin-bottom: 0;">
+            <button type="button" class="btn-toggle-lista" style="border-color: #555; color: #aaa; margin-top: 6px;" onclick="toggleFormNuevoCliente()">
+                ➕ Agregar un nuevo cliente al padrón
+            </button>
+
+            <!-- FORMULARIO REGISTRAR JUGADOR VIP (PLEGABLE) -->
+            <div id="form-nuevo-cliente-box" class="sub-box-form gold-dashed" style="display: none; margin-top: 14px; margin-bottom: 0;">
                 <h3 style="color: var(--neon-gold); margin: 0 0 10px 0; font-size: 1em; display: flex; align-items: center; gap: 6px;">
                     <span>➕</span> Registrar Nuevo Jugador VIP
                 </h3>
@@ -644,7 +678,7 @@
                 <input type="number" id="vip-nuevo-bonus" value="0" min="0">
 
                 <button class="btn-action btn-add-table" onclick="crearJugadorVIP()">
-                    ➕ Registrar en Cartera VIP
+                    ➕ Guardar Cliente
                 </button>
             </div>
         </section>
@@ -670,11 +704,11 @@
             </button>
         </section>
 
-        <!-- 3. GESTOR DE PROMOCIONES -->
+        <!-- 3. GESTOR DE PROMOCIONES WEB -->
         <section class="admin-card">
             <div class="card-header">
                 <span style="font-size: 1.4em;">🏷️</span>
-                <h2>Nueva Promoción</h2>
+                <h2>Nueva Promoción en App</h2>
             </div>
 
             <label>Tipo de Promoción</label>
@@ -690,7 +724,7 @@
             <textarea id="promo-descripcion" rows="2" placeholder="Ej. Válido en mesas abiertas hasta las 11:00 PM."></textarea>
 
             <button class="btn-action btn-save" onclick="crearPromocion()">
-                ➕ Publicar Promoción
+                ➕ Publicar en App
             </button>
 
             <div id="lista-promos" style="margin-top: 20px;"></div>
@@ -779,53 +813,97 @@
         const SUPABASE_ANON_KEY = "sb_publishable_on1rkqvAIhSQonTODdk5fA_qTpEo_8H";
         const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // ================= JUGADORES VIP CON PERSIANA Y SELECCIÓN =================
-        let listaVipMemoria = [];
-        let listaCompletaVisible = false;
-        let promoMensajeActiva = '🎰 Torneo de Blackjack con Bolsa Garantizada';
+        // ================= GESTIÓN DE PROMOCIONES ROTATIVAS Y EDITABLES =================
+        const PROMOS_DEFAULT = [
+            { id: 0, titulo: "🎰 Torneo de Blackjack", desc: "Bolsa garantizada en premios. Válido a partir de las 8:00 PM." },
+            { id: 1, titulo: "🎡 Noche de Ruleta", desc: "Jackpot progresivo acumulado al máximo listo para caer hoy." },
+            { id: 2, titulo: "💰 Bono de Recarga", desc: "En recargas desde $3,000 hasta $20,000 llévate el 10% en fichas de cortesía." },
+            { id: 3, titulo: "🥂 Noche VIP Lounge", desc: "Barra libre, cócteles de bienvenida y botana fina en mesas abiertas." }
+        ];
 
-        function seleccionarPromoMensaje(textoPromo, btnElement) {
-            promoMensajeActiva = textoPromo;
-            document.querySelectorAll('.btn-chip-promo').forEach(b => b.classList.remove('active'));
-            btnElement.classList.add('active');
+        let promosRotativas = JSON.parse(localStorage.getItem('casino_promos_rotativas')) || PROMOS_DEFAULT;
+        let indexPromoActiva = parseInt(localStorage.getItem('casino_promo_activa_idx')) || 0;
 
-            // Actualiza los links de WhatsApp activos
-            document.querySelectorAll('.btn-wa-direct').forEach(btn => {
-                const id = btn.getAttribute('data-id');
-                if (id) actualizarLinkWhatsApp(id);
-            });
+        function renderizarChipsPromociones() {
+            const cont = document.getElementById('contenedor-chips-promos');
+            cont.innerHTML = promosRotativas.map((p, idx) => `
+                <button type="button" class="btn-chip-promo ${idx === indexPromoActiva ? 'active' : ''}" onclick="seleccionarChipPromo(${idx})">
+                    ${p.titulo}
+                </button>
+            `).join('');
+
+            // Cargar en el formulario de edición
+            document.getElementById('edit-promo-titulo').value = promosRotativas[indexPromoActiva].titulo;
+            document.getElementById('edit-promo-desc').value = promosRotativas[indexPromoActiva].desc;
         }
 
-        // GENERADOR DE MENSAJE ELEGANTE A TODO COLOR (CON O SIN BONUS)
+        function seleccionarChipPromo(idx) {
+            indexPromoActiva = idx;
+            localStorage.setItem('casino_promo_activa_idx', idx);
+            renderizarChipsPromociones();
+            actualizarTodosLosLinksWhatsApp();
+        }
+
+        function toggleEditorPromo() {
+            const caja = document.getElementById('caja-edicion-promo');
+            caja.style.display = caja.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function guardarEdicionPromoLive() {
+            const nuevoTitulo = document.getElementById('edit-promo-titulo').value.trim();
+            const nuevaDesc = document.getElementById('edit-promo-desc').value.trim();
+
+            promosRotativas[indexPromoActiva].titulo = nuevoTitulo || "Promoción Especial";
+            promosRotativas[indexPromoActiva].desc = nuevaDesc || "Válido en mesas de juego hoy.";
+
+            localStorage.setItem('casino_promos_rotativas', JSON.stringify(promosRotativas));
+
+            // Actualizar botones visuales sin perder foco
+            const chips = document.querySelectorAll('.btn-chip-promo');
+            if (chips[indexPromoActiva]) {
+                chips[indexPromoActiva].innerText = promosRotativas[indexPromoActiva].titulo;
+            }
+
+            actualizarTodosLosLinksWhatsApp();
+        }
+
+        // ================= PLANTILLA DE MENSAJE 100% COLOR (SIN CARACTERES PLANOS) =================
         function generarTextoWhatsApp(nombre, bonus) {
             const monto = Number(bonus) || 0;
+            const promo = promosRotativas[indexPromoActiva];
 
             if (monto > 0) {
-                // CASO A: TIENE BONUS BACK ACUMULADO
-                return `♠️ ♥️  *CASINO BIGBOLA*  ♦️ ♣️\n` +
-                       `👑  *INVITACIÓN VIP EXCLUSIVA*  👑\n\n` +
+                // CASO A: TIENE BONUS BACK (> $0)
+                return `🎰 *CASINO BIGBOLA* 🎰\n` +
+                       `👑 *INVITACIÓN VIP EXCLUSIVA* 👑\n\n` +
                        `Hola *${nombre}*, es un placer saludarte. 🥂✨\n\n` +
-                       `Te informamos que tienes disponible tu saldo en sala:\n` +
-                       `💎 *Bonus Back:* *$${monto.toLocaleString('es-MX')} MXN* 💰🔥\n` +
-                       `_(Listos para redimir y jugar en mesas en vivo)_\n\n` +
-                       `🎯 *EVENTO ESPECIAL DE HOY:*\n` +
-                       `⚡ *${promoMensajeActiva}*\n\n` +
+                       `💰 *Tu saldo a favor en sala:* \n` +
+                       `💵 *$${monto.toLocaleString('es-MX')} MXN* en *Bonus Back* 🔥\n` +
+                       `_(Fichas listas para redimir y jugar en mesas en vivo)_\n\n` +
+                       `🎁 *PROMOCIÓN DE HOY:*\n` +
+                       `🔥 *${promo.titulo}*\n` +
+                       `👉 ${promo.desc}\n\n` +
                        `🃏 Disfruta de la mejor adrenalina, crupieres en rotación y servicio de bebidas de cortesía en sala.\n\n` +
-                       `📲 *¿Te apartamos tu lugar favorito en la mesa?*\n` +
-                       `¡Te esperamos hoy en CASINO BIGBOLA! 🎰🥂`;
+                       `🥂 *¿Te apartamos tu lugar favorito en la mesa?*\n` +
+                       `✨ ¡Te esperamos hoy para ganar en grande! 🎲`;
             } else {
-                // CASO B: TIENE $0 (INVITACIÓN DIRECTA A LA PROMOCIÓN)
-                return `♠️ ♥️  *CASINO BIGBOLA*  ♦️ ♣️\n` +
-                       `👑  *INVITACIÓN VIP EXCLUSIVA*  👑\n\n` +
+                // CASO B: TIENE $0 (INVITACIÓN DE SALA SIN MENCIONAR SALDO)
+                return `🎰 *CASINO BIGBOLA* 🎰\n` +
+                       `👑 *INVITACIÓN VIP EXCLUSIVA* 👑\n\n` +
                        `Hola *${nombre}*, es un gusto saludarte. 🥂✨\n\n` +
                        `Queremos invitarte cordialmente a vivir una noche especial en nuestras mesas en vivo:\n\n` +
-                       `🎯 *PROMOCIÓN DE LA NOCHE:*\n` +
-                       `⚡ *${promoMensajeActiva}*\n\n` +
-                       `🍸 Tendremos servicio de barra, cócteles de cortesía y las mejores mesas activas con Jackpot acumulado.\n\n` +
-                       `📲 *¿Te reservamos un lugar en tu mesa favorita?*\n` +
-                       `¡Te esperamos hoy en CASINO BIGBOLA! 🎰🎲`;
+                       `🎁 *PROMOCIÓN DE HOY:*\n` +
+                       `🔥 *${promo.titulo}*\n` +
+                       `👉 ${promo.desc}\n\n` +
+                       `🍸 Contamos con cócteles de cortesía en sala, excelente ambiente y las mejores mesas activas con Jackpot acumulado.\n\n` +
+                       `🥂 *¿Te reservamos un lugar en tu mesa favorita?*\n` +
+                       `✨ ¡Te esperamos hoy en CASINO BIGBOLA! 🎲`;
             }
         }
+
+        // ================= JUGADORES VIP CON PERSIANA =================
+        let listaVipMemoria = [];
+        let listaCompletaVisible = false;
 
         function manejarBusquedaPersiana() {
             const termino = (document.getElementById('input-buscar-vip').value || '').toLowerCase().trim();
@@ -889,8 +967,13 @@
                 renderizarListaCompletaVIP(listaVipMemoria);
             } else {
                 cont.style.display = 'none';
-                btn.innerHTML = `👁️ Mostrar todos los clientes (${total})`;
+                btn.innerHTML = `👁️ Ver todos los clientes registrados (${total})`;
             }
+        }
+
+        function toggleFormNuevoCliente() {
+            const box = document.getElementById('form-nuevo-cliente-box');
+            box.style.display = box.style.display === 'block' ? 'none' : 'block';
         }
 
         function renderTarjetaVIPHTML(v, esDestacado = false) {
@@ -919,7 +1002,7 @@
                 </div>
 
                 <a href="${urlWa}" id="btn-wa-${v.id}" data-id="${v.id}" data-nombre="${v.nombre}" data-tel="${v.telefono}" target="_blank" class="btn-wa-direct">
-                    <span>📲</span> Enviar WhatsApp Elegante
+                    <span>📲</span> Enviar WhatsApp con Emojis a Color
                 </a>
             </div>
             `;
@@ -972,6 +1055,13 @@
             btnWa.href = `https://wa.me/${tel}?text=${encodeURIComponent(textoMensaje)}`;
         }
 
+        function actualizarTodosLosLinksWhatsApp() {
+            document.querySelectorAll('.btn-wa-direct').forEach(btn => {
+                const id = btn.getAttribute('data-id');
+                if (id) actualizarLinkWhatsApp(id);
+            });
+        }
+
         async function crearJugadorVIP() {
             const nombre = document.getElementById('vip-nuevo-nombre').value.trim();
             let telefono = document.getElementById('vip-nuevo-telefono').value.trim().replace(/\D/g, '');
@@ -999,6 +1089,7 @@
                 document.getElementById('vip-nuevo-nombre').value = '';
                 document.getElementById('vip-nuevo-telefono').value = '';
                 document.getElementById('vip-nuevo-bonus').value = '0';
+                toggleFormNuevoCliente();
                 cargarJugadoresVIP();
             }
         }
@@ -1080,7 +1171,7 @@
             }
         }
 
-        // ================= PROMOCIONES =================
+        // ================= PROMOCIONES EN APP =================
         async function crearPromocion() {
             const tipo = document.getElementById('promo-tipo').value;
             const titulo = document.getElementById('promo-titulo').value.trim();
@@ -1350,6 +1441,7 @@
         }
 
         window.addEventListener('DOMContentLoaded', () => {
+            renderizarChipsPromociones();
             cargarJugadoresVIP();
             cargarPromociones();
             cargarMesas();
