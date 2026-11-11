@@ -199,7 +199,7 @@
             gap: 10px;
         }
 
-        /* BUSCADOR CON PERSIANA (DROPDOWN) */
+        /* Buscador con persiana */
         .search-box-vip {
             position: relative;
             margin-bottom: 14px;
@@ -228,7 +228,6 @@
             z-index: 2;
         }
 
-        /* PERSIANA DESPLEGABLE */
         .vip-dropdown-persiana {
             position: absolute;
             top: 100%;
@@ -261,7 +260,6 @@
             background: rgba(212, 175, 55, 0.18);
         }
 
-        /* BOTÓN TOGGLE MOSTRAR/OCULTAR LISTA */
         .btn-toggle-lista {
             background: rgba(212, 175, 55, 0.1);
             color: var(--neon-gold);
@@ -285,7 +283,7 @@
             transform: scale(0.98);
         }
 
-        /* TARJETAS VIP (AMPLIAS PARA CELULAR) */
+        /* Tarjetas VIP */
         .vip-item {
             background: #0e1017;
             border: 1px solid #332d18;
@@ -476,6 +474,10 @@
             transition: 0.15s;
         }
 
+        .btn-preset:active {
+            transform: scale(0.94);
+        }
+
         .btn-preset.fuego {
             background: rgba(255, 102, 0, 0.15);
             color: #ff6600;
@@ -541,14 +543,14 @@
                 Escribe una letra o nombre para desplegar la persiana y elegir al cliente.
             </p>
 
-            <!-- BUSCADOR CON PERSIANA (DROPDOWN) -->
+            <!-- BUSCADOR CON PERSIANA -->
             <div class="search-box-vip">
                 <span class="search-icon-fixed">🔍</span>
                 <input type="text" id="input-buscar-vip" oninput="manejarBusquedaPersiana()" placeholder="Teclea una letra o nombre (ej. J, Enrique)..." autocomplete="off">
                 <div id="vip-dropdown-persiana" class="vip-dropdown-persiana" style="display: none;"></div>
             </div>
 
-            <!-- TARJETA DEL CLIENTE SELECCIONADO DESDE LA PERSIANA -->
+            <!-- TARJETA DEL CLIENTE SELECCIONADO -->
             <div id="vip-seleccionado-card" style="display: none; margin-bottom: 14px;"></div>
 
             <!-- BOTÓN PARA MOSTRAR/OCULTAR LA LISTA COMPLETA -->
@@ -556,7 +558,7 @@
                 👁️ Mostrar todos los clientes (<span id="vip-contador-toggle">0</span>)
             </button>
 
-            <!-- CONTENEDOR DE LA LISTA COMPLETA (OCULTO POR DEFECTO) -->
+            <!-- CONTENEDOR DE LA LISTA COMPLETA -->
             <div id="contenedor-vip-admin" style="display: none;">
                 <p style="text-align: center; color: #8892b0;">Cargando jugadores VIP...</p>
             </div>
@@ -641,7 +643,6 @@
                 <h2>Gestión de Mesas</h2>
             </div>
 
-            <!-- FORMULARIO CREAR MESA -->
             <div class="sub-box-form">
                 <h3 style="color: var(--neon-gold); margin: 0 0 10px 0; font-size: 1.05em; display: flex; align-items: center; gap: 6px;">
                     <span>➕</span> Agregar Nueva Mesa
@@ -705,7 +706,6 @@
                 </button>
             </div>
 
-            <!-- LISTADO DE MESAS EXISTENTES -->
             <h3 style="color: var(--neon-cyan); font-size: 1em; margin-bottom: 12px;">Mesas en Operación</h3>
             <div id="contenedor-mesas-admin">
                 <p style="text-align: center; color: #8892b0;">Cargando mesas...</p>
@@ -719,7 +719,7 @@
         const SUPABASE_ANON_KEY = "sb_publishable_on1rkqvAIhSQonTODdk5fA_qTpEo_8H";
         const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // ================= JUGADORES VIP CON PERSIANA Y SELECCIÓN =================
+        // ================= JUGADORES VIP =================
         let listaVipMemoria = [];
         let listaCompletaVisible = false;
 
@@ -764,11 +764,9 @@
             const cliente = listaVipMemoria.find(v => v.id == id);
             if (!cliente) return;
 
-            // Cierra la persiana
             document.getElementById('vip-dropdown-persiana').style.display = 'none';
             document.getElementById('input-buscar-vip').value = cliente.nombre;
 
-            // Renderiza únicamente la tarjeta del cliente seleccionado
             const contSeleccionado = document.getElementById('vip-seleccionado-card');
             contSeleccionado.innerHTML = renderTarjetaVIPHTML(cliente, true);
             contSeleccionado.style.display = 'block';
@@ -792,9 +790,13 @@
         }
 
         function renderTarjetaVIPHTML(v, esDestacado = false) {
-            const mensaje = `Hola *${v.nombre}*, te escribe la gerencia de *CASINO BIGBOLA* 🎰.\n\n` +
-                            `Te informamos que tienes acumulados *$${Number(v.bonus_back || 0).toLocaleString('es-MX')} MXN* en *Bonus Back* listos para jugar en mesas este fin de semana.\n\n` +
-                            `¿Te apartamos un lugar en tu mesa favorita? ¡Te esperamos!`;
+            const mensaje = `🎰 *CASINO BIGBOLA* | Invitación VIP 🎰\n\n` +
+                            `Hola *${v.nombre}*, nos da gusto saludarte.\n\n` +
+                            `Queremos informarte que tienes un saldo a favor de:\n` +
+                            `💎 *$${Number(v.bonus_back || 0).toLocaleString('es-MX')} MXN* en *Bonus Back*\n\n` +
+                            `Este saldo está listo para que lo redimas en nuestras mesas de juego.\n\n` +
+                            `🥂 ¿Te apartamos tu lugar favorito o te preparamos algo de la barra a tu llegada?\n\n` +
+                            `¡Te esperamos en la sala!`;
             
             const urlWa = `https://wa.me/${v.telefono}?text=${encodeURIComponent(mensaje)}`;
 
@@ -868,9 +870,13 @@
             const tel = btnWa.getAttribute('data-tel');
             const bonus = document.getElementById(`bonus-val-${id}`).value || 0;
 
-            const mensaje = `Hola *${nombre}*, te escribe la gerencia de *CASINO BIGBOLA* 🎰.\n\n` +
-                            `Te informamos que tienes acumulados *$${Number(bonus).toLocaleString('es-MX')} MXN* en *Bonus Back* listos para jugar en mesas este fin de semana.\n\n` +
-                            `¿Te apartamos un lugar en tu mesa favorita? ¡Te esperamos!`;
+            const mensaje = `🎰 *CASINO BIGBOLA* | Invitación VIP 🎰\n\n` +
+                            `Hola *${nombre}*, nos da gusto saludarte.\n\n` +
+                            `Queremos informarte que tienes un saldo a favor de:\n` +
+                            `💎 *$${Number(bonus).toLocaleString('es-MX')} MXN* en *Bonus Back*\n\n` +
+                            `Este saldo está listo para que lo redimas en nuestras mesas de juego.\n\n` +
+                            `🥂 ¿Te apartamos tu lugar favorito o te preparamos algo de la barra a tu llegada?\n\n` +
+                            `¡Te esperamos en la sala!`;
 
             btnWa.href = `https://wa.me/${tel}?text=${encodeURIComponent(mensaje)}`;
         }
@@ -932,7 +938,6 @@
             }
         }
 
-        // Cierra la persiana al hacer clic fuera del buscador
         document.addEventListener('click', (e) => {
             const searchBox = document.querySelector('.search-box-vip');
             if (searchBox && !searchBox.contains(e.target)) {
@@ -984,7 +989,7 @@
             }
         }
 
-        // ================= GESTIÓN DE PROMOCIONES =================
+        // ================= PROMOCIONES =================
         async function crearPromocion() {
             const tipo = document.getElementById('promo-tipo').value;
             const titulo = document.getElementById('promo-titulo').value.trim();
@@ -1050,7 +1055,7 @@
             }
         }
 
-        // ================= GESTIÓN DE MESAS =================
+        // ================= MESAS =================
         async function cambiarJugadores(id, delta, maxCapacidad) {
             try {
                 const display = document.getElementById(`val-jugadores-${id}`);
