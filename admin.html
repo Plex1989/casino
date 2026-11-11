@@ -571,7 +571,7 @@
                     <h2>Gestión de Mesas</h2>
                 </div>
 
-                <!-- FORMULARIO INTELIGENTE QUE CAMBIA SI ES TEXAS HOLD'EM -->
+                <!-- FORMULARIO NUEVA MESA CON APUESTA MÍNIMA Y MÁXIMA -->
                 <div class="sub-box-form">
                     <h3 style="color: var(--neon-gold); margin: 0 0 10px 0; font-size: 1.05em;">
                         <span>➕</span> Agregar Nueva Mesa
@@ -595,21 +595,22 @@
                         </div>
                     </div>
 
+                    <!-- APUESTA MÍNIMA Y APUESTA MÁXIMA -->
                     <div class="admin-grid-2" style="margin-top: 6px;">
-                        <div>
-                            <label>Capacidad Máx.</label>
-                            <input type="number" id="nueva-mesa-capacidad" value="7" min="1" max="50">
-                        </div>
                         <div>
                             <label>Apuesta Mínima ($)</label>
                             <input type="number" step="any" id="nueva-mesa-apuesta-min" value="50" min="0">
+                        </div>
+                        <div>
+                            <label>Apuesta Máxima ($)</label>
+                            <input type="number" step="any" id="nueva-mesa-apuesta-max" value="5000" min="0">
                         </div>
                     </div>
 
                     <div class="admin-grid-2" style="margin-top: 6px;">
                         <div>
-                            <label>Crupier</label>
-                            <input type="text" id="nueva-mesa-crupier" placeholder="Ej. Carlos M.">
+                            <label>Capacidad Máx.</label>
+                            <input type="number" id="nueva-mesa-capacidad" value="7" min="1" max="50">
                         </div>
                         <div>
                             <label>Estatus Inicial</label>
@@ -620,7 +621,12 @@
                         </div>
                     </div>
 
-                    <!-- CAJA A: 3 ACUMULADOS PROGRESIVOS PARA TEXAS / ULTIMATE -->
+                    <div style="margin-top: 6px;">
+                        <label>Crupier</label>
+                        <input type="text" id="nueva-mesa-crupier" placeholder="Ej. Carlos M.">
+                    </div>
+
+                    <!-- CAJA A: 3 ACUMULADOS PARA TEXAS / ULTIMATE -->
                     <div id="caja-jackpot-texas-nueva" class="box-triple-jackpot-admin" style="margin-top: 10px;">
                         <span style="font-size: 0.78em; color: var(--neon-gold); font-weight: bold; text-transform: uppercase;">
                             ★ 3 Acumulados Progresivos (Pantalla de Sala)
@@ -676,7 +682,6 @@
         const SUPABASE_ANON_KEY = "sb_publishable_on1rkqvAIhSQonTODdk5fA_qTpEo_8H";
         const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // ================= CAMBIO INTELIGENTE DEL FORMULARIO =================
         function cambiarTipoJuegoNuevo() {
             const juego = (document.getElementById('nueva-mesa-juego').value || '').toLowerCase();
             const esTexas = juego.includes('texas') || juego.includes('hold') || juego.includes('ultimate');
@@ -693,7 +698,6 @@
             }
         }
 
-        // ================= SESIÓN ADMIN =================
         function verificarSesionActiva() {
             const sesion = sessionStorage.getItem('bigbola_admin_logged');
             if (sesion === 'true') {
@@ -747,7 +751,6 @@
             window.location.reload();
         }
 
-        // ================= PROMOS WHATSAPP =================
         let promosRotativas = [];
         let idPromoActiva = 1;
 
@@ -1101,7 +1104,7 @@
             }
         }
 
-        // ================= GESTIÓN DE MESAS =================
+        // ================= GESTIÓN DE MESAS CON APUESTA MÍNIMA Y MÁXIMA =================
         async function cambiarJugadores(id, delta) {
             const display = document.getElementById(`val-jugadores-${id}`);
             const capInput = document.getElementById(`capacidad-${id}`);
@@ -1135,12 +1138,12 @@
             }
         }
 
-        // REGISTRAR MESA ADAPTATIVO (CON 3 POZOS SI ES TEXAS O ULTIMATE)
         async function crearMesa() {
             const nombre = document.getElementById('nueva-mesa-nombre').value.trim();
             const juego = document.getElementById('nueva-mesa-juego').value;
             const capacidad = parseInt(document.getElementById('nueva-mesa-capacidad').value) || 7;
             const apuesta_minima = parseFloat(document.getElementById('nueva-mesa-apuesta-min').value) || 0;
+            const apuesta_maxima = parseFloat(document.getElementById('nueva-mesa-apuesta-max').value) || 0;
             const estatus = document.getElementById('nueva-mesa-estatus').value;
             const crupier = document.getElementById('nueva-mesa-crupier').value.trim();
 
@@ -1173,6 +1176,7 @@
                 capacidad_maxima: capacidad, 
                 jugadores_actuales: 0,
                 apuesta_minima, 
+                apuesta_maxima,
                 estatus, 
                 crupier: crupier === '' ? null : crupier, 
                 jackpot, 
@@ -1196,12 +1200,14 @@
             try {
                 const crupierInput = document.getElementById(`crupier-${id}`);
                 const apuestaMinInput = document.getElementById(`apuesta-min-${id}`);
+                const apuestaMaxInput = document.getElementById(`apuesta-max-${id}`);
                 const capacidadInput = document.getElementById(`capacidad-${id}`);
                 const promoInput = document.getElementById(`promo-${id}`);
                 const jackpotInput = document.getElementById(`jackpot-${id}`);
 
                 const crupierTexto = crupierInput ? crupierInput.value.trim() : '';
                 const apuesta_minima = apuestaMinInput ? (parseFloat(apuestaMinInput.value) || 0) : 0;
+                const apuesta_maxima = apuestaMaxInput ? (parseFloat(apuestaMaxInput.value) || 0) : 0;
                 const capacidad_maxima = capacidadInput ? (parseInt(capacidadInput.value) || 7) : 7;
                 const promo_especial = promoInput ? promoInput.value.trim() : '';
                 const jackpot = jackpotInput ? (parseFloat(jackpotInput.value) || 0) : 0;
@@ -1209,6 +1215,7 @@
                 const updateData = {
                     crupier: crupierTexto === '' ? null : crupierTexto,
                     apuesta_minima,
+                    apuesta_maxima,
                     capacidad_maxima,
                     promo_especial
                 };
@@ -1288,14 +1295,19 @@
                             </div>
                         </div>
 
-                        <div class="admin-grid-2" style="margin-top: 6px;">
+                        <!-- 3 CAMPOS NUMÉRICOS: CAPACIDAD, AP. MÍNIMA Y AP. MÁXIMA -->
+                        <div class="admin-grid-3" style="margin-top: 6px;">
                             <div>
-                                <label>Capacidad Máx.</label>
+                                <label>Capacidad</label>
                                 <input type="number" id="capacidad-${m.id}" value="${capMax}" min="1" max="50">
                             </div>
                             <div>
-                                <label>Apuesta Mínima ($)</label>
+                                <label>Ap. Mínima ($)</label>
                                 <input type="number" step="any" id="apuesta-min-${m.id}" value="${m.apuesta_minima || 0}">
+                            </div>
+                            <div>
+                                <label>Ap. Máxima ($)</label>
+                                <input type="number" step="any" id="apuesta-max-${m.id}" value="${m.apuesta_maxima || 0}">
                             </div>
                         </div>
 
