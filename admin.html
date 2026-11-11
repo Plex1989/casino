@@ -20,7 +20,6 @@
             --neon-gold: #d4af37;
             --neon-purple: #b026ff;
             --neon-green: #25D366;
-            --neon-orange: #ff6600;
             --silver-metal: #d9dadb;
             --border-color: #2a2d3d;
         }
@@ -35,8 +34,8 @@
             color: white;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             margin: 0;
-            padding: 15px;
-            padding-bottom: 80px;
+            padding: 14px;
+            padding-bottom: 90px;
             font-size: 16px;
         }
 
@@ -48,44 +47,34 @@
         /* Encabezado */
         .admin-header {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            padding: 10px 0 15px 0;
+            gap: 12px;
+            padding: 10px 0 16px 0;
             border-bottom: 1px solid var(--border-color);
             margin-bottom: 20px;
         }
 
-        .admin-title {
+        .admin-logo {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--silver-metal);
+            box-shadow: 0 0 12px rgba(217, 218, 219, 0.3);
+        }
+
+        .admin-title-box h1 {
+            margin: 0;
+            font-size: 1.25em;
             color: var(--silver-metal);
-            font-size: 1.15em;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            gap: 10px;
             letter-spacing: 0.5px;
         }
 
-        .admin-logo {
-            width: 38px;
-            height: 38px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 1px solid var(--silver-metal);
-            box-shadow: 0 0 10px rgba(217, 218, 219, 0.3);
-        }
-
-        .btn-view-app {
-            background: rgba(0, 240, 255, 0.1);
+        .admin-title-box span {
+            font-size: 0.78em;
             color: var(--neon-cyan);
-            border: 1px solid var(--neon-cyan);
-            padding: 8px 14px;
-            border-radius: 8px;
-            font-size: 0.85em;
-            font-weight: bold;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         /* Tarjetas */
@@ -94,8 +83,13 @@
             border: 1px solid var(--border-color);
             border-radius: 14px;
             padding: 18px;
-            margin-bottom: 20px;
+            margin-bottom: 22px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+        }
+
+        .admin-card.vip-card {
+            border: 1px solid var(--neon-gold);
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
         }
 
         .admin-card.push-card {
@@ -114,6 +108,10 @@
             margin: 0;
             font-size: 1.15em;
             color: var(--neon-purple);
+        }
+
+        .vip-card .card-header h2 {
+            color: var(--neon-gold);
         }
 
         .push-card .card-header h2 {
@@ -182,8 +180,7 @@
             color: black;
         }
 
-        /* Mesas */
-        .form-crear-mesa {
+        .sub-box-form {
             background: #0e1017;
             border: 1px dashed var(--neon-cyan);
             border-radius: 12px;
@@ -191,6 +188,130 @@
             margin-bottom: 20px;
         }
 
+        .sub-box-form.gold-dashed {
+            border-color: var(--neon-gold);
+        }
+
+        .admin-grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        /* BUSCADOR EN TIEMPO REAL */
+        .search-box-vip {
+            position: relative;
+            margin-bottom: 14px;
+        }
+
+        .search-box-vip input {
+            padding-left: 40px;
+            border-color: #443c22;
+            background: #0e1017;
+            color: var(--neon-gold);
+            font-weight: bold;
+        }
+
+        .search-box-vip input::placeholder {
+            color: #8892b0;
+            font-weight: normal;
+        }
+
+        .search-icon-fixed {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.1em;
+            pointer-events: none;
+        }
+
+        /* TARJETAS VIP ADAPTADAS A CELULAR (AMPLIAS) */
+        .vip-item {
+            background: #0e1017;
+            border: 1px solid #332d18;
+            border-left: 4px solid var(--neon-gold);
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 14px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+        }
+
+        .vip-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .vip-name {
+            font-weight: bold;
+            font-size: 1.1em;
+            color: white;
+            display: block;
+        }
+
+        .vip-phone {
+            font-size: 0.82em;
+            color: #8892b0;
+            display: block;
+            margin-top: 2px;
+        }
+
+        .vip-input-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .vip-input-row input {
+            font-size: 1.25em;
+            font-weight: bold;
+            color: var(--neon-gold);
+            text-align: center;
+            padding: 10px;
+            background: #000;
+            border: 1px solid #443c22;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-guardar-bonus {
+            background: linear-gradient(90deg, #0070f3, var(--neon-cyan));
+            color: black;
+            border: none;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .btn-wa-direct {
+            background: linear-gradient(90deg, #128C7E, #25D366);
+            color: white;
+            border: 1px solid #25D366;
+            padding: 13px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 0.9em;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            width: 100%;
+        }
+
+        .btn-wa-direct:active {
+            transform: scale(0.98);
+        }
+
+        /* Mesas */
         .mesa-item {
             background: #0e1017;
             border: 1px solid var(--border-color);
@@ -212,12 +333,6 @@
             color: white;
         }
 
-        .mesa-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-
         .mesa-estatus-select {
             padding: 10px;
             font-weight: bold;
@@ -237,7 +352,6 @@
             border: 1px solid var(--neon-red);
         }
 
-        /* Control para jugadores (+ / -) */
         .stepper-container {
             display: flex;
             align-items: center;
@@ -260,7 +374,6 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: 0.1s;
             user-select: none;
             touch-action: manipulation;
         }
@@ -279,7 +392,6 @@
             color: white;
         }
 
-        /* Botones de frases rápidas (1 toque) */
         .preset-badge-group {
             display: flex;
             flex-wrap: wrap;
@@ -296,10 +408,6 @@
             border: 1px solid transparent;
             background: #151722;
             transition: 0.15s;
-        }
-
-        .btn-preset:active {
-            transform: scale(0.94);
         }
 
         .btn-preset.fuego {
@@ -333,7 +441,7 @@
             margin-top: 10px;
         }
 
-        .btn-del-mesa {
+        .btn-del-item {
             background: rgba(255, 0, 60, 0.15);
             color: var(--neon-red);
             border: 1px solid var(--neon-red);
@@ -348,15 +456,67 @@
 
     <div class="container">
         
+        <!-- ENCABEZADO -->
         <header class="admin-header">
-            <div class="admin-title">
-                <img src="logo.jpg" alt="Casino BigBola" class="admin-logo" onerror="this.src='logo.png'">
-                <span>Admin CASINO BIGBOLA</span>
+            <img src="logo.jpg" alt="Casino BigBola" class="admin-logo" onerror="this.src='logo.png'">
+            <div class="admin-title-box">
+                <h1>CASINO BIGBOLA</h1>
+                <span>Panel de Administración</span>
             </div>
-            <a href="index.html" class="btn-view-app">📱 Ir a App</a>
         </header>
 
-        <!-- 1. MÓDULO PUSH -->
+        <!-- 1. MÓDULO JUGADORES VIP & BONUS BACK -->
+        <section class="admin-card vip-card">
+            <div class="card-header">
+                <span style="font-size: 1.4em;">💎</span>
+                <h2>Gestión de Bonus Back (VIP)</h2>
+            </div>
+            <p style="color: #8892b0; font-size: 0.85em; margin-top: 0;">
+                Busca al cliente por nombre, actualiza sus puntos y envíale su saldo a WhatsApp en 1 toque.
+            </p>
+
+            <!-- BUSCADOR EN TIEMPO REAL -->
+            <div class="search-box-vip">
+                <span class="search-icon-fixed">🔍</span>
+                <input type="text" id="input-buscar-vip" oninput="filtrarJugadoresVIP()" placeholder="Buscar cliente por nombre o teléfono...">
+            </div>
+
+            <!-- FORMULARIO REGISTRAR JUGADOR VIP -->
+            <div class="sub-box-form gold-dashed">
+                <h3 style="color: var(--neon-gold); margin: 0 0 10px 0; font-size: 1em; display: flex; align-items: center; gap: 6px;">
+                    <span>➕</span> Registrar Nuevo Jugador VIP
+                </h3>
+
+                <div class="admin-grid-2">
+                    <div>
+                        <label>Nombre del Jugador</label>
+                        <input type="text" id="vip-nuevo-nombre" placeholder="Ej. Enrique Morales">
+                    </div>
+                    <div>
+                        <label>Celular (10 dígitos)</label>
+                        <input type="tel" id="vip-nuevo-telefono" placeholder="Ej. 2281234567">
+                    </div>
+                </div>
+
+                <label>Bonus Back Inicial ($)</label>
+                <input type="number" id="vip-nuevo-bonus" value="0" min="0">
+
+                <button class="btn-action btn-add-table" onclick="crearJugadorVIP()">
+                    ➕ Registrar en Cartera VIP
+                </button>
+            </div>
+
+            <!-- LISTA DE JUGADORES FILTRADOS -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <h3 style="color: var(--neon-gold); font-size: 0.95em; margin: 0;">Cartera de Clientes</h3>
+                <span id="vip-contador" style="font-size: 0.8em; color: #8892b0;">0 registrados</span>
+            </div>
+            <div id="contenedor-vip-admin">
+                <p style="text-align: center; color: #8892b0;">Cargando jugadores VIP...</p>
+            </div>
+        </section>
+
+        <!-- 2. MÓDULO PUSH -->
         <section class="admin-card push-card">
             <div class="card-header">
                 <span style="font-size: 1.4em;">📢</span>
@@ -377,7 +537,7 @@
             </button>
         </section>
 
-        <!-- 2. GESTOR DE PROMOCIONES -->
+        <!-- 3. GESTOR DE PROMOCIONES -->
         <section class="admin-card">
             <div class="card-header">
                 <span style="font-size: 1.4em;">🏷️</span>
@@ -403,7 +563,7 @@
             <div id="lista-promos" style="margin-top: 20px;"></div>
         </section>
 
-        <!-- 3. GESTOR DE MESAS (CREAR Y EDITAR) -->
+        <!-- 4. GESTOR DE MESAS -->
         <section class="admin-card">
             <div class="card-header">
                 <span style="font-size: 1.4em;">🎲</span>
@@ -411,12 +571,12 @@
             </div>
 
             <!-- FORMULARIO CREAR MESA -->
-            <div class="form-crear-mesa">
+            <div class="sub-box-form">
                 <h3 style="color: var(--neon-gold); margin: 0 0 10px 0; font-size: 1.05em; display: flex; align-items: center; gap: 6px;">
                     <span>➕</span> Agregar Nueva Mesa
                 </h3>
 
-                <div class="mesa-grid">
+                <div class="admin-grid-2">
                     <div>
                         <label>Nombre de la Mesa</label>
                         <input type="text" id="nueva-mesa-nombre" placeholder="Ej. Mesa VIP 1">
@@ -433,7 +593,7 @@
                     </div>
                 </div>
 
-                <div class="mesa-grid" style="margin-top: 6px;">
+                <div class="admin-grid-2" style="margin-top: 6px;">
                     <div>
                         <label>Capacidad Máx.</label>
                         <input type="number" id="nueva-mesa-capacidad" value="7" min="1" max="50">
@@ -444,7 +604,7 @@
                     </div>
                 </div>
 
-                <div class="mesa-grid" style="margin-top: 6px;">
+                <div class="admin-grid-2" style="margin-top: 6px;">
                     <div>
                         <label>Crupier</label>
                         <input type="text" id="nueva-mesa-crupier" placeholder="Ej. Carlos M.">
@@ -458,7 +618,7 @@
                     </div>
                 </div>
 
-                <div class="mesa-grid" style="margin-top: 6px;">
+                <div class="admin-grid-2" style="margin-top: 6px;">
                     <div>
                         <label>Jackpot Inicial ($)</label>
                         <input type="number" id="nueva-mesa-jackpot" value="0">
@@ -488,7 +648,156 @@
         const SUPABASE_ANON_KEY = "sb_publishable_on1rkqvAIhSQonTODdk5fA_qTpEo_8H";
         const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // ENVÍO DE PUSH
+        // ================= JUGADORES VIP CON FILTRO EN VIVO =================
+        let listaVipMemoria = [];
+
+        async function crearJugadorVIP() {
+            const nombre = document.getElementById('vip-nuevo-nombre').value.trim();
+            let telefono = document.getElementById('vip-nuevo-telefono').value.trim().replace(/\D/g, '');
+            const bonus_back = parseInt(document.getElementById('vip-nuevo-bonus').value) || 0;
+
+            if (!nombre || !telefono) {
+                alert("Por favor ingresa el nombre y teléfono del cliente.");
+                return;
+            }
+
+            if (telefono.length === 10) {
+                telefono = "52" + telefono;
+            }
+
+            const { error } = await client.from('clientes_vip').insert([{
+                nombre,
+                telefono,
+                bonus_back
+            }]);
+
+            if (error) {
+                alert("Error al registrar: " + error.message);
+            } else {
+                document.getElementById('vip-nuevo-nombre').value = '';
+                document.getElementById('vip-nuevo-telefono').value = '';
+                document.getElementById('vip-nuevo-bonus').value = '0';
+                cargarJugadoresVIP();
+            }
+        }
+
+        async function guardarBonusBack(id) {
+            const inputBonus = document.getElementById(`bonus-val-${id}`);
+            const bonus = parseInt(inputBonus.value) || 0;
+
+            const { error } = await client.from('clientes_vip').update({
+                bonus_back: bonus,
+                fecha_actualizacion: new Date().toISOString()
+            }).eq('id', id);
+
+            if (error) {
+                alert("Error al guardar: " + error.message);
+            } else {
+                const badge = document.getElementById(`vip-badge-${id}`);
+                if (badge) {
+                    badge.innerText = "✓ Guardado";
+                    badge.style.display = "inline";
+                    setTimeout(() => badge.style.display = "none", 1800);
+                }
+                
+                // Actualiza en memoria local y el link de WhatsApp
+                const item = listaVipMemoria.find(x => x.id == id);
+                if (item) item.bonus_back = bonus;
+                actualizarLinkWhatsApp(id);
+            }
+        }
+
+        function actualizarLinkWhatsApp(id) {
+            const btnWa = document.getElementById(`btn-wa-${id}`);
+            if (!btnWa) return;
+
+            const nombre = btnWa.getAttribute('data-nombre');
+            const tel = btnWa.getAttribute('data-tel');
+            const bonus = document.getElementById(`bonus-val-${id}`).value || 0;
+
+            const mensaje = `Hola *${nombre}*, te escribe la gerencia de *CASINO BIGBOLA* 🎰.\n\n` +
+                            `Te informamos que tienes acumulados *$${Number(bonus).toLocaleString('es-MX')} MXN* en *Bonus Back* listos para jugar en mesas este fin de semana.\n\n` +
+                            `¿Te apartamos un lugar en tu mesa favorita? ¡Te esperamos!`;
+
+            btnWa.href = `https://wa.me/${tel}?text=${encodeURIComponent(mensaje)}`;
+        }
+
+        async function eliminarJugadorVIP(id, nombre) {
+            if (confirm(`¿Eliminar a ${nombre} de la lista VIP?`)) {
+                const { error } = await client.from('clientes_vip').delete().eq('id', id);
+                if (error) alert("Error: " + error.message);
+                else cargarJugadoresVIP();
+            }
+        }
+
+        function filtrarJugadoresVIP() {
+            const termino = (document.getElementById('input-buscar-vip').value || '').toLowerCase().trim();
+            const filtrados = listaVipMemoria.filter(v => 
+                v.nombre.toLowerCase().includes(termino) || v.telefono.includes(termino)
+            );
+            renderizarListaVIP(filtrados);
+        }
+
+        function renderizarListaVIP(vips) {
+            const cont = document.getElementById('contenedor-vip-admin');
+            const contador = document.getElementById('vip-contador');
+
+            contador.innerText = `${vips.length} mostrado${vips.length === 1 ? '' : 's'}`;
+
+            if (vips && vips.length > 0) {
+                cont.innerHTML = vips.map(v => {
+                    const mensaje = `Hola *${v.nombre}*, te escribe la gerencia de *CASINO BIGBOLA* 🎰.\n\n` +
+                                    `Te informamos que tienes acumulados *$${Number(v.bonus_back || 0).toLocaleString('es-MX')} MXN* en *Bonus Back* listos para jugar en mesas este fin de semana.\n\n` +
+                                    `¿Te apartamos un lugar en tu mesa favorita? ¡Te esperamos!`;
+                    
+                    const urlWa = `https://wa.me/${v.telefono}?text=${encodeURIComponent(mensaje)}`;
+
+                    return `
+                    <div class="vip-item">
+                        <div class="vip-header">
+                            <div>
+                                <span class="vip-name">⭐ ${v.nombre}</span>
+                                <span class="vip-phone">📱 +${v.telefono}</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 6px;">
+                                <span id="vip-badge-${v.id}" style="color: var(--neon-green); font-size: 0.78em; display: none; font-weight: bold;">✓ Guardado</span>
+                                <button onclick="eliminarJugadorVIP('${v.id}', '${v.nombre}')" style="background: none; border: none; color: #8892b0; font-size: 1.1em; cursor: pointer; padding: 2px;">🗑️</button>
+                            </div>
+                        </div>
+
+                        <!-- INPUT ESPACIOSO PARA BONUS BACK -->
+                        <label style="margin-top: 0; margin-bottom: 4px; font-size: 0.75em; color: var(--neon-gold);">Bonus Back Acumulado ($ MXN):</label>
+                        <div class="vip-input-row">
+                            <input type="number" id="bonus-val-${v.id}" value="${v.bonus_back || 0}" min="0" onchange="guardarBonusBack('${v.id}')">
+                            <button class="btn-guardar-bonus" onclick="guardarBonusBack('${v.id}')">
+                                💾 Guardar
+                            </button>
+                        </div>
+
+                        <!-- BOTÓN DISPARADOR DE WHATSAPP -->
+                        <a href="${urlWa}" id="btn-wa-${v.id}" data-nombre="${v.nombre}" data-tel="${v.telefono}" target="_blank" class="btn-wa-direct">
+                            <span>📲</span> Enviar Saldo por WhatsApp
+                        </a>
+                    </div>
+                    `;
+                }).join('');
+            } else {
+                cont.innerHTML = '<p style="text-align: center; color: #8892b0; font-size: 0.9em; padding: 10px 0;">No se encontraron clientes con ese nombre.</p>';
+            }
+        }
+
+        async function cargarJugadoresVIP() {
+            const { data: vips, error } = await client.from('clientes_vip').select('*').order('nombre', { ascending: true });
+            if (error) {
+                document.getElementById('contenedor-vip-admin').innerHTML = `<p style="color: var(--neon-red); text-align: center;">Error: ${error.message}</p>`;
+                return;
+            }
+
+            listaVipMemoria = vips || [];
+            filtrarJugadoresVIP();
+        }
+
+        // ================= MÓDULO PUSH =================
         async function enviarPush() {
             const inputTitulo = document.getElementById('push-titulo');
             const inputMensaje = document.getElementById('push-mensaje');
@@ -531,7 +840,7 @@
             }
         }
 
-        // PROMOCIONES
+        // ================= GESTIÓN DE PROMOCIONES =================
         async function crearPromocion() {
             const tipo = document.getElementById('promo-tipo').value;
             const titulo = document.getElementById('promo-titulo').value.trim();
@@ -597,9 +906,7 @@
             }
         }
 
-        // ================= GESTIÓN EN TIEMPO REAL =================
-
-        // 1. SUBIR O BAJAR JUGADORES (SIN BOTÓN DE GUARDAR)
+        // ================= GESTIÓN DE MESAS =================
         async function cambiarJugadores(id, delta, maxCapacidad) {
             try {
                 const display = document.getElementById(`val-jugadores-${id}`);
@@ -626,19 +933,15 @@
             }
         }
 
-        // 2. CAMBIAR ESTATUS INMEDIATAMENTE AL SELECCIONAR
         async function cambiarEstatus(id, selectElement) {
             const nuevoEstatus = selectElement.value;
             selectElement.className = 'mesa-estatus-select ' + (nuevoEstatus === 'Abierta' ? 'abierta' : 'cerrada');
             mostrarAvisoEnVivo(id);
 
             const { error } = await client.from('mesas').update({ estatus: nuevoEstatus }).eq('id', id);
-            if (error) {
-                alert("Error al cambiar estatus: " + error.message);
-            }
+            if (error) alert("Error al cambiar estatus: " + error.message);
         }
 
-        // 3. APLICAR FRASE PREESTABLECIDA DE 1 TOQUE
         async function aplicarPreset(id, frase) {
             const inputPromo = document.getElementById(`promo-${id}`);
             if (inputPromo) inputPromo.value = frase;
@@ -646,9 +949,7 @@
             mostrarAvisoEnVivo(id);
 
             const { error } = await client.from('mesas').update({ promo_especial: frase }).eq('id', id);
-            if (error) {
-                alert("Error al actualizar frase: " + error.message);
-            }
+            if (error) alert("Error al actualizar frase: " + error.message);
         }
 
         function mostrarAvisoEnVivo(id) {
@@ -660,7 +961,6 @@
             }
         }
 
-        // CREAR MESA
         async function crearMesa() {
             const nombre = document.getElementById('nueva-mesa-nombre').value.trim();
             const juego = document.getElementById('nueva-mesa-juego').value;
@@ -700,7 +1000,6 @@
             }
         }
 
-        // GUARDAR CAMPOS MANUALES (Crupier, Apuesta Mínima, Jackpot, Promo)
         async function actualizarMesa(id) {
             const crupier = document.getElementById(`crupier-${id}`).value.trim();
             const apuesta_minima = parseInt(document.getElementById(`apuesta-min-${id}`).value) || 0;
@@ -714,14 +1013,10 @@
                 promo_especial: promo
             }).eq('id', id);
 
-            if (error) {
-                alert("Error al guardar: " + error.message);
-            } else {
-                mostrarAvisoEnVivo(id);
-            }
+            if (error) alert("Error al guardar: " + error.message);
+            else mostrarAvisoEnVivo(id);
         }
 
-        // ELIMINAR MESA
         async function eliminarMesa(id, nombre) {
             if (confirm(`¿Eliminar la ${nombre}?`)) {
                 const { error } = await client.from('mesas').delete().eq('id', id);
@@ -730,7 +1025,6 @@
             }
         }
 
-        // CARGAR MESAS
         async function cargarMesas() {
             const { data: mesas, error } = await client.from('mesas').select('*').order('juego').order('nombre');
             const cont = document.getElementById('contenedor-mesas-admin');
@@ -750,7 +1044,7 @@
                             <span id="badge-guardado-${m.id}" style="color: var(--neon-cyan); font-size: 0.8em; display: none; font-weight: bold;">⚡ Sincronizado</span>
                         </div>
 
-                        <div class="mesa-grid">
+                        <div class="admin-grid-2">
                             <div>
                                 <label>Estatus</label>
                                 <select id="estatus-${m.id}" class="mesa-estatus-select ${m.estatus === 'Abierta' ? 'abierta' : 'cerrada'}" onchange="cambiarEstatus('${m.id}', this)">
@@ -768,7 +1062,7 @@
                             </div>
                         </div>
 
-                        <div class="mesa-grid" style="margin-top: 6px;">
+                        <div class="admin-grid-2" style="margin-top: 6px;">
                             <div>
                                 <label>Apuesta Mínima ($)</label>
                                 <input type="number" id="apuesta-min-${m.id}" value="${m.apuesta_minima || 0}">
@@ -779,7 +1073,7 @@
                             </div>
                         </div>
 
-                        <div class="mesa-grid" style="margin-top: 6px;">
+                        <div class="admin-grid-2" style="margin-top: 6px;">
                             <div>
                                 <label>Crupier</label>
                                 <input type="text" id="crupier-${m.id}" value="${m.crupier || ''}" placeholder="Nombre">
@@ -790,7 +1084,6 @@
                             </div>
                         </div>
 
-                        <!-- BOTONES PREDEFINIDOS DE 1 TOQUE -->
                         <div style="margin-top: 8px;">
                             <span style="font-size: 0.72em; color: #8892b0; text-transform: uppercase; font-weight: bold;">Activar frase rápida (1 toque):</span>
                             <div class="preset-badge-group">
@@ -805,7 +1098,7 @@
                             <button class="btn-action btn-save" onclick="actualizarMesa('${m.id}')" style="margin-top: 0; padding: 10px; font-size: 0.9em;">
                                 💾 Guardar Crupier/Jackpot
                             </button>
-                            <button class="btn-del-mesa" onclick="eliminarMesa('${m.id}', '${m.nombre}')" title="Eliminar">
+                            <button class="btn-del-item" onclick="eliminarMesa('${m.id}', '${m.nombre}')" title="Eliminar">
                                 🗑️
                             </button>
                         </div>
@@ -817,6 +1110,7 @@
         }
 
         window.addEventListener('DOMContentLoaded', () => {
+            cargarJugadoresVIP();
             cargarPromociones();
             cargarMesas();
         });
