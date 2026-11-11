@@ -604,7 +604,7 @@
                 <h2>Gestión de Bonus Back (VIP)</h2>
             </div>
             <p style="color: #8892b0; font-size: 0.85em; margin-top: 0;">
-                Elige la promoción activa, busca al cliente y envíale la invitación formal a su WhatsApp.
+                Elige la promoción activa, busca al cliente y envíale la invitación directa a su WhatsApp.
             </p>
 
             <!-- SELECTOR DE PROMOCIONES ROTATIVAS GUARDADAS EN SUPABASE -->
@@ -901,44 +901,40 @@
             }
         }
 
-        // ================= PLANTILLA DE MENSAJE 100% COMPATIBLE (METODO INDEX) =================
+        // ================= PLANTILLA CONCRETA, SIN SATURACIÓN Y CON FOCO EN SALDO =================
         function generarTextoWhatsApp(nombre, bonus) {
             const monto = Number(bonus) || 0;
             const promo = promosRotativas.find(p => p.id === idPromoActiva) || {
-                titulo: "🎰 Torneo Especial de Sala",
+                titulo: "Torneo Especial de Sala",
                 descripcion: "Mesas activas con Jackpot acumulado y premios en efectivo."
             };
 
+            // Quita emojis del título de la promo en caso de que vengan de la base de datos
+            const tituloLimpio = promo.titulo.replace(/[\u{1F300}-\u{1F9FF}]/gu, '').trim();
+
             if (monto > 0) {
-                // CLIENTE CON BONUS BACK (> $0)
-                return `🎰 *CASINO BIGBOLA* 🎰\n` +
-                       `👑 *INVITACIÓN VIP EXCLUSIVA* 👑\n\n` +
-                       `Hola *${nombre}*, es un placer saludarte. 🥂✨\n\n` +
-                       `💰 *Tu saldo a favor en sala:* \n` +
-                       `💵 *$${monto.toLocaleString('es-MX')} MXN* en *Bonus Back* 🔥\n` +
-                       `_(Fichas listas para redimir y jugar en mesas en vivo)_\n\n` +
-                       `🎁 *PROMOCIÓN DE HOY:*\n` +
-                       `🔥 *${promo.titulo}*\n` +
-                       `👉 ${promo.descripcion}\n\n` +
-                       `🎲 Disfruta de la mejor adrenalina, crupieres en rotación y servicio de cortesía en sala.\n\n` +
-                       `📲 *¿Te apartamos tu lugar favorito en la mesa?*\n` +
-                       `✨ ¡Te esperamos hoy para ganar en grande! 🎰🔥`;
+                // FOCO DIRECTO: BONUS BACK EN PRIMERA LÍNEA + PROMO CONCRETA
+                return `*CASINO BIGBOLA* | Membresía VIP\n\n` +
+                       `Hola *${nombre}*, tienes saldo disponible para jugar hoy:\n\n` +
+                       `💰 *BONUS BACK ACUMULADO:*\n` +
+                       `👉 *$${monto.toLocaleString('es-MX')} MXN* en fichas\n\n` +
+                       `🔥 *PROMO DE HOY:*\n` +
+                       `*${tituloLimpio}*\n` +
+                       `${promo.descripcion}\n\n` +
+                       `¿Te apartamos tu lugar favorito? Avísanos por aquí para tenerlo listo a tu llegada.`;
             } else {
-                // CLIENTE SIN SALDO ($0)
-                return `🎰 *CASINO BIGBOLA* 🎰\n` +
-                       `👑 *INVITACIÓN VIP EXCLUSIVA* 👑\n\n` +
-                       `Hola *${nombre}*, es un gusto saludarte. 🥂✨\n\n` +
-                       `Queremos invitarte cordialmente a vivir una noche especial en nuestras mesas en vivo:\n\n` +
-                       `🎁 *PROMOCIÓN DE HOY:*\n` +
-                       `🔥 *${promo.titulo}*\n` +
-                       `👉 ${promo.descripcion}\n\n` +
-                       `🍸 Contamos con cócteles en sala, excelente ambiente y las mejores mesas activas con Jackpot acumulado.\n\n` +
-                       `📲 *¿Te reservamos un lugar en tu mesa favorita?*\n` +
-                       `✨ ¡Te esperamos hoy en CASINO BIGBOLA! 🎰🎲`;
+                // INVITACIÓN DIRECTA A LA PROMO DE HOY (SIN MENCIONAR SALDO)
+                return `*CASINO BIGBOLA* | Invitación Especial\n\n` +
+                       `Hola *${nombre}*, te compartimos el evento activo de hoy en sala:\n\n` +
+                       `🔥 *PROMO DE HOY:*\n` +
+                       `*${tituloLimpio}*\n` +
+                       `${promo.descripcion}\n\n` +
+                       `🍸 Bebidas de cortesía en mesas abiertas.\n` +
+                       `¿Te apartamos un lugar en tu mesa favorita? Avísanos por aquí.`;
             }
         }
 
-        // ================= DISPARADOR DIRECTO DE WHATSAPP (IGUAL QUE INDEX.HTML) =================
+        // ================= DISPARADOR DIRECTO DE WHATSAPP =================
         function enviarWhatsAppVIP(id) {
             const cliente = listaVipMemoria.find(v => v.id == id);
             if (!cliente) return;
@@ -948,7 +944,6 @@
 
             const textoMensaje = generarTextoWhatsApp(cliente.nombre, bonus);
             
-            // Usamos api.whatsapp.com/send directo para no pasar por el acortador wa.me que corrompe los emojis
             const urlWhatsApp = `https://api.whatsapp.com/send?phone=${cliente.telefono}&text=${encodeURIComponent(textoMensaje)}`;
             window.open(urlWhatsApp, '_blank');
         }
@@ -1051,7 +1046,7 @@
                 </div>
 
                 <button type="button" onclick="enviarWhatsAppVIP('${v.id}')" class="btn-wa-direct">
-                    <span>📲</span> Enviar WhatsApp Elegante
+                    <span>📲</span> Enviar Invitación Directa por WhatsApp
                 </button>
             </div>
             `;
