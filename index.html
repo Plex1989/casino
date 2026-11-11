@@ -93,19 +93,11 @@
             transition: 0.2s;
         }
 
-        .btn-instalar-corner:active {
-            transform: scale(0.95);
-        }
+        .btn-instalar-corner:active { transform: scale(0.95); }
 
         @keyframes pulsoInstalar {
-            0% {
-                box-shadow: 0 0 6px rgba(0, 240, 255, 0.3);
-                border-color: rgba(0, 240, 255, 0.6);
-            }
-            100% {
-                box-shadow: 0 0 16px rgba(0, 240, 255, 0.7);
-                border-color: var(--neon-cyan);
-            }
+            0% { box-shadow: 0 0 6px rgba(0, 240, 255, 0.3); border-color: rgba(0, 240, 255, 0.6); }
+            100% { box-shadow: 0 0 16px rgba(0, 240, 255, 0.7); border-color: var(--neon-cyan); }
         }
 
         header img {
@@ -134,77 +126,75 @@
             letter-spacing: 0.5px;
         }
 
-        /* MODALES */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.88);
-            z-index: 9999;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            backdrop-filter: blur(5px);
-        }
-
-        .modal-box {
-            background: var(--card-bg);
-            border: 1px solid var(--neon-cyan);
-            border-radius: 16px;
-            padding: 22px;
-            max-width: 380px;
-            width: 100%;
-            text-align: center;
-            box-shadow: 0 0 30px rgba(0,240,255,0.25);
-        }
-
-        .modal-box h3 {
-            color: var(--neon-cyan);
-            margin: 0 0 10px 0;
-            font-size: 1.2em;
-        }
-
-        .modal-box p {
-            color: #c5c6c7;
-            font-size: 0.85em;
-            margin-bottom: 16px;
-            line-height: 1.4;
-        }
-
-        .qr-wrapper {
-            background: white;
-            padding: 16px;
-            border-radius: 12px;
-            display: inline-flex;
-            justify-content: center;
-            align-items: center;
-            margin: 10px auto 16px auto;
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
-        }
-
-        .modal-pasos {
-            text-align: left;
-            background: #0b0c10;
-            padding: 14px;
-            border-radius: 10px;
-            font-size: 0.85em;
-            color: white;
+        /* CONTADOR DE VISITAS */
+        .contador-visitas-bar {
             display: flex;
-            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            margin: 8px auto 14px auto;
+            padding: 6px 14px;
+            background: rgba(15, 17, 25, 0.75);
+            border: 1px solid #232738;
+            border-radius: 20px;
+            font-size: 0.76em;
+            color: #8892b0;
+            width: fit-content;
+        }
+
+        .contador-visitas-bar strong {
+            color: white;
+        }
+
+        .contador-dot-live {
+            width: 7px;
+            height: 7px;
+            background-color: var(--neon-green);
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 6px var(--neon-green);
+        }
+
+        /* BANNER BOTÓN VIP BONUS BACK */
+        .btn-banner-vip {
+            background: linear-gradient(90deg, rgba(212, 175, 55, 0.18), rgba(255, 102, 0, 0.15));
+            border: 1px solid var(--neon-gold);
+            border-radius: 12px;
+            padding: 12px 14px;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 0 14px rgba(212, 175, 55, 0.2);
+            transition: 0.2s;
+            text-decoration: none;
+        }
+
+        .btn-banner-vip:active { transform: scale(0.98); }
+
+        .btn-banner-vip-text {
+            display: flex;
+            align-items: center;
             gap: 10px;
         }
 
-        .btn-cerrar-modal {
-            margin-top: 14px;
-            width: 100%;
-            padding: 12px;
-            background: linear-gradient(90deg, #0070f3, var(--neon-cyan));
-            color: black;
-            border: none;
-            border-radius: 8px;
-            font-weight: bold;
+        .btn-banner-vip-text strong {
+            color: var(--neon-gold);
             font-size: 0.95em;
-            cursor: pointer;
+            display: block;
+        }
+
+        .btn-banner-vip-text span {
+            color: #c5c6c7;
+            font-size: 0.75em;
+            display: block;
+        }
+
+        .btn-banner-vip-arrow {
+            color: var(--neon-gold);
+            font-size: 1.2em;
+            font-weight: bold;
         }
 
         /* 3 BOTONES DE ACCIÓN RÁPIDA */
@@ -255,6 +245,67 @@
             border: 1px solid var(--neon-gold);
         }
 
+        /* MODALES */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.88);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-box {
+            background: var(--card-bg);
+            border: 1px solid var(--neon-gold);
+            border-radius: 16px;
+            padding: 22px;
+            max-width: 380px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.3);
+        }
+
+        .modal-box h3 {
+            color: var(--neon-gold);
+            margin: 0 0 8px 0;
+            font-size: 1.25em;
+        }
+
+        .modal-box p {
+            color: #c5c6c7;
+            font-size: 0.85em;
+            margin-bottom: 16px;
+            line-height: 1.4;
+        }
+
+        .qr-wrapper {
+            background: white;
+            padding: 16px;
+            border-radius: 12px;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            margin: 10px auto 16px auto;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-cerrar-modal {
+            margin-top: 14px;
+            width: 100%;
+            padding: 12px;
+            background: #232738;
+            color: #c5c6c7;
+            border: 1px solid #444;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 0.9em;
+            cursor: pointer;
+        }
+
         .marquesina-flash {
             background: linear-gradient(90deg, #ff003c, #990024);
             color: white;
@@ -299,7 +350,7 @@
             padding-bottom: 6px;
         }
 
-        /* ESTRUCTURA BASE DE MESA */
+        /* TARJETAS CON MARCO NEÓN POR JUEGO */
         .mesa-card {
             background: var(--card-bg);
             border-radius: 16px;
@@ -315,41 +366,33 @@
             filter: grayscale(40%);
         }
 
-        /* 🟣 MARCO MORADO NEÓN: BLACKJACK */
+        /* 🟣 MARCO MORADO: BLACKJACK */
         .mesa-card.tema-blackjack {
             border: 2px solid #b026ff !important;
             box-shadow: 0 0 20px rgba(176, 38, 255, 0.4), inset 0 0 12px rgba(176, 38, 255, 0.08) !important;
         }
-        .mesa-card.tema-blackjack .juego-tag-label {
-            color: #d67bff;
-        }
+        .mesa-card.tema-blackjack .juego-tag-label { color: #d67bff; }
 
-        /* 🔴 MARCO ROJO NEÓN: RULETA */
+        /* 🔴 MARCO ROJO: RULETA */
         .mesa-card.tema-ruleta {
             border: 2px solid #ff003c !important;
             box-shadow: 0 0 20px rgba(255, 0, 60, 0.4), inset 0 0 12px rgba(255, 0, 60, 0.08) !important;
         }
-        .mesa-card.tema-ruleta .juego-tag-label {
-            color: #ff3b69;
-        }
+        .mesa-card.tema-ruleta .juego-tag-label { color: #ff3b69; }
 
-        /* 🟢 MARCO VERDE NEÓN: TEXAS HOLD'EM / ULTIMATE */
+        /* 🟢 MARCO VERDE: TEXAS HOLD'EM / ULTIMATE */
         .mesa-card.tema-texas {
             border: 2px solid #00ff88 !important;
             box-shadow: 0 0 20px rgba(0, 255, 136, 0.4), inset 0 0 12px rgba(0, 255, 136, 0.08) !important;
         }
-        .mesa-card.tema-texas .juego-tag-label {
-            color: #00ff88;
-        }
+        .mesa-card.tema-texas .juego-tag-label { color: #00ff88; }
 
-        /* 🔵 MARCO CYAN NEÓN: OTROS JUEGOS */
+        /* 🔵 MARCO CYAN: GENERAL */
         .mesa-card.tema-general {
             border: 2px solid #00f0ff !important;
             box-shadow: 0 0 20px rgba(0, 240, 255, 0.4) !important;
         }
-        .mesa-card.tema-general .juego-tag-label {
-            color: #00f0ff;
-        }
+        .mesa-card.tema-general .juego-tag-label { color: #00f0ff; }
 
         .mesa-banner-box {
             position: relative;
@@ -445,7 +488,6 @@
         .stat-val.gold { color: var(--neon-gold); }
         .stat-val.cyan { color: var(--neon-cyan); }
 
-        /* 3 ACUMULADOS TEXAS HOLD'EM */
         .texas-jackpot-screen {
             background: linear-gradient(180deg, #090a10, #141624);
             border: 2px solid #b38728;
@@ -512,7 +554,6 @@
             letter-spacing: 0.5px;
         }
 
-        /* ETIQUETA INTERNA DE ALERTA (NO ALTERA EL MARCO DE LA TARJETA) */
         .mesa-promo-tag {
             margin-top: 10px;
             background: rgba(212, 175, 55, 0.12);
@@ -561,6 +602,52 @@
             color: black;
             transform: scale(0.98);
         }
+
+        /* INPUTS Y RESULTADOS DEL MODAL VIP */
+        .vip-input-phone {
+            width: 100%;
+            padding: 14px;
+            background: #0b0c10;
+            border: 1px solid var(--neon-gold);
+            border-radius: 8px;
+            color: var(--neon-gold);
+            font-size: 1.2em;
+            font-weight: bold;
+            text-align: center;
+            outline: none;
+            margin-bottom: 12px;
+            letter-spacing: 1px;
+        }
+
+        .btn-consultar-submit {
+            width: 100%;
+            padding: 13px;
+            background: linear-gradient(90deg, var(--neon-gold), #ff8800);
+            color: black;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 0.95em;
+            cursor: pointer;
+        }
+
+        .vip-resultado-box {
+            display: none;
+            background: #090a10;
+            border: 1px solid var(--neon-green);
+            border-radius: 10px;
+            padding: 14px;
+            margin-top: 14px;
+            text-align: center;
+        }
+
+        .vip-resultado-monto {
+            font-size: 1.7em;
+            font-weight: 900;
+            color: var(--neon-gold);
+            margin: 6px 0;
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -575,7 +662,26 @@
             <img src="logo.jpg" alt="Casino BigBola" onerror="this.src='logo.png'">
             <h1>CASINO BIGBOLA</h1>
             <p>Estado de Mesas & Jackpots en Sala</p>
+
+            <!-- CONTADOR DE VISITAS EN VIVO CON BASE -->
+            <div class="contador-visitas-bar">
+                <span><span class="contador-dot-live"></span> <strong id="visitas-hoy-val">11</strong> en sala hoy</span>
+                <span>•</span>
+                <span><strong id="visitas-totales-val">1,142</strong> visitas registradas</span>
+            </div>
         </header>
+
+        <!-- BANNER DE CONSULTA BONUS BACK -->
+        <div class="btn-banner-vip" onclick="abrirModalBonusBack()">
+            <div class="btn-banner-vip-text">
+                <span style="font-size: 1.7em;">💎</span>
+                <div>
+                    <strong>Consultar mi Saldo Bonus Back</strong>
+                    <span>Consulta tus puntos acumulados para jugar hoy</span>
+                </div>
+            </div>
+            <div class="btn-banner-vip-arrow">➔</div>
+        </div>
 
         <!-- 3 ACCIONES LIMPIAS -->
         <div class="quick-actions-bar">
@@ -605,22 +711,51 @@
 
     </div>
 
+    <!-- MODAL CONSULTAR BONUS BACK (CON CELULAR O WHATSAPP) -->
+    <div id="modal-bonus-back" class="modal-overlay" onclick="cerrarModalBonusBack(event)">
+        <div class="modal-box" onclick="event.stopPropagation()">
+            <div style="font-size: 2em; margin-bottom: 4px;">💎</div>
+            <h3>Consulta de Bonus Back</h3>
+            <p>Ingresa tu número de celular registrado para consultar tus fichas de cortesía:</p>
+            
+            <input type="tel" id="input-phone-consulta" class="vip-input-phone" placeholder="Ej. 2281234567" maxlength="10">
+            <button class="btn-consultar-submit" onclick="ejecutarConsultaBonusBack()">
+                🔍 Consultar Saldo
+            </button>
+
+            <!-- RESULTADO EN PANTALLA -->
+            <div id="vip-resultado-box" class="vip-resultado-box">
+                <span id="vip-res-nombre" style="color: white; font-weight: bold; font-size: 1.05em;"></span>
+                <span style="color: #8892b0; font-size: 0.78em; display: block; margin-top: 2px;">Tienes acumulado en sala:</span>
+                <span id="vip-res-monto" class="vip-resultado-monto"></span>
+                <span style="color: var(--neon-green); font-size: 0.75em; font-weight: bold;">✓ Listo para canjear en mesas</span>
+            </div>
+
+            <div style="margin-top: 16px; border-top: 1px solid #2a2d3d; padding-top: 14px;">
+                <span style="color: #8892b0; font-size: 0.78em; display: block; margin-bottom: 8px;">¿Prefieres que te atienda un gerente?</span>
+                <a href="#" id="link-wa-consulta-directa" target="_blank" class="btn-mesa-whatsapp" style="margin-top: 0;">
+                    <span>📲</span> Preguntar por WhatsApp
+                </a>
+            </div>
+
+            <button class="btn-cerrar-modal" onclick="cerrarModalBonusBack()">
+                Cerrar
+            </button>
+        </div>
+    </div>
+
     <!-- MODAL GUÍA PARA IPHONE -->
     <div id="modal-ios-install" class="modal-overlay">
         <div class="modal-box">
             <div style="font-size: 2.2em; margin-bottom: 8px;">📲</div>
-            <h3>Instalar en tu iPhone</h3>
-            <p>
-                Para instalar la app de <strong>CASINO BIGBOLA</strong> en tu pantalla de inicio:
-            </p>
+            <h3 style="color: var(--neon-cyan);">Instalar en tu iPhone</h3>
+            <p>Para recibir notificaciones de mesas en sala en tu iPhone:</p>
             <div class="modal-pasos">
-                <div><strong>1.</strong> Toca el botón <strong>Compartir</strong> (el cuadro con la flecha hacia arriba <span style="color: var(--neon-cyan); font-size: 1.1em;">⎙</span> en la barra inferior de Safari).</div>
-                <div><strong>2.</strong> Desliza hacia abajo en el menú y selecciona <strong>"Agregar a pantalla de inicio" ➕</strong>.</div>
+                <div><strong>1.</strong> Toca el botón <strong>Compartir</strong> (icono <span style="color: var(--neon-cyan); font-size: 1.1em;">⎙</span> en Safari).</div>
+                <div><strong>2.</strong> Selecciona <strong>"Agregar a pantalla de inicio" ➕</strong>.</div>
                 <div><strong>3.</strong> Pulsa <strong>"Agregar"</strong> arriba a la derecha.</div>
             </div>
-            <button class="btn-cerrar-modal" onclick="cerrarModalIos()">
-                Entendido
-            </button>
+            <button class="btn-cerrar-modal" onclick="cerrarModalIos()">Entendido</button>
         </div>
     </div>
 
@@ -630,19 +765,106 @@
             <div style="font-size: 1.8em; margin-bottom: 4px;">🎰</div>
             <h3>Escanea para Entrar</h3>
             <p>Apunta con la cámara de tu celular para abrir la app de <strong>CASINO BIGBOLA</strong>.</p>
-            
-            <div class="qr-wrapper">
-                <div id="contenedor-qr"></div>
-            </div>
-
-            <button class="btn-cerrar-modal" onclick="cerrarModalQR()">
-                Cerrar Código QR
-            </button>
+            <div class="qr-wrapper"><div id="contenedor-qr"></div></div>
+            <button class="btn-cerrar-modal" onclick="cerrarModalQR()">Cerrar Código QR</button>
         </div>
     </div>
 
     <script>
         const NUMERO_WHATSAPP_CASINO = "522282311773";
+        const SUPABASE_URL = "https://kqgtyzsxwrkomdtuktkk.supabase.co";
+        const SUPABASE_ANON_KEY = "sb_publishable_on1rkqvAIhSQonTODdk5fA_qTpEo_8H";
+        const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // ================= CONTADOR DE VISITAS SINCRONIZADO =================
+        async function registrarYObtenerVisitas() {
+            try {
+                const hoyStr = new Date().toISOString().split('T')[0];
+
+                const { data, error } = await client
+                    .from('contador_visitas')
+                    .select('*')
+                    .eq('id', 1)
+                    .single();
+
+                if (error || !data) return;
+
+                let { visitas_totales, visitas_hoy, fecha_hoy } = data;
+
+                // Si cambió el día, reinicia hoy en 10 + 1 (11)
+                if (fecha_hoy !== hoyStr) {
+                    visitas_hoy = 11;
+                    visitas_totales += 1;
+                    fecha_hoy = hoyStr;
+                } else {
+                    visitas_hoy += 1;
+                    visitas_totales += 1;
+                }
+
+                // Actualiza en Supabase
+                await client.from('contador_visitas').update({
+                    visitas_totales,
+                    visitas_hoy,
+                    fecha_hoy
+                }).eq('id', 1);
+
+                // Renderiza en pantalla
+                document.getElementById('visitas-hoy-val').innerText = visitas_hoy;
+                document.getElementById('visitas-totales-val').innerText = Number(visitas_totales).toLocaleString('es-MX');
+            } catch (e) {
+                console.error("Error al contar visitas:", e);
+            }
+        }
+
+        // ================= MODAL DE CONSULTA BONUS BACK =================
+        function abrirModalBonusBack() {
+            document.getElementById('modal-bonus-back').style.display = 'flex';
+            document.getElementById('input-phone-consulta').value = '';
+            document.getElementById('vip-resultado-box').style.display = 'none';
+
+            const msgWa = encodeURIComponent("Hola, me gustaría consultar mi saldo de Bonus Back acumulado en CASINO BIGBOLA 🎰.");
+            document.getElementById('link-wa-consulta-directa').href = `https://wa.me/${NUMERO_WHATSAPP_CASINO}?text=${msgWa}`;
+        }
+
+        function cerrarModalBonusBack(e) {
+            if (!e || e.target.id === 'modal-bonus-back') {
+                document.getElementById('modal-bonus-back').style.display = 'none';
+            }
+        }
+
+        async function ejecutarConsultaBonusBack() {
+            const rawPhone = document.getElementById('input-phone-consulta').value.replace(/\D/g, '');
+            const boxResultado = document.getElementById('vip-resultado-box');
+
+            if (rawPhone.length < 10) {
+                alert("Por favor ingresa tu número de celular a 10 dígitos.");
+                return;
+            }
+
+            const { data: vips, error } = await client
+                .from('clientes_vip')
+                .select('*');
+
+            if (error || !vips) {
+                alert("No se pudo conectar con el padrón de sala.");
+                return;
+            }
+
+            // Busca coincidencia en los últimos 10 dígitos
+            const cliente = vips.find(v => (v.telefono || '').endsWith(rawPhone));
+
+            if (cliente) {
+                document.getElementById('vip-res-nombre').innerText = `⭐ ¡Hola, ${cliente.nombre}!`;
+                document.getElementById('vip-res-monto').innerText = `$${Number(cliente.bonus_back || 0).toLocaleString('es-MX')} MXN`;
+                boxResultado.style.display = 'block';
+
+                const msgWa = encodeURIComponent(`Hola, soy ${cliente.nombre}. Acabo de consultar en la app y tengo $${cliente.bonus_back} de Bonus Back. ¿Me pueden apartar un lugar en mesa para hoy?`);
+                document.getElementById('link-wa-consulta-directa').href = `https://wa.me/${NUMERO_WHATSAPP_CASINO}?text=${msgWa}`;
+            } else {
+                boxResultado.style.display = 'none';
+                alert("Tu número no aparece en el padrón VIP todavía. Toca el botón de WhatsApp abajo para que gerencia te agregue.");
+            }
+        }
 
         // ================= DETECCIÓN DE PWA & INSTALACIÓN =================
         const esModoApp = window.matchMedia('(display-mode: standalone)').matches 
@@ -722,7 +944,6 @@
             return 'logo.jpg';
         }
 
-        // ================= QR Y COMPARTIR =================
         let qrGenerado = false;
         function abrirModalQR() {
             const modal = document.getElementById('modal-qr');
@@ -765,10 +986,6 @@
             window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(textoCompartir)}`, '_blank');
         }
 
-        const SUPABASE_URL = "https://kqgtyzsxwrkomdtuktkk.supabase.co";
-        const SUPABASE_ANON_KEY = "sb_publishable_on1rkqvAIhSQonTODdk5fA_qTpEo_8H";
-        const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
         async function cargarPromociones() {
             const { data: promos } = await client.from('promociones').select('*').eq('activa', true).order('fecha_creacion', { ascending: false });
             const contMarquesina = document.getElementById('marquesina-container');
@@ -792,7 +1009,7 @@
                 return;
             }
 
-            // ORDENAMIENTO POR GRUPOS: 1. Ruleta, 2. Blackjack, 3. Texas, etc.
+            // ORDENAMIENTO POR GRUPOS (Ruleta, Blackjack, Texas)
             const ordenJuegos = {
                 'ruleta': 1,
                 'blackjack': 2,
@@ -831,7 +1048,6 @@
                 const crupierTexto = (m.crupier && m.crupier.trim().length > 0) ? m.crupier.trim() : 'En rotación';
                 const fmt = (num) => Number(num || 0).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-                // ASIGNACIÓN DE COLOR NEÓN DIRECTO AL MARCO
                 let claseTema = 'tema-general';
                 if (tipoJuego === 'blackjack') claseTema = 'tema-blackjack';
                 else if (tipoJuego === 'ruleta') claseTema = 'tema-ruleta';
@@ -879,7 +1095,6 @@
                                 </div>
                             </div>
 
-                            <!-- PANTALLA 3 ACUMULADOS PARA TEXAS HOLD'EM -->
                             ${esTexas ? `
                                 <div class="texas-jackpot-screen">
                                     <div class="texas-jackpot-title">
@@ -929,6 +1144,7 @@
         
         window.addEventListener('DOMContentLoaded', () => { 
             verificarEstadoInstalacion();
+            registrarYObtenerVisitas();
             cargarPromociones(); 
             cargarMesas(); 
         });
