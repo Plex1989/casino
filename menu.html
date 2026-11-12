@@ -3,22 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Menú Big Bola Lounge - CASINO BIGBOLA</title>
+    <title>Big Bola Lounge - Menú Oficial | CASINO BIGBOLA</title>
 
-    <meta name="theme-color" content="#0b0c10">
+    <meta name="theme-color" content="#07080c">
     <link rel="apple-touch-icon" href="logo.jpg">
 
     <style>
         :root {
-            --bg-color: #0b0c10;
-            --card-bg: #151722;
-            --neon-cyan: #00f0ff;
-            --neon-red: #ff003c;
-            --neon-gold: #d4af37;
-            --neon-purple: #b026ff;
-            --neon-green: #25D366;
-            --silver-metal: #d9dadb;
-            --border-color: #2a2d3d;
+            --bg-deep: #07080c;
+            --card-surface: #11131d;
+            --card-elevated: #171a27;
+            --gold-primary: #d4af37;
+            --gold-light: #f3d98b;
+            --gold-border: rgba(212, 175, 55, 0.28);
+            --cyan-accent: #00f0ff;
+            --emerald-vip: #25D366;
+            --crimson-alert: #ff003c;
+            --text-main: #f4f5f7;
+            --text-muted: #949cb3;
+            --border-subtle: rgba(255, 255, 255, 0.08);
         }
 
         * {
@@ -27,17 +30,20 @@
         }
 
         body {
-            background-color: var(--bg-color);
-            color: white;
+            background-color: var(--bg-deep);
+            background-image:
+                radial-gradient(circle at 50% 0%, rgba(212, 175, 55, 0.12) 0%, transparent 45%),
+                radial-gradient(circle at 85% 20%, rgba(0, 240, 255, 0.05) 0%, transparent 35%);
+            color: var(--text-main);
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             margin: 0;
-            padding: 12px;
+            padding: 14px;
             padding-bottom: 110px;
-            transition: padding-bottom 0.2s;
+            transition: padding-bottom 0.25s ease;
         }
 
         body.con-pedido-activo {
-            padding-bottom: 195px;
+            padding-bottom: 205px;
         }
 
         .container {
@@ -45,80 +51,125 @@
             margin: 0 auto;
         }
 
-        /* BARRA SUPERIOR DE REGRESO */
+        /* NAVEGACIÓN SUPERIOR */
         .top-nav {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
         }
 
         .btn-volver {
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            background: rgba(0, 240, 255, 0.12);
-            border: 1px solid var(--neon-cyan);
-            color: var(--neon-cyan);
-            padding: 8px 14px;
-            border-radius: 20px;
-            font-size: 0.85em;
-            font-weight: bold;
+            background: rgba(21, 24, 36, 0.85);
+            border: 1px solid var(--gold-border);
+            color: var(--gold-light);
+            padding: 8px 15px;
+            border-radius: 999px;
+            font-size: 0.82em;
+            font-weight: 700;
+            letter-spacing: 0.3px;
             text-decoration: none;
+            backdrop-filter: blur(6px);
             transition: 0.2s;
         }
 
         .btn-volver:active {
             transform: scale(0.96);
-            background: var(--neon-cyan);
-            color: black;
+            background: var(--gold-primary);
+            color: #07080c;
         }
 
-        /* ENCABEZADO */
-        header {
-            text-align: center;
-            padding: 8px 0 12px 0;
-        }
-
-        header img {
-            width: 72px;
-            height: 72px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-bottom: 6px;
-            border: 2px solid var(--neon-gold);
-            box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
-        }
-
-        header h1 {
-            margin: 0;
-            font-size: 1.4em;
-            color: var(--silver-metal);
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-        }
-
-        header p {
-            margin: 4px 0 0 0;
-            color: var(--neon-gold);
-            font-size: 0.88em;
-            font-weight: bold;
+        .badge-lounge-status {
+            font-size: 0.72em;
+            color: var(--gold-primary);
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid rgba(212, 175, 55, 0.25);
+            padding: 5px 11px;
+            border-radius: 999px;
+            font-weight: 700;
             letter-spacing: 1px;
             text-transform: uppercase;
         }
 
-        .sub-instruccion {
-            background: rgba(37, 211, 102, 0.1);
-            border: 1px dashed rgba(37, 211, 102, 0.45);
-            color: #a7f3d0;
-            font-size: 0.78em;
-            padding: 8px 12px;
-            border-radius: 10px;
+        /* ENCABEZADO DE LUJO */
+        header {
             text-align: center;
-            margin-bottom: 12px;
+            padding: 10px 0 16px 0;
         }
 
-        /* BUSCADOR RÁPIDO */
+        .logo-ring {
+            width: 78px;
+            height: 78px;
+            margin: 0 auto 10px auto;
+            padding: 3px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--gold-light), var(--gold-primary), #6e5411);
+            box-shadow: 0 0 24px rgba(212, 175, 55, 0.35);
+        }
+
+        .logo-ring img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            display: block;
+            background: #000;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 1.45em;
+            font-weight: 800;
+            color: #ffffff;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+        }
+
+        .lounge-subtitle {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 6px;
+            color: var(--gold-light);
+            font-family: Georgia, 'Times New Roman', serif;
+            font-style: italic;
+            font-size: 1.02em;
+            letter-spacing: 0.8px;
+        }
+
+        .lounge-subtitle::before,
+        .lounge-subtitle::after {
+            content: "";
+            width: 24px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold-primary));
+        }
+
+        .lounge-subtitle::after {
+            background: linear-gradient(90deg, var(--gold-primary), transparent);
+        }
+
+        /* BANNER INFORMATIVO DE APARTADO */
+        .vip-order-hint {
+            background: linear-gradient(90deg, rgba(212, 175, 55, 0.1), rgba(37, 211, 102, 0.08), rgba(212, 175, 55, 0.1));
+            border: 1px solid rgba(212, 175, 55, 0.25);
+            color: #d6dbe8;
+            font-size: 0.78em;
+            padding: 9px 14px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 14px;
+            line-height: 1.35;
+        }
+
+        .vip-order-hint strong {
+            color: var(--gold-light);
+        }
+
+        /* BUSCADOR ELEGANTE */
         .search-wrapper {
             position: relative;
             margin-bottom: 12px;
@@ -126,41 +177,67 @@
 
         .search-wrapper input {
             width: 100%;
-            padding: 12px 14px 12px 40px;
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
+            padding: 13px 38px 13px 42px;
+            background: var(--card-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: 14px;
             color: white;
-            font-size: 0.95em;
+            font-size: 0.92em;
             outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .search-wrapper input::placeholder {
+            color: #6b738c;
         }
 
         .search-wrapper input:focus {
-            border-color: var(--neon-gold);
+            border-color: var(--gold-primary);
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.15);
         }
 
         .search-icon {
             position: absolute;
-            left: 14px;
+            left: 15px;
             top: 50%;
             transform: translateY(-50%);
-            font-size: 1em;
+            font-size: 0.95em;
+            opacity: 0.75;
             pointer-events: none;
         }
 
-        /* PESTAÑAS DE CATEGORÍAS (DESLIZABLES) */
+        .btn-clear-search {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: #c5c6c7;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            font-size: 0.75em;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* BARRA DE CATEGORÍAS STICKY */
         .tabs-scroll {
             display: flex;
             gap: 8px;
             overflow-x: auto;
-            padding-bottom: 8px;
+            padding: 8px 0 10px 0;
             margin-bottom: 16px;
             scrollbar-width: none;
             position: sticky;
             top: 0;
-            background: var(--bg-color);
-            padding-top: 6px;
+            background: rgba(7, 8, 12, 0.92);
+            backdrop-filter: blur(10px);
             z-index: 50;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
         }
 
         .tabs-scroll::-webkit-scrollbar {
@@ -168,77 +245,97 @@
         }
 
         .tab-btn {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            color: #c5c6c7;
-            padding: 8px 14px;
-            border-radius: 20px;
-            font-size: 0.82em;
-            font-weight: bold;
+            background: var(--card-surface);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-muted);
+            padding: 8px 15px;
+            border-radius: 999px;
+            font-size: 0.8em;
+            font-weight: 700;
             white-space: nowrap;
             cursor: pointer;
-            transition: 0.2s;
+            transition: all 0.2s ease;
         }
 
         .tab-btn.active {
-            background: linear-gradient(90deg, rgba(212, 175, 55, 0.25), rgba(255, 102, 0, 0.2));
-            border-color: var(--neon-gold);
-            color: var(--neon-gold);
-            box-shadow: 0 0 10px rgba(212, 175, 55, 0.25);
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.25), rgba(212, 175, 55, 0.08));
+            border-color: var(--gold-primary);
+            color: var(--gold-light);
+            box-shadow: 0 0 14px rgba(212, 175, 55, 0.2);
         }
 
-        /* SECCIONES DEL MENÚ */
+        /* ENCABEZADOS DE SECCIÓN */
         .menu-section {
-            margin-bottom: 24px;
+            margin-bottom: 28px;
         }
 
         .section-header {
             display: flex;
             align-items: center;
-            gap: 8px;
-            color: var(--neon-gold);
-            font-size: 1.15em;
+            justify-content: space-between;
+            margin: 0 0 14px 0;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--gold-border);
+        }
+
+        .section-header-title {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            color: var(--gold-light);
+            font-size: 1.08em;
             font-weight: 800;
             text-transform: uppercase;
+            letter-spacing: 1.4px;
+        }
+
+        .section-header-line {
+            font-size: 0.7em;
+            color: var(--text-muted);
             letter-spacing: 1px;
-            border-bottom: 1px solid rgba(212, 175, 55, 0.35);
-            padding-bottom: 6px;
-            margin: 0 0 12px 0;
+            text-transform: uppercase;
         }
 
         .sub-category-title {
-            color: var(--neon-cyan);
-            font-size: 0.9em;
+            color: var(--gold-primary);
+            font-size: 0.84em;
             font-weight: 800;
             text-transform: uppercase;
-            letter-spacing: 0.8px;
-            margin: 16px 0 8px 2px;
+            letter-spacing: 1.2px;
+            margin: 18px 0 10px 2px;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
         }
 
-        /* TARJETA DE PLATILLO O BEBIDA CON CHECKBOX */
+        .sub-category-title::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, rgba(212, 175, 55, 0.3), transparent);
+        }
+
+        /* TARJETA DE PLATILLO / BEBIDA */
         .menu-item {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 12px;
+            background: linear-gradient(145deg, var(--card-elevated), var(--card-surface));
+            border: 1px solid var(--border-subtle);
+            border-radius: 14px;
+            padding: 13px 14px;
             margin-bottom: 10px;
             display: flex;
             align-items: flex-start;
-            gap: 11px;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.35);
-            transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+            gap: 12px;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+            transition: transform 0.15s ease, border-color 0.2s ease, box-shadow 0.2s ease;
         }
 
         .menu-item.seleccionado {
-            border-color: var(--neon-green);
-            background: linear-gradient(135deg, rgba(37, 211, 102, 0.08), rgba(21, 23, 34, 0.98));
-            box-shadow: 0 0 14px rgba(37, 211, 102, 0.22);
+            border-color: var(--emerald-vip);
+            background: linear-gradient(145deg, rgba(37, 211, 102, 0.11), var(--card-surface));
+            box-shadow: 0 4px 18px rgba(37, 211, 102, 0.18);
         }
 
-        /* CHECKBOX PERSONALIZADO NEÓN */
+        /* CHECKBOX DE SELECCIÓN */
         .item-check-wrap {
             padding-top: 2px;
             flex-shrink: 0;
@@ -249,28 +346,28 @@
             -webkit-appearance: none;
             width: 24px;
             height: 24px;
-            border-radius: 7px;
-            border: 2px solid #555c75;
-            background: #0b0c10;
+            border-radius: 8px;
+            border: 1.5px solid rgba(212, 175, 55, 0.5);
+            background: rgba(7, 8, 12, 0.8);
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             margin: 0;
-            transition: 0.15s;
+            transition: all 0.18s ease;
         }
 
         .item-checkbox:checked {
-            background: var(--neon-green);
-            border-color: var(--neon-green);
-            box-shadow: 0 0 10px rgba(37, 211, 102, 0.5);
+            background: var(--emerald-vip);
+            border-color: var(--emerald-vip);
+            box-shadow: 0 0 12px rgba(37, 211, 102, 0.55);
         }
 
         .item-checkbox:checked::after {
             content: "✓";
-            color: #000;
+            color: #050709;
             font-weight: 900;
-            font-size: 15px;
+            font-size: 14px;
             line-height: 1;
         }
 
@@ -281,23 +378,31 @@
         }
 
         .item-name {
-            font-weight: 800;
+            font-weight: 700;
             font-size: 0.96em;
-            color: white;
+            color: #ffffff;
             margin: 0 0 4px 0;
-            line-height: 1.25;
+            line-height: 1.3;
+            letter-spacing: 0.2px;
         }
 
         .item-measure {
-            color: #8892b0;
+            display: inline-block;
+            color: var(--gold-light);
+            background: rgba(212, 175, 55, 0.12);
+            border: 1px solid rgba(212, 175, 55, 0.22);
             font-weight: 600;
-            font-size: 0.85em;
+            font-size: 0.74em;
+            padding: 1px 7px;
+            border-radius: 6px;
+            margin-left: 4px;
+            vertical-align: middle;
         }
 
         .item-desc {
-            color: #aeb6cc;
-            font-size: 0.79em;
-            line-height: 1.38;
+            color: var(--text-muted);
+            font-size: 0.8em;
+            line-height: 1.42;
             margin: 0;
         }
 
@@ -310,24 +415,27 @@
         }
 
         .item-price {
-            color: var(--neon-gold);
-            font-weight: 900;
-            font-size: 1em;
+            color: var(--gold-light);
+            font-weight: 800;
+            font-size: 0.98em;
+            font-variant-numeric: tabular-nums;
             white-space: nowrap;
-            background: rgba(212, 175, 55, 0.1);
-            border: 1px solid rgba(212, 175, 55, 0.3);
-            padding: 5px 9px;
-            border-radius: 8px;
+            background: rgba(212, 175, 55, 0.08);
+            border: 1px solid rgba(212, 175, 55, 0.28);
+            padding: 5px 10px;
+            border-radius: 9px;
+            letter-spacing: 0.3px;
         }
 
-        /* CONTADOR DE CANTIDAD (- 1 +) */
+        /* STEPPER DE CANTIDAD */
         .qty-stepper {
             display: none;
             align-items: center;
-            background: #0b0c10;
-            border: 1px solid var(--neon-green);
-            border-radius: 8px;
+            background: #090b10;
+            border: 1px solid var(--emerald-vip);
+            border-radius: 9px;
             overflow: hidden;
+            box-shadow: 0 0 10px rgba(37, 211, 102, 0.2);
         }
 
         .menu-item.seleccionado .qty-stepper {
@@ -337,11 +445,11 @@
         .btn-qty {
             width: 28px;
             height: 28px;
-            background: #1b222c;
+            background: rgba(37, 211, 102, 0.12);
             border: none;
-            color: var(--neon-green);
+            color: var(--emerald-vip);
             font-weight: 900;
-            font-size: 1.1em;
+            font-size: 1.05em;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -350,31 +458,32 @@
         }
 
         .btn-qty:active {
-            background: var(--neon-green);
-            color: black;
+            background: var(--emerald-vip);
+            color: #000;
         }
 
         .qty-val {
-            min-width: 26px;
+            min-width: 28px;
             text-align: center;
             font-weight: 800;
-            font-size: 0.9em;
+            font-size: 0.88em;
+            font-variant-numeric: tabular-nums;
             color: white;
         }
 
-        /* BARRA FLOTANTE INFERIOR DE APARTADO POR WHATSAPP */
+        /* BARRA FLOTANTE DE PEDIDO WHATSAPP */
         .floating-order-bar {
             position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
-            background: rgba(15, 17, 26, 0.97);
-            border-top: 2px solid var(--neon-green);
-            box-shadow: 0 -6px 25px rgba(0, 0, 0, 0.85), 0 0 18px rgba(37, 211, 102, 0.25);
-            padding: 12px 14px 14px 14px;
+            background: rgba(12, 14, 22, 0.96);
+            border-top: 1px solid var(--gold-primary);
+            box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.9), 0 0 20px rgba(212, 175, 55, 0.15);
+            padding: 12px 14px 16px 14px;
             z-index: 999;
             display: none;
-            backdrop-filter: blur(8px);
+            backdrop-filter: blur(12px);
         }
 
         .floating-order-inner {
@@ -390,13 +499,14 @@
         }
 
         .order-count-badge {
-            font-size: 0.85em;
-            color: #c5c6c7;
-            font-weight: bold;
+            font-size: 0.84em;
+            color: #d6dbe8;
+            font-weight: 600;
         }
 
         .order-count-badge strong {
-            color: var(--neon-green);
+            color: var(--emerald-vip);
+            font-size: 1.05em;
         }
 
         .order-total-box {
@@ -408,51 +518,53 @@
         .order-total-amount {
             font-size: 1.15em;
             font-weight: 900;
-            color: var(--neon-gold);
+            font-variant-numeric: tabular-nums;
+            color: var(--gold-light);
         }
 
         .btn-clear-order {
-            background: rgba(255, 0, 60, 0.15);
-            border: 1px solid var(--neon-red);
-            color: var(--neon-red);
-            border-radius: 6px;
-            padding: 4px 8px;
-            font-size: 0.75em;
-            font-weight: bold;
+            background: rgba(255, 0, 60, 0.12);
+            border: 1px solid rgba(255, 0, 60, 0.45);
+            color: #ff5c82;
+            border-radius: 7px;
+            padding: 4px 9px;
+            font-size: 0.74em;
+            font-weight: 700;
             cursor: pointer;
         }
 
         .order-name-input {
             width: 100%;
-            padding: 8px 12px;
-            background: #0b0c10;
-            border: 1px solid #2a2d3d;
-            border-radius: 8px;
+            padding: 9px 12px;
+            background: #07080c;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 9px;
             color: white;
-            font-size: 0.85em;
-            margin-bottom: 8px;
+            font-size: 0.84em;
+            margin-bottom: 9px;
             outline: none;
         }
 
         .order-name-input:focus {
-            border-color: var(--neon-green);
+            border-color: var(--emerald-vip);
         }
 
         .btn-send-wa-order {
             width: 100%;
             padding: 13px;
-            background: linear-gradient(90deg, #128C7E, #25D366);
-            color: #000;
+            background: linear-gradient(90deg, #169c8b, #25D366);
+            color: #04130a;
             border: none;
-            border-radius: 10px;
+            border-radius: 11px;
             font-weight: 900;
-            font-size: 0.95em;
+            font-size: 0.94em;
+            letter-spacing: 0.3px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
-            box-shadow: 0 0 15px rgba(37, 211, 102, 0.4);
+            box-shadow: 0 4px 18px rgba(37, 211, 102, 0.35);
         }
 
         .btn-send-wa-order:active {
@@ -462,13 +574,14 @@
         /* PIE LEGAL Y BOTÓN VOLVER */
         .legal-disclaimer {
             text-align: center;
-            color: #6c758d;
-            font-size: 0.7em;
-            line-height: 1.4;
-            margin-top: 25px;
-            padding: 12px;
-            border-top: 1px solid var(--border-color);
+            color: #656e85;
+            font-size: 0.68em;
+            line-height: 1.45;
+            margin-top: 28px;
+            padding: 14px 10px;
+            border-top: 1px solid var(--border-subtle);
             text-transform: uppercase;
+            letter-spacing: 0.4px;
         }
 
         .floating-back-bottom {
@@ -476,13 +589,15 @@
             width: 100%;
             text-align: center;
             padding: 14px;
-            margin-top: 16px;
-            background: linear-gradient(90deg, #0070f3, var(--neon-cyan));
-            color: black;
-            font-weight: bold;
+            margin-top: 14px;
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(212, 175, 55, 0.08));
+            border: 1px solid var(--gold-primary);
+            color: var(--gold-light);
+            font-weight: 800;
             border-radius: 12px;
             text-decoration: none;
-            font-size: 0.95em;
+            font-size: 0.92em;
+            letter-spacing: 0.5px;
         }
     </style>
 </head>
@@ -494,23 +609,26 @@
             <a href="index.html" class="btn-volver">
                 <span>←</span> Volver a Mesas
             </a>
-            <span style="font-size: 0.75em; color: #8892b0; font-weight: bold;">SERVICIO EN SALA</span>
+            <span class="badge-lounge-status">Servicio en Sala</span>
         </div>
 
         <header>
-            <img src="logo.jpg" alt="Casino BigBola" onerror="this.src='logo.png'">
+            <div class="logo-ring">
+                <img src="logo.jpg" alt="Casino BigBola" onerror="this.src='logo.png'">
+            </div>
             <h1>CASINO BIGBOLA</h1>
-            <p>★ Menú Big Bola Lounge ★</p>
+            <div class="lounge-subtitle">Big Bola Lounge</div>
         </header>
 
-        <div class="sub-instruccion">
-            ☑️ Marca las casillas de lo que deseas y apártalo por WhatsApp antes de llegar
+        <div class="vip-order-hint">
+            ☑️ Selecciona tus platillos o bebidas y envía tu apartado por <strong>WhatsApp</strong> para tenerlo listo a tu llegada.
         </div>
 
         <!-- BUSCADOR -->
         <div class="search-wrapper">
             <span class="search-icon">🔍</span>
             <input type="text" id="buscador-menu" oninput="filtrarMenu()" placeholder="Buscar platillo, bebida o marca...">
+            <button type="button" id="btn-limpiar-busqueda" class="btn-clear-search" onclick="limpiarBusqueda()" title="Limpiar búsqueda">✕</button>
         </div>
 
         <!-- FILTROS POR CATEGORÍA -->
@@ -528,7 +646,10 @@
 
         <!-- ==================== 1. SNACKS ==================== -->
         <section class="menu-section" data-categoria="snacks">
-            <h2 class="section-header"><span>🍔</span> Snacks</h2>
+            <div class="section-header">
+                <div class="section-header-title"><span>🍔</span> Snacks</div>
+                <span class="section-header-line">Para compartir</span>
+            </div>
 
             <div class="menu-item" data-nombre="BONELESS" data-precio="130">
                 <div class="item-info">
@@ -581,7 +702,10 @@
 
         <!-- ==================== 2. SOPAS ==================== -->
         <section class="menu-section" data-categoria="sopas">
-            <h2 class="section-header"><span>🍲</span> Sopas</h2>
+            <div class="section-header">
+                <div class="section-header-title"><span>🍲</span> Sopas</div>
+                <span class="section-header-line">Calientes</span>
+            </div>
 
             <div class="menu-item" data-nombre="CALDO XÓCHITL" data-precio="70">
                 <div class="item-info">
@@ -602,7 +726,10 @@
 
         <!-- ==================== 3. ENSALADAS ==================== -->
         <section class="menu-section" data-categoria="ensaladas">
-            <h2 class="section-header"><span>🥗</span> Ensaladas</h2>
+            <div class="section-header">
+                <div class="section-header-title"><span>🥗</span> Ensaladas</div>
+                <span class="section-header-line">Frescas</span>
+            </div>
 
             <div class="menu-item" data-nombre="ENSALADA JIPEZA" data-precio="55">
                 <div class="item-info">
@@ -623,7 +750,10 @@
 
         <!-- ==================== 4. PLATOS PRINCIPALES ==================== -->
         <section class="menu-section" data-categoria="principales">
-            <h2 class="section-header"><span>🍽️</span> Platos Principales</h2>
+            <div class="section-header">
+                <div class="section-header-title"><span>🍽️</span> Platos Principales</div>
+                <span class="section-header-line">Especialidades</span>
+            </div>
 
             <div class="menu-item" data-nombre="TACOS DE ARRACHERA" data-precio="140">
                 <div class="item-info">
@@ -668,301 +798,313 @@
 
         <!-- ==================== 5. CERVEZAS ==================== -->
         <section class="menu-section" data-categoria="cervezas">
-            <h2 class="section-header"><span>🍺</span> Cervezas & Preparados</h2>
+            <div class="section-header">
+                <div class="section-header-title"><span>🍺</span> Cervezas &amp; Preparados</div>
+                <span class="section-header-line">Frías</span>
+            </div>
 
             <div class="menu-item" data-nombre="Corona (355 ml)" data-precio="45">
-                <div class="item-info"><h3 class="item-name">Corona <span class="item-measure">(355 ml)</span></h3></div>
+                <div class="item-info"><h3 class="item-name">Corona <span class="item-measure">355 ml</span></h3></div>
                 <div class="item-price">$45.00</div>
             </div>
             <div class="menu-item" data-nombre="Victoria (355 ml)" data-precio="45">
-                <div class="item-info"><h3 class="item-name">Victoria <span class="item-measure">(355 ml)</span></h3></div>
+                <div class="item-info"><h3 class="item-name">Victoria <span class="item-measure">355 ml</span></h3></div>
                 <div class="item-price">$45.00</div>
             </div>
             <div class="menu-item" data-nombre="Negra Modelo (355 ml)" data-precio="45">
-                <div class="item-info"><h3 class="item-name">Negra Modelo <span class="item-measure">(355 ml)</span></h3></div>
+                <div class="item-info"><h3 class="item-name">Negra Modelo <span class="item-measure">355 ml</span></h3></div>
                 <div class="item-price">$45.00</div>
             </div>
             <div class="menu-item" data-nombre="Modelo Especial (355 ml)" data-precio="45">
-                <div class="item-info"><h3 class="item-name">Modelo Especial <span class="item-measure">(355 ml)</span></h3></div>
+                <div class="item-info"><h3 class="item-name">Modelo Especial <span class="item-measure">355 ml</span></h3></div>
                 <div class="item-price">$45.00</div>
             </div>
             <div class="menu-item" data-nombre="Tecate Light (355 ml)" data-precio="45">
-                <div class="item-info"><h3 class="item-name">Tecate Light <span class="item-measure">(355 ml)</span></h3></div>
+                <div class="item-info"><h3 class="item-name">Tecate Light <span class="item-measure">355 ml</span></h3></div>
                 <div class="item-price">$45.00</div>
             </div>
             <div class="menu-item" data-nombre="Michelob Ultra (355 ml)" data-precio="45">
-                <div class="item-info"><h3 class="item-name">Michelob Ultra <span class="item-measure">(355 ml)</span></h3></div>
+                <div class="item-info"><h3 class="item-name">Michelob Ultra <span class="item-measure">355 ml</span></h3></div>
                 <div class="item-price">$45.00</div>
             </div>
             <div class="menu-item" data-nombre="Vaso Cubano Michemix (90 ml)" data-precio="15">
                 <div class="item-info">
-                    <h3 class="item-name">Vaso Cubano Michemix <span class="item-measure">(90 ml)</span></h3>
+                    <h3 class="item-name">Vaso Cubano Michemix <span class="item-measure">90 ml</span></h3>
                     <p class="item-desc">Vaso escarchado con salsas negras (45 ml) y jugo de limón (45 ml).</p>
                 </div>
                 <div class="item-price">$15.00</div>
             </div>
             <div class="menu-item" data-nombre="Vaso Chelado (43 ml)" data-precio="10">
                 <div class="item-info">
-                    <h3 class="item-name">Vaso Chelado <span class="item-measure">(43 ml)</span></h3>
+                    <h3 class="item-name">Vaso Chelado <span class="item-measure">43 ml</span></h3>
                     <p class="item-desc">Vaso escarchado con jugo de limón (30 grs) y sal (5 grs).</p>
                 </div>
                 <div class="item-price">$10.00</div>
             </div>
             <div class="menu-item" data-nombre="Clamato mezclador (120 ml)" data-precio="15">
-                <div class="item-info"><h3 class="item-name">Clamato mezclador <span class="item-measure">(120 ml)</span></h3></div>
+                <div class="item-info"><h3 class="item-name">Clamato mezclador <span class="item-measure">120 ml</span></h3></div>
                 <div class="item-price">$15.00</div>
             </div>
         </section>
 
         <!-- ==================== 6. BEBIDAS SIN ALCOHOL ==================== -->
         <section class="menu-section" data-categoria="sin-alcohol">
-            <h2 class="section-header"><span>🥤</span> Bebidas sin Alcohol</h2>
+            <div class="section-header">
+                <div class="section-header-title"><span>🥤</span> Bebidas sin Alcohol</div>
+                <span class="section-header-line">Refrescantes</span>
+            </div>
 
             <div class="menu-item" data-nombre="Botella con agua (355 ml)" data-precio="20">
-                <div class="item-info"><h3 class="item-name">Botella con agua <span class="item-measure">(355 ml)</span></h3></div>
+                <div class="item-info"><h3 class="item-name">Botella con agua <span class="item-measure">355 ml</span></h3></div>
                 <div class="item-price">$20.00</div>
             </div>
             <div class="menu-item" data-nombre="Refresco de lata (355 ml)" data-precio="30">
-                <div class="item-info"><h3 class="item-name">Refresco de lata <span class="item-measure">(355 ml)</span></h3></div>
+                <div class="item-info"><h3 class="item-name">Refresco de lata <span class="item-measure">355 ml</span></h3></div>
                 <div class="item-price">$30.00</div>
             </div>
             <div class="menu-item" data-nombre="Agua mineral lata (355 ml)" data-precio="30">
-                <div class="item-info"><h3 class="item-name">Agua mineral lata <span class="item-measure">(355 ml)</span></h3></div>
+                <div class="item-info"><h3 class="item-name">Agua mineral lata <span class="item-measure">355 ml</span></h3></div>
                 <div class="item-price">$30.00</div>
             </div>
             <div class="menu-item" data-nombre="Té de limón / Manzanilla / Verde (230 ml)" data-precio="30">
-                <div class="item-info"><h3 class="item-name">Té de limón o Manzanilla o Verde <span class="item-measure">(230 ml)</span></h3></div>
+                <div class="item-info"><h3 class="item-name">Té de limón o Manzanilla o Verde <span class="item-measure">230 ml</span></h3></div>
                 <div class="item-price">$30.00</div>
             </div>
             <div class="menu-item" data-nombre="Naranjada Natural (355 ml)" data-precio="40">
-                <div class="item-info"><h3 class="item-name">Naranjada Natural <span class="item-measure">(355 ml)</span></h3></div>
+                <div class="item-info"><h3 class="item-name">Naranjada Natural <span class="item-measure">355 ml</span></h3></div>
                 <div class="item-price">$40.00</div>
             </div>
             <div class="menu-item" data-nombre="Naranjada Mineral (355 ml)" data-precio="40">
                 <div class="item-info">
-                    <h3 class="item-name">Naranjada Mineral <span class="item-measure">(355 ml)</span></h3>
+                    <h3 class="item-name">Naranjada Mineral <span class="item-measure">355 ml</span></h3>
                     <p class="item-desc">Agua mineral, jarabe natural, concentrado de jugo de naranja.</p>
                 </div>
                 <div class="item-price">$40.00</div>
             </div>
             <div class="menu-item" data-nombre="Limonada Natural (355 ml)" data-precio="40">
-                <div class="item-info"><h3 class="item-name">Limonada Natural <span class="item-measure">(355 ml)</span></h3></div>
+                <div class="item-info"><h3 class="item-name">Limonada Natural <span class="item-measure">355 ml</span></h3></div>
                 <div class="item-price">$40.00</div>
             </div>
             <div class="menu-item" data-nombre="Limonada Mineral (355 ml)" data-precio="40">
                 <div class="item-info">
-                    <h3 class="item-name">Limonada Mineral <span class="item-measure">(355 ml)</span></h3>
+                    <h3 class="item-name">Limonada Mineral <span class="item-measure">355 ml</span></h3>
                     <p class="item-desc">Agua mineral, jarabe natural, concentrado de jugo de limón.</p>
                 </div>
                 <div class="item-price">$40.00</div>
             </div>
             <div class="menu-item" data-nombre="Red Bull (230 ml)" data-precio="45">
-                <div class="item-info"><h3 class="item-name">Red Bull <span class="item-measure">(230 ml)</span></h3></div>
+                <div class="item-info"><h3 class="item-name">Red Bull <span class="item-measure">230 ml</span></h3></div>
                 <div class="item-price">$45.00</div>
             </div>
             <div class="menu-item" data-nombre="Piñada (355 ml)" data-precio="40">
                 <div class="item-info">
-                    <h3 class="item-name">Piñada <span class="item-measure">(355 ml)</span></h3>
+                    <h3 class="item-name">Piñada <span class="item-measure">355 ml</span></h3>
                     <p class="item-desc">Jugo de piña (90 ml), Carnation (60 ml), Calahua (90 ml).</p>
                 </div>
                 <div class="item-price">$40.00</div>
             </div>
             <div class="menu-item" data-nombre="Rusa (355 ml)" data-precio="40">
                 <div class="item-info">
-                    <h3 class="item-name">Rusa <span class="item-measure">(355 ml)</span></h3>
+                    <h3 class="item-name">Rusa <span class="item-measure">355 ml</span></h3>
                     <p class="item-desc">Agua mineral (355 ml) con concentrado de jugo de limón, escarchado con sal.</p>
                 </div>
                 <div class="item-price">$40.00</div>
             </div>
             <div class="menu-item" data-nombre="Vaso con Clamato (230 ml)" data-precio="25">
-                <div class="item-info"><h3 class="item-name">Vaso con Clamato <span class="item-measure">(230 ml)</span></h3></div>
+                <div class="item-info"><h3 class="item-name">Vaso con Clamato <span class="item-measure">230 ml</span></h3></div>
                 <div class="item-price">$25.00</div>
             </div>
         </section>
 
         <!-- ==================== 7. CAFÉS ==================== -->
         <section class="menu-section" data-categoria="cafes">
-            <h2 class="section-header"><span>☕</span> Cafés & Calientes</h2>
+            <div class="section-header">
+                <div class="section-header-title"><span>☕</span> Cafés &amp; Calientes</div>
+                <span class="section-header-line">Barra de café</span>
+            </div>
 
             <div class="menu-item" data-nombre="Espresso (67.25 ml)" data-precio="45">
-                <div class="item-info"><h3 class="item-name">Espresso <span class="item-measure">(67.25 ml)</span></h3></div>
+                <div class="item-info"><h3 class="item-name">Espresso <span class="item-measure">67.25 ml</span></h3></div>
                 <div class="item-price">$45.00</div>
             </div>
             <div class="menu-item" data-nombre="Espresso Cortado (67.25 ml)" data-precio="50">
-                <div class="item-info"><h3 class="item-name">Espresso Cortado <span class="item-measure">(67.25 ml)</span></h3></div>
+                <div class="item-info"><h3 class="item-name">Espresso Cortado <span class="item-measure">67.25 ml</span></h3></div>
                 <div class="item-price">$50.00</div>
             </div>
             <div class="menu-item" data-nombre="Capuchino (203 ml)" data-precio="45">
-                <div class="item-info"><h3 class="item-name">Capuchino <span class="item-measure">(203 ml)</span></h3></div>
+                <div class="item-info"><h3 class="item-name">Capuchino <span class="item-measure">203 ml</span></h3></div>
                 <div class="item-price">$45.00</div>
             </div>
             <div class="menu-item" data-nombre="Latte (203 ml)" data-precio="45">
-                <div class="item-info"><h3 class="item-name">Latte <span class="item-measure">(203 ml)</span></h3></div>
+                <div class="item-info"><h3 class="item-name">Latte <span class="item-measure">203 ml</span></h3></div>
                 <div class="item-price">$45.00</div>
             </div>
             <div class="menu-item" data-nombre="Mocaccino (203 ml)" data-precio="45">
-                <div class="item-info"><h3 class="item-name">Mocaccino <span class="item-measure">(203 ml)</span></h3></div>
+                <div class="item-info"><h3 class="item-name">Mocaccino <span class="item-measure">203 ml</span></h3></div>
                 <div class="item-price">$45.00</div>
             </div>
             <div class="menu-item" data-nombre="Chocolate Caliente (203 ml)" data-precio="45">
-                <div class="item-info"><h3 class="item-name">Chocolate Caliente <span class="item-measure">(203 ml)</span></h3></div>
+                <div class="item-info"><h3 class="item-name">Chocolate Caliente <span class="item-measure">203 ml</span></h3></div>
                 <div class="item-price">$45.00</div>
             </div>
         </section>
 
         <!-- ==================== 8. DESTILADOS, VINOS Y DIGESTIVOS ==================== -->
         <section class="menu-section" data-categoria="destilados">
-            <h2 class="section-header"><span>🥃</span> Destilados, Vinos & Digestivos</h2>
+            <div class="section-header">
+                <div class="section-header-title"><span>🥃</span> Destilados, Vinos &amp; Digestivos</div>
+                <span class="section-header-line">Copa</span>
+            </div>
 
             <!-- TEQUILAS -->
             <div class="sub-category-title">🌵 Tequilas</div>
             <div class="menu-item" data-nombre="Tequila Cazadores (43 ml)" data-precio="85">
-                <div class="item-info"><h3 class="item-name">Cazadores <span class="item-measure">(43 ml)</span></h3></div>
+                <div class="item-info"><h3 class="item-name">Cazadores <span class="item-measure">43 ml</span></h3></div>
                 <div class="item-price">$85.00</div>
             </div>
             <div class="menu-item" data-nombre="Tequila Herradura Reposado (43 ml)" data-precio="100">
-                <div class="item-info"><h3 class="item-name">Herradura Reposado <span class="item-measure">(43 ml)</span></h3></div>
+                <div class="item-info"><h3 class="item-name">Herradura Reposado <span class="item-measure">43 ml</span></h3></div>
                 <div class="item-price">$100.00</div>
             </div>
             <div class="menu-item" data-nombre="Tequila Herradura Blanco (43 ml)" data-precio="85">
-                <div class="item-info"><h3 class="item-name">Herradura Blanco <span class="item-measure">(43 ml)</span></h3></div>
+                <div class="item-info"><h3 class="item-name">Herradura Blanco <span class="item-measure">43 ml</span></h3></div>
                 <div class="item-price">$85.00</div>
             </div>
             <div class="menu-item" data-nombre="Tequila Cuervo Tradicional (43 ml)" data-precio="85">
-                <div class="item-info"><h3 class="item-name">Cuervo Tradicional <span class="item-measure">(43 ml)</span></h3></div>
+                <div class="item-info"><h3 class="item-name">Cuervo Tradicional <span class="item-measure">43 ml</span></h3></div>
                 <div class="item-price">$85.00</div>
             </div>
             <div class="menu-item" data-nombre="Tequila Don Julio Blanco (43 ml)" data-precio="95">
-                <div class="item-info"><h3 class="item-name">Don Julio Blanco <span class="item-measure">(43 ml)</span></h3></div>
+                <div class="item-info"><h3 class="item-name">Don Julio Blanco <span class="item-measure">43 ml</span></h3></div>
                 <div class="item-price">$95.00</div>
             </div>
             <div class="menu-item" data-nombre="Tequila Don Julio Reposado (43 ml)" data-precio="100">
-                <div class="item-info"><h3 class="item-name">Don Julio Reposado <span class="item-measure">(43 ml)</span></h3></div>
+                <div class="item-info"><h3 class="item-name">Don Julio Reposado <span class="item-measure">43 ml</span></h3></div>
                 <div class="item-price">$100.00</div>
             </div>
 
             <!-- WHISKY -->
             <div class="sub-category-title">🥃 Whisky</div>
             <div class="menu-item" data-nombre="Whisky Chivas Regal (43 ml)" data-precio="100">
-                <div class="item-info"><h3 class="item-name">Chivas Regal <span class="item-measure">(43 ml)</span></h3></div>
+                <div class="item-info"><h3 class="item-name">Chivas Regal <span class="item-measure">43 ml</span></h3></div>
                 <div class="item-price">$100.00</div>
             </div>
             <div class="menu-item" data-nombre="Whisky Etiqueta Roja (43 ml)" data-precio="95">
-                <div class="item-info"><h3 class="item-name">Etiqueta Roja <span class="item-measure">(43 ml)</span></h3></div>
+                <div class="item-info"><h3 class="item-name">Etiqueta Roja <span class="item-measure">43 ml</span></h3></div>
                 <div class="item-price">$95.00</div>
             </div>
             <div class="menu-item" data-nombre="Whisky Etiqueta Negra (43 ml)" data-precio="125">
-                <div class="item-info"><h3 class="item-name">Etiqueta Negra <span class="item-measure">(43 ml)</span></h3></div>
+                <div class="item-info"><h3 class="item-name">Etiqueta Negra <span class="item-measure">43 ml</span></h3></div>
                 <div class="item-price">$125.00</div>
             </div>
             <div class="menu-item" data-nombre="Whisky Buchanan's (43 ml)" data-precio="110">
-                <div class="item-info"><h3 class="item-name">Buchanan's <span class="item-measure">(43 ml)</span></h3></div>
+                <div class="item-info"><h3 class="item-name">Buchanan's <span class="item-measure">43 ml</span></h3></div>
                 <div class="item-price">$110.00</div>
             </div>
             <div class="menu-item" data-nombre="Whisky J&B (43 ml)" data-precio="85">
-                <div class="item-info"><h3 class="item-name">J&amp;B <span class="item-measure">(43 ml)</span></h3></div>
+                <div class="item-info"><h3 class="item-name">J&amp;B <span class="item-measure">43 ml</span></h3></div>
                 <div class="item-price">$85.00</div>
             </div>
 
             <!-- VODKA -->
             <div class="sub-category-title">❄️ Vodka</div>
             <div class="menu-item" data-nombre="Vodka Absolut Azul (43 ml)" data-precio="80">
-                <div class="item-info"><h3 class="item-name">Absolut Azul <span class="item-measure">(43 ml)</span></h3></div>
+                <div class="item-info"><h3 class="item-name">Absolut Azul <span class="item-measure">43 ml</span></h3></div>
                 <div class="item-price">$80.00</div>
             </div>
             <div class="menu-item" data-nombre="Vodka Stolichnaya (43 ml)" data-precio="80">
-                <div class="item-info"><h3 class="item-name">Stolichnaya <span class="item-measure">(43 ml)</span></h3></div>
+                <div class="item-info"><h3 class="item-name">Stolichnaya <span class="item-measure">43 ml</span></h3></div>
                 <div class="item-price">$80.00</div>
             </div>
             <div class="menu-item" data-nombre="Vodka Smirnoff (43 ml)" data-precio="70">
-                <div class="item-info"><h3 class="item-name">Smirnoff <span class="item-measure">(43 ml)</span></h3></div>
+                <div class="item-info"><h3 class="item-name">Smirnoff <span class="item-measure">43 ml</span></h3></div>
                 <div class="item-price">$70.00</div>
             </div>
 
             <!-- BRANDY -->
             <div class="sub-category-title">🍇 Brandy</div>
             <div class="menu-item" data-nombre="Brandy Fundador (43 ml)" data-precio="65">
-                <div class="item-info"><h3 class="item-name">Fundador <span class="item-measure">(43 ml)</span></h3></div>
+                <div class="item-info"><h3 class="item-name">Fundador <span class="item-measure">43 ml</span></h3></div>
                 <div class="item-price">$65.00</div>
             </div>
             <div class="menu-item" data-nombre="Brandy Terry (43 ml)" data-precio="80">
-                <div class="item-info"><h3 class="item-name">Terry <span class="item-measure">(43 ml)</span></h3></div>
+                <div class="item-info"><h3 class="item-name">Terry <span class="item-measure">43 ml</span></h3></div>
                 <div class="item-price">$80.00</div>
             </div>
             <div class="menu-item" data-nombre="Brandy Don Pedro (43 ml)" data-precio="60">
-                <div class="item-info"><h3 class="item-name">Don Pedro <span class="item-measure">(43 ml)</span></h3></div>
+                <div class="item-info"><h3 class="item-name">Don Pedro <span class="item-measure">43 ml</span></h3></div>
                 <div class="item-price">$60.00</div>
             </div>
             <div class="menu-item" data-nombre="Brandy Torres 10 (43 ml)" data-precio="75">
-                <div class="item-info"><h3 class="item-name">Torres 10 <span class="item-measure">(43 ml)</span></h3></div>
+                <div class="item-info"><h3 class="item-name">Torres 10 <span class="item-measure">43 ml</span></h3></div>
                 <div class="item-price">$75.00</div>
             </div>
 
             <!-- RON -->
             <div class="sub-category-title">🏝️ Ron</div>
             <div class="menu-item" data-nombre="Ron Bacardí Blanco (43 ml)" data-precio="60">
-                <div class="item-info"><h3 class="item-name">Bacardí Blanco <span class="item-measure">(43 ml)</span></h3></div>
+                <div class="item-info"><h3 class="item-name">Bacardí Blanco <span class="item-measure">43 ml</span></h3></div>
                 <div class="item-price">$60.00</div>
             </div>
             <div class="menu-item" data-nombre="Ron Bacardí Añejo (43 ml)" data-precio="65">
-                <div class="item-info"><h3 class="item-name">Bacardí Añejo <span class="item-measure">(43 ml)</span></h3></div>
+                <div class="item-info"><h3 class="item-name">Bacardí Añejo <span class="item-measure">43 ml</span></h3></div>
                 <div class="item-price">$65.00</div>
             </div>
             <div class="menu-item" data-nombre="Ron Appleton State (43 ml)" data-precio="70">
-                <div class="item-info"><h3 class="item-name">Appleton State <span class="item-measure">(43 ml)</span></h3></div>
+                <div class="item-info"><h3 class="item-name">Appleton State <span class="item-measure">43 ml</span></h3></div>
                 <div class="item-price">$70.00</div>
             </div>
 
             <!-- COGNAC & GINEBRA -->
             <div class="sub-category-title">👑 Cognac &amp; Ginebra</div>
             <div class="menu-item" data-nombre="Cognac Martell Medallón (43 ml)" data-precio="140">
-                <div class="item-info"><h3 class="item-name">Martell Medallón <span class="item-measure">(43 ml)</span></h3></div>
+                <div class="item-info"><h3 class="item-name">Martell Medallón <span class="item-measure">43 ml</span></h3></div>
                 <div class="item-price">$140.00</div>
             </div>
             <div class="menu-item" data-nombre="Cognac Hennessy VSOP (43 ml)" data-precio="145">
-                <div class="item-info"><h3 class="item-name">Hennessy VSOP <span class="item-measure">(43 ml)</span></h3></div>
+                <div class="item-info"><h3 class="item-name">Hennessy VSOP <span class="item-measure">43 ml</span></h3></div>
                 <div class="item-price">$145.00</div>
             </div>
             <div class="menu-item" data-nombre="Ginebra Beefeater (43 ml)" data-precio="65">
-                <div class="item-info"><h3 class="item-name">Beefeater Ginebra <span class="item-measure">(43 ml)</span></h3></div>
+                <div class="item-info"><h3 class="item-name">Beefeater Ginebra <span class="item-measure">43 ml</span></h3></div>
                 <div class="item-price">$65.00</div>
             </div>
 
             <!-- VINOS -->
             <div class="sub-category-title">🍷 Vinos</div>
             <div class="menu-item" data-nombre="Vino Cune Crianza (150 ml)" data-precio="130">
-                <div class="item-info"><h3 class="item-name">Cune Crianza <span class="item-measure">(150 ml)</span></h3></div>
+                <div class="item-info"><h3 class="item-name">Cune Crianza <span class="item-measure">150 ml</span></h3></div>
                 <div class="item-price">$130.00</div>
             </div>
             <div class="menu-item" data-nombre="Vino Blanc de Blancs (150 ml)" data-precio="130">
-                <div class="item-info"><h3 class="item-name">Blanc de Blancs <span class="item-measure">(150 ml)</span></h3></div>
+                <div class="item-info"><h3 class="item-name">Blanc de Blancs <span class="item-measure">150 ml</span></h3></div>
                 <div class="item-price">$130.00</div>
             </div>
 
             <!-- DIGESTIVOS -->
             <div class="sub-category-title">🍸 Digestivos</div>
             <div class="menu-item" data-nombre="Anís Chinchón Seco (43 ml)" data-precio="60">
-                <div class="item-info"><h3 class="item-name">Anís Chinchón Seco <span class="item-measure">(43 ml)</span></h3></div>
+                <div class="item-info"><h3 class="item-name">Anís Chinchón Seco <span class="item-measure">43 ml</span></h3></div>
                 <div class="item-price">$60.00</div>
             </div>
             <div class="menu-item" data-nombre="Anís Chinchón Dulce (43 ml)" data-precio="60">
-                <div class="item-info"><h3 class="item-name">Anís Chinchón Dulce <span class="item-measure">(43 ml)</span></h3></div>
+                <div class="item-info"><h3 class="item-name">Anís Chinchón Dulce <span class="item-measure">43 ml</span></h3></div>
                 <div class="item-price">$60.00</div>
             </div>
             <div class="menu-item" data-nombre="Licor 43 (43 ml)" data-precio="70">
-                <div class="item-info"><h3 class="item-name">Licor 43 <span class="item-measure">(43 ml)</span></h3></div>
+                <div class="item-info"><h3 class="item-name">Licor 43 <span class="item-measure">43 ml</span></h3></div>
                 <div class="item-price">$70.00</div>
             </div>
             <div class="menu-item" data-nombre="Baileys (43 ml)" data-precio="70">
-                <div class="item-info"><h3 class="item-name">Baileys <span class="item-measure">(43 ml)</span></h3></div>
+                <div class="item-info"><h3 class="item-name">Baileys <span class="item-measure">43 ml</span></h3></div>
                 <div class="item-price">$70.00</div>
             </div>
             <div class="menu-item" data-nombre="Kahlúa (43 ml)" data-precio="60">
-                <div class="item-info"><h3 class="item-name">Kahlúa <span class="item-measure">(43 ml)</span></h3></div>
+                <div class="item-info"><h3 class="item-name">Kahlúa <span class="item-measure">43 ml</span></h3></div>
                 <div class="item-price">$60.00</div>
             </div>
             <div class="menu-item" data-nombre="Midori (43 ml)" data-precio="70">
-                <div class="item-info"><h3 class="item-name">Midori <span class="item-measure">(43 ml)</span></h3></div>
+                <div class="item-info"><h3 class="item-name">Midori <span class="item-measure">43 ml</span></h3></div>
                 <div class="item-price">$70.00</div>
             </div>
         </section>
@@ -982,7 +1124,7 @@
     <div id="barra-pedido-wa" class="floating-order-bar">
         <div class="floating-order-inner">
             <div class="order-summary-row">
-                <span class="order-count-badge">🛒 <strong id="pedido-total-items">0</strong> seleccionado(s)</span>
+                <span class="order-count-badge">🛒 <strong id="pedido-total-items">0</strong> producto(s)</span>
                 <div class="order-total-box">
                     <span class="order-total-amount" id="pedido-total-monto">$0.00</span>
                     <button type="button" class="btn-clear-order" onclick="limpiarPedido()">✕ Limpiar</button>
@@ -1000,7 +1142,6 @@
         let categoriaActual = 'todos';
         const pedidoSeleccionado = {};
 
-        // ================= INICIALIZAR CHECKBOXES Y CANTIDADES EN CADA PLATILLO =================
         function inicializarControlesMenu() {
             const tarjetas = document.querySelectorAll('.menu-item');
 
@@ -1011,7 +1152,6 @@
 
                 card.setAttribute('data-id', id);
 
-                // 1. Insertar checkbox al inicio de la tarjeta
                 const checkWrap = document.createElement('div');
                 checkWrap.className = 'item-check-wrap';
                 checkWrap.innerHTML = `<input type="checkbox" class="item-checkbox" id="chk-${id}" aria-label="Seleccionar ${nombre}">`;
@@ -1019,7 +1159,6 @@
 
                 const checkbox = checkWrap.querySelector('input');
 
-                // 2. Reorganizar precio + selector de cantidad (- 1 +) a la derecha
                 const priceEl = card.querySelector('.item-price');
                 const rightCol = document.createElement('div');
                 rightCol.className = 'item-right-col';
@@ -1036,7 +1175,6 @@
                 rightCol.appendChild(stepper);
                 card.appendChild(rightCol);
 
-                // Eventos de selección
                 checkbox.addEventListener('change', () => {
                     if (checkbox.checked) {
                         pedidoSeleccionado[id] = { nombre, precio, cantidad: 1 };
@@ -1049,7 +1187,6 @@
                     actualizarBarraPedido();
                 });
 
-                // Permitir tocar el texto del platillo para marcar/desmarcar fácilmente
                 const infoEl = card.querySelector('.item-info');
                 infoEl.addEventListener('click', () => {
                     checkbox.checked = !checkbox.checked;
@@ -1063,8 +1200,7 @@
             if (!item) return;
 
             const nuevaCantidad = item.cantidad + delta;
-            const card = document.querySelector(`.menu-item[data-id="${id}"]`);
-            const checkbox = document.getElementById(`chk-${id}`);
+            const card = document.querySelector(`.menu-item[data-id="${id}"]`); const checkbox = document.getElementById(`chk-${id}`);
 
             if (nuevaCantidad <= 0) {
                 delete pedidoSeleccionado[id];
@@ -1072,55 +1208,8 @@
                 if (card) card.classList.remove('seleccionado');
             } else {
                 item.cantidad = nuevaCantidad;
-                const qtyEl = document.getElementById(`qty-${id}`);
-                if (qtyEl) qtyEl.innerText = nuevaCantidad;
-            }
-
-            actualizarBarraPedido();
-        }
-
-        function actualizarBarraPedido() {
-            const items = Object.values(pedidoSeleccionado);
-            const barra = document.getElementById('barra-pedido-wa');
-
-            if (items.length === 0) {
-                barra.style.display = 'none';
-                document.body.classList.remove('con-pedido-activo');
-                return;
-            }
-
-            let totalUnidades = 0;
-            let totalDinero = 0;
-
-            items.forEach(it => {
-                totalUnidades += it.cantidad;
-                totalDinero += (it.precio * it.cantidad);
-            });
-
-            document.getElementById('pedido-total-items').innerText = totalUnidades;
-            document.getElementById('pedido-total-monto').innerText = `$${totalDinero.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-
-            barra.style.display = 'block';
-            document.body.classList.add('con-pedido-activo');
-        }
-
-        function limpiarPedido() {
-            Object.keys(pedidoSeleccionado).forEach(id => {
-                delete pedidoSeleccionado[id];
-                const chk = document.getElementById(`chk-${id}`);
-                const card = document.querySelector(`.menu-item[data-id="${id}"]`);
-                if (chk) chk.checked = false;
-                if (card) card.classList.remove('seleccionado');
-            });
-            actualizarBarraPedido();
-        }
-
-        function enviarPedidoWhatsApp() {
-            const items = Object.values(pedidoSeleccionado);
-            if (items.length === 0) return;
-
-            const nombreCliente = (document.getElementById('pedido-nombre-cliente').value || '').trim();
-            const saludoExtra = nombreCliente ? ` Soy *${nombreCliente}*.` : '';
+                const qtyEl = document.getElementById(`qty-${id}`); if (qtyEl) qtyEl.innerText = nuevaCantidad; }  actualizarBarraPedido(); }  function actualizarBarraPedido() { const items = Object.values(pedidoSeleccionado); const barra = document.getElementById('barra-pedido-wa');  if (items.length === 0) { barra.style.display = 'none'; document.body.classList.remove('con-pedido-activo'); return; }  let totalUnidades = 0; let totalDinero = 0;  items.forEach(it => { totalUnidades += it.cantidad; totalDinero += (it.precio * it.cantidad); });  document.getElementById('pedido-total-items').innerText = totalUnidades; document.getElementById('pedido-total-monto').innerText = `$${totalDinero.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;  barra.style.display = 'block'; document.body.classList.add('con-pedido-activo'); }  function limpiarPedido() { Object.keys(pedidoSeleccionado).forEach(id => { delete pedidoSeleccionado[id]; const chk = document.getElementById(`chk-${id}`);
+                const card = document.querySelector(`.menu-item[data-id="${id}"]`); if (chk) chk.checked = false; if (card) card.classList.remove('seleccionado'); }); actualizarBarraPedido(); }  function enviarPedidoWhatsApp() { const items = Object.values(pedidoSeleccionado); if (items.length === 0) return;  const nombreCliente = (document.getElementById('pedido-nombre-cliente').value \vert{}\vert{} '').trim(); const saludoExtra = nombreCliente ? ` Soy *${nombreCliente}*.` : '';
 
             let totalGeneral = 0;
             const lineasProductos = items.map(it => {
@@ -1132,27 +1221,32 @@
             const mensaje =
                 `*CASINO BIGBOLA* | Apartado de Menú 🍽️\n\n` +
                 `Hola,${saludoExtra} *apártame comida que ya voy para allá*. Voy a querer lo siguiente:\n\n` +
-                `${lineasProductos}\n\n` +
-                `💰 *TOTAL ESTIMADO: $${totalGeneral.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} MXN*\n\n` +
+                `${lineasProductos}\n\n` + `💰 *TOTAL ESTIMADO: $${totalGeneral.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} MXN*\n\n` +
                 `¡Gracias, nos vemos en sala! ♠️`;
 
             const urlWhatsApp = `https://wa.me/${NUMERO_WHATSAPP_CASINO}?text=${encodeURIComponent(mensaje)}`;
             window.open(urlWhatsApp, '_blank');
         }
 
-        // ================= FILTROS Y BÚSQUEDA =================
         function seleccionarCategoria(cat, btn) {
             categoriaActual = cat;
-
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
+            document.getElementById('buscador-menu').value = '';
+            filtrarMenu();
+        }
 
+        function limpiarBusqueda() {
             document.getElementById('buscador-menu').value = '';
             filtrarMenu();
         }
 
         function filtrarMenu() {
-            const texto = (document.getElementById('buscador-menu').value || '')
+            const rawVal = document.getElementById('buscador-menu').value || '';
+            const btnClear = document.getElementById('btn-limpiar-busqueda');
+            if (btnClear) btnClear.style.display = rawVal.length > 0 ? 'flex' : 'none';
+
+            const texto = rawVal
                 .toLowerCase()
                 .normalize("NFD")
                 .replace(/[\u0300-\u036f]/g, "");
