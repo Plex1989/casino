@@ -370,13 +370,6 @@
         .vip-item {
             background: #0e1017; border: 1px solid #332d18; border-left: 4px solid var(--neon-gold);
             border-radius: 12px; padding: 14px; margin-bottom: 14px;
-            transition: border-color 0.2s, box-shadow 0.2s;
-        }
-
-        .vip-item.con-cena-activa {
-            border-color: var(--neon-green);
-            border-left: 4px solid var(--neon-green);
-            box-shadow: 0 0 14px rgba(37, 211, 102, 0.18);
         }
 
         .vip-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
@@ -392,75 +385,36 @@
         }
 
         /* CHECKBOX DE CENA DE CORTESÍA */
-        .cena-cortesia-check-box {
+        .vip-cena-check-box {
             display: flex;
             align-items: center;
             gap: 10px;
-            background: rgba(212, 175, 55, 0.08);
+            background: rgba(212, 175, 55, 0.1);
             border: 1px dashed rgba(212, 175, 55, 0.45);
-            border-radius: 9px;
             padding: 10px 12px;
+            border-radius: 8px;
             margin-bottom: 10px;
             cursor: pointer;
-            transition: all 0.2s ease;
-            user-select: none;
+            text-transform: none;
+            letter-spacing: 0;
+            font-size: 0.86em;
+            color: #f3e5ab;
+            font-weight: 600;
+            transition: 0.15s;
         }
 
-        .cena-cortesia-check-box.checked {
-            background: rgba(37, 211, 102, 0.14);
-            border: 1px solid var(--neon-green);
+        .vip-cena-check-box:hover {
+            background: rgba(212, 175, 55, 0.18);
+            border-color: var(--neon-gold);
         }
 
-        .cena-checkbox-input {
-            appearance: none;
-            -webkit-appearance: none;
-            width: 22px;
-            height: 22px;
-            border-radius: 6px;
-            border: 2px solid var(--neon-gold);
-            background: #0b0c10;
+        .vip-cena-check-box input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            accent-color: var(--neon-gold);
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             margin: 0;
             flex-shrink: 0;
-            padding: 0;
-        }
-
-        .cena-checkbox-input:checked {
-            background: var(--neon-green);
-            border-color: var(--neon-green);
-        }
-
-        .cena-checkbox-input:checked::after {
-            content: "✓";
-            color: #000;
-            font-weight: 900;
-            font-size: 14px;
-            line-height: 1;
-        }
-
-        .cena-check-text {
-            flex: 1;
-        }
-
-        .cena-check-text strong {
-            display: block;
-            font-size: 0.86em;
-            color: var(--neon-gold);
-            letter-spacing: 0.2px;
-        }
-
-        .cena-cortesia-check-box.checked .cena-check-text strong {
-            color: #6ee7b7;
-        }
-
-        .cena-check-text span {
-            display: block;
-            font-size: 0.74em;
-            color: #949cb3;
-            margin-top: 1px;
         }
 
         .btn-wa-direct {
@@ -601,7 +555,7 @@
                     <h2>Gestión de Bonus Back (VIP)</h2>
                 </div>
                 <p style="color: #8892b0; font-size: 0.85em; margin-top: 0;">
-                    Elige la promoción activa, busca al cliente, marca si incluye cena de cortesía y envíale la invitación directa a su WhatsApp.
+                    Elige la promoción activa, busca al cliente y envíale la invitación directa a su WhatsApp.
                 </p>
 
                 <div class="promo-selector-box">
@@ -999,8 +953,8 @@
             }
         }
 
-        // ================= GENERADOR INTELIGENTE DE WHATSAPP (PUNTOS, PROMOS Y CENA DE CORTESÍA) =================
-        function generarTextoWhatsApp(nombre, bonus, incluirCenaCortesia = false) {
+        // ================= PLANTILLA INTELIGENTE (CON OPCIÓN DE CENA DE CORTESÍA) =================
+        function generarTextoWhatsApp(nombre, bonus, incluirCena = false) {
             const monto = Number(bonus) || 0;
             const promo = promosRotativas.find(p => p.id === idPromoActiva) || {
                 titulo: "Torneo Especial de Sala",
@@ -1009,73 +963,71 @@
 
             const tituloLimpio = promo.titulo.replace(/[\u{1F300}-\u{1F9FF}]/gu, '').trim();
 
-            // ESCENARIO 1: SE SELECCIONÓ CENA DE CORTESÍA CON BEBIDAS INCLUIDAS
-            if (incluirCenaCortesia) {
-                if (monto > 0) {
-                    return `*CASINO BIGBOLA* | Invitación Exclusiva VIP 🍽️\n\n` +
-                           `Hola *${nombre}*, hoy queremos consentirte en sala:\n\n` + `🍽️ *CENA DE CORTESÍA + BEBIDAS INCLUIDAS:*\n` + `Tienes lista una *cena de cortesía con bebidas incluidas* esta noche en nuestro *Big Bola Lounge*.\n\n` + `💰 *ADEMÁS, TIENES SALDO DISPONIBLE:*\n` + `👉 *$${monto.toLocaleString('es-MX')} MXN* en fichas Bonus Back\n\n` +
-                           `🔥 *PROMO ACTIVA EN SALA:*\n` +
-                           `*${tituloLimpio}* —${promo.descripcion}\n\n` +
-                           `¿A qué hora te esperamos para tener lista tu cena y apartarte lugar en mesa?\n\n` +
-                           `♠️ *Mesas abiertas y premios acumulados:*\n` +
-                           `https://casino-three-rho.vercel.app`;
-                } else {
-                    return `*CASINO BIGBOLA* | Cortesía Especial VIP 🍽️\n\n` +
-                           `Hola *${nombre}*, te saludamos de *Casino BigBola* para invitarte hoy a disfrutar de una:\n\n` +
-                           `🍽️ *CENA DE CORTESÍA CON BEBIDAS INCLUIDAS*\n` +
-                           `_(Válida esta noche en nuestro Big Bola Lounge mientras disfrutas del ambiente en sala)_\n\n` +
-                           `🔥 *ADEMÁS HOY EN SALA TENEMOS:*\n` +
-                           `*${tituloLimpio}*\n` + `${promo.descripcion}\n\n` +
-                           `¿A qué hora nos acompañas para tener lista tu cena y apartarte tu lugar favorito?\n\n` +
-                           `♠️ *Mesas abiertas y premios acumulados:*\n` +
-                           `https://casino-three-rho.vercel.app`;
-                }
+            // CASO 1: TIENE BONUS BACK (> $0) + CENA DE CORTESÍA
+            if (monto > 0 && incluirCena) {
+                return `*CASINO BIGBOLA* | Invitación VIP\n\n` +
+                       `Hola *${nombre}*, hoy queremos consentirte en sala:\n\n` +
+                       `🍽️ *CENA DE CORTESÍA:*\n` +
+                       `👉 Tienes una *cena de cortesía (alimentos y bebidas incluidos)* lista para ti hoy en nuestro Lounge.\n\n` +
+                       `💰 *BONUS BACK ACUMULADO:*\n` +
+                       `👉 *$${monto.toLocaleString('es-MX')} MXN* en fichas\n\n` +
+                       `🔥 *PROMO DE HOY:*\n` +
+                       `*${tituloLimpio}*\n` +
+                       `${promo.descripcion}\n\n` +
+                       `¿A qué hora te esperamos para tener lista tu cena y tu lugar favorito? Avísanos por aquí.\n\n` +
+                       `♠️ *Mesas abiertas y premios acumulados:*\n` +
+                       `https://casino-three-rho.vercel.app`;
             }
 
-            // ESCENARIO 2: MENSAJE ESTÁNDAR (SIN CENA DE CORTESÍA)
+            // CASO 2: SIN SALDO ($0) + CENA DE CORTESÍA
+            if (monto <= 0 && incluirCena) {
+                return `*CASINO BIGBOLA* | Invitación Especial VIP\n\n` +
+                       `Hola *${nombre}*, hoy queremos invitarte personalmente a nuestra sala:\n\n` +
+                       `🍽️ *CENA DE CORTESÍA:*\n` +
+                       `👉 Tienes una *cena de cortesía (alimentos y bebidas incluidos)* esperando por ti hoy en Big Bola Lounge.\n\n` +
+                       `🔥 *PROMO DE HOY:*\n` +
+                       `*${tituloLimpio}*\n` +
+                       `${promo.descripcion}\n\n` +
+                       `¿A qué hora te esperamos para tener lista tu cena y tu mesa favorita? Avísanos por aquí.\n\n` +
+                       `♠️ *Mesas abiertas y premios acumulados:*\n` +
+                       `https://casino-three-rho.vercel.app`;
+            }
+
+            // CASO 3: TIENE BONUS BACK (> $0) SIN CENA
             if (monto > 0) {
                 return `*CASINO BIGBOLA* | Membresía VIP\n\n` +
-                       `Hola *${nombre}*, tienes saldo disponible para jugar hoy:\n\n` + `💰 *BONUS BACK ACUMULADO:*\n` + `👉 *$${monto.toLocaleString('es-MX')} MXN* en fichas\n` +
+                       `Hola *${nombre}*, tienes saldo disponible para jugar hoy:\n\n` +
+                       `💰 *BONUS BACK ACUMULADO:*\n` +
+                       `👉 *$${monto.toLocaleString('es-MX')} MXN* en fichas\n` +
                        `_(Listas para jugar en nuestras mesas en sala)_\n\n` +
                        `🔥 *PROMO DE HOY:*\n` +
-                       `*${tituloLimpio}*\n` + `${promo.descripcion}\n\n` +
+                       `*${tituloLimpio}*\n` +
+                       `${promo.descripcion}\n\n` +
                        `¿Te apartamos tu lugar favorito? Avísanos por aquí para tenerlo listo a tu llegada.\n\n` +
                        `♠️ *Mesas abiertas y premios acumulados:*\n` +
                        `https://casino-three-rho.vercel.app`;
-            } else {
-                return `*CASINO BIGBOLA* | Invitación Especial\n\n` +
-                       `Hola *${nombre}*, te compartimos el evento activo de hoy en sala:\n\n` +
-                       `🔥 *PROMO DE HOY:*\n` +
-                       `*${tituloLimpio}*\n` + `${promo.descripcion}\n\n` +
-                       `🍸 Bebidas de cortesía en mesas abiertas.\n` +
-                       `¿Te apartamos un lugar en tu mesa favorita? Avísanos por aquí.\n\n` +
-                       `♠️ *Mesas abiertas y premios acumulados:*\n` +
-                       `https://casino-three-rho.vercel.app`;
             }
-        }
 
-        function toggleCheckCenaVIP(id) {
-            const chk = document.getElementById(`cena-chk-${id}`); const box = document.getElementById(`cena-box-${id}`);
-            const card = document.getElementById(`vip-card-${id}`); const btnWa = document.getElementById(`btn-wa-vip-${id}`);
-
-            if (!chk) return;
-
-            if (chk.checked) {
-                if (box) box.classList.add('checked');
-                if (card) card.classList.add('con-cena-activa');
-                if (btnWa) btnWa.innerHTML = `<span>🍽️</span> Enviar Invitación + Cena de Cortesía`;
-            } else {
-                if (box) box.classList.remove('checked');
-                if (card) card.classList.remove('con-cena-activa');
-                if (btnWa) btnWa.innerHTML = `<span>📲</span> Enviar Invitación Directa por WhatsApp`;
-            }
+            // CASO 4: SOLO PROMO DE HOY ($0 Y SIN CENA)
+            return `*CASINO BIGBOLA* | Invitación Especial\n\n` +
+                   `Hola *${nombre}*, te compartimos el evento activo de hoy en sala:\n\n` +
+                   `🔥 *PROMO DE HOY:*\n` +
+                   `*${tituloLimpio}*\n` +
+                   `${promo.descripcion}\n\n` +
+                   `🍸 Bebidas de cortesía en mesas abiertas.\n` +
+                   `¿Te apartamos un lugar en tu mesa favorita? Avísanos por aquí.\n\n` +
+                   `♠️ *Mesas abiertas y premios acumulados:*\n` +
+                   `https://casino-three-rho.vercel.app`;
         }
 
         function enviarWhatsAppVIP(id) {
             const cliente = listaVipMemoria.find(v => v.id == id);
             if (!cliente) return;
 
-            const inputMonto = document.getElementById(`bonus-val-${id}`); const bonus = inputMonto ? inputMonto.value : (cliente.bonus_back \vert{}\vert{} 0);  const chkCena = document.getElementById(`cena-chk-${id}`);
+            const inputMonto = document.getElementById(`bonus-val-${id}`);
+            const bonus = inputMonto ? inputMonto.value : (cliente.bonus_back || 0);
+
+            const chkCena = document.getElementById(`cena-vip-${id}`);
             const incluirCena = chkCena ? chkCena.checked : false;
 
             const textoMensaje = generarTextoWhatsApp(cliente.nombre, bonus, incluirCena);
@@ -1105,7 +1057,10 @@
                     <div class="vip-dropdown-item" onclick="seleccionarClienteVIP('${v.id}')">
                         <div>
                             <strong style="color: white; display: block; font-size: 0.95em;">⭐ ${v.nombre}</strong>
-                            <small style="color: #8892b0;">📱 +${v.telefono}</small> </div> <span style="color: var(--neon-gold); font-weight: bold; font-size: 0.9em;"> $${Number(v.bonus_back || 0).toLocaleString('es-MX')}
+                            <small style="color: #8892b0;">📱 +${v.telefono}</small>
+                        </div>
+                        <span style="color: var(--neon-gold); font-weight: bold; font-size: 0.9em;">
+                            $${Number(v.bonus_back || 0).toLocaleString('es-MX')}
                         </span>
                     </div>
                 `).join('');
@@ -1123,13 +1078,6 @@
             document.getElementById('vip-dropdown-persiana').style.display = 'none';
             document.getElementById('input-buscar-vip').value = cliente.nombre;
 
-            // Si la lista completa estaba abierta, la cerramos para no duplicar IDs de checkboxes
-            if (listaCompletaVisible) {
-                listaCompletaVisible = false;
-                document.getElementById('contenedor-vip-admin').style.display = 'none';
-                document.getElementById('btn-toggle-vip').innerHTML = `👁️ Ver todos los clientes registrados (${listaVipMemoria.length})`;
-            }
-
             const contSeleccionado = document.getElementById('vip-seleccionado-card');
             contSeleccionado.innerHTML = renderTarjetaVIPHTML(cliente, true);
             contSeleccionado.style.display = 'block';
@@ -1138,12 +1086,9 @@
         function toggleListaCompletaVIP() {
             const cont = document.getElementById('contenedor-vip-admin');
             const btn = document.getElementById('btn-toggle-vip');
-            const contSeleccionado = document.getElementById('vip-seleccionado-card');
             listaCompletaVisible = !listaCompletaVisible;
 
             if (listaCompletaVisible) {
-                contSeleccionado.style.display = 'none';
-                contSeleccionado.innerHTML = '';
                 cont.style.display = 'block';
                 btn.innerHTML = `🙈 Ocultar lista (${listaVipMemoria.length})`;
                 renderizarListaCompletaVIP(listaVipMemoria);
@@ -1160,7 +1105,7 @@
 
         function renderTarjetaVIPHTML(v, esDestacado = false) {
             return `
-            <div id="vip-card-${v.id}" class="vip-item ${esDestacado ? 'destacado' : ''}">
+            <div class="vip-item ${esDestacado ? 'destacado' : ''}">
                 <div class="vip-header">
                     <div>
                         <span class="vip-name">⭐ ${v.nombre}</span>
@@ -1174,22 +1119,19 @@
 
                 <label style="margin-top: 0; margin-bottom: 4px; font-size: 0.75em; color: var(--neon-gold);">Bonus Back Acumulado ($ MXN):</label>
                 <div class="vip-input-row">
-                    <input type="number" id="bonus-val-${v.id}" value="${v.bonus_back \vert{}\vert{} 0}" min="0" onchange="guardarBonusBack('${v.id}')">
+                    <input type="number" id="bonus-val-${v.id}" value="${v.bonus_back || 0}" min="0" onchange="guardarBonusBack('${v.id}')">
                     <button class="btn-guardar-bonus" onclick="guardarBonusBack('${v.id}')">
                         💾 Guardar
                     </button>
                 </div>
 
-                <!-- CHECKBOX INTELIGENTE: CENA DE CORTESÍA CON BEBIDAS -->
-                <label id="cena-box-${v.id}" class="cena-cortesia-check-box" style="text-transform: none; letter-spacing: 0;">
-                    <input type="checkbox" id="cena-chk-${v.id}" class="cena-checkbox-input" onchange="toggleCheckCenaVIP('${v.id}')">
-                    <div class="cena-check-text">
-                        <strong>🍽️ Incluir Cena de Cortesía + Bebidas</strong>
-                        <span>Activa invitación especial a cenar en el Lounge hoy</span>
-                    </div>
+                <!-- CHECKBOX DE CENA DE CORTESÍA (CON BEBIDAS) -->
+                <label class="vip-cena-check-box" for="cena-vip-${v.id}">
+                    <input type="checkbox" id="cena-vip-${v.id}">
+                    <span>🍽️ Incluir <strong>Cena de Cortesía</strong> (con bebidas)</span>
                 </label>
 
-                <button type="button" id="btn-wa-vip-${v.id}" onclick="enviarWhatsAppVIP('${v.id}')" class="btn-wa-direct">
+                <button type="button" onclick="enviarWhatsAppVIP('${v.id}')" class="btn-wa-direct">
                     <span>📲</span> Enviar Invitación Directa por WhatsApp
                 </button>
             </div>
@@ -1202,7 +1144,16 @@
         }
 
         async function guardarBonusBack(id) {
-            const inputBonus = document.getElementById(`bonus-val-${id}`); const bonus = parseInt(inputBonus.value) \vert{}\vert{} 0;  const { error } = await client.from('clientes_vip').update({ bonus_back: bonus, fecha_actualizacion: new Date().toISOString() }).eq('id', id);  if (!error) { const badge = document.getElementById(`vip-badge-${id}`);
+            const inputBonus = document.getElementById(`bonus-val-${id}`);
+            const bonus = parseInt(inputBonus.value) || 0;
+
+            const { error } = await client.from('clientes_vip').update({
+                bonus_back: bonus,
+                fecha_actualizacion: new Date().toISOString()
+            }).eq('id', id);
+
+            if (!error) {
+                const badge = document.getElementById(`vip-badge-${id}`);
                 if (badge) {
                     badge.innerText = "✓ Guardado";
                     badge.style.display = "inline";
@@ -1305,8 +1256,16 @@
         }
 
         function toggleEditarPromoApp(id) {
-            const box = document.getElementById(`edit-promo-box-${id}`); if (box) { box.style.display = box.style.display === 'block' ? 'none' : 'block'; } }  async function guardarEdicionPromoApp(id) { const tipo = document.getElementById(`edit-promo-tipo-${id}`).value;
-            const titulo = document.getElementById(`edit-promo-titulo-${id}`).value.trim(); const descripcion = document.getElementById(`edit-promo-desc-${id}`).value.trim();
+            const box = document.getElementById(`edit-promo-box-${id}`);
+            if (box) {
+                box.style.display = box.style.display === 'block' ? 'none' : 'block';
+            }
+        }
+
+        async function guardarEdicionPromoApp(id) {
+            const tipo = document.getElementById(`edit-promo-tipo-${id}`).value;
+            const titulo = document.getElementById(`edit-promo-titulo-${id}`).value.trim();
+            const descripcion = document.getElementById(`edit-promo-desc-${id}`).value.trim();
 
             if (!titulo || !descripcion) {
                 alert("Completa el título y la descripción para guardar.");
@@ -1345,4 +1304,445 @@
                     <div class="promo-app-card">
                         <div class="promo-app-top">
                             <div>
-                                <strong style="color:
+                                <strong style="color: ${p.tipo === 'Flash' ? 'var(--neon-red)' : 'var(--neon-purple)'}; font-size: 0.85em;">[${escaparHTML(p.tipo)}]</strong>
+                                <strong style="color: white; display: block; font-size: 0.95em;">${escaparHTML(p.titulo)}</strong>
+                                <span style="color: #8892b0; font-size: 0.82em; display: block; margin-top: 2px;">${escaparHTML(p.descripcion)}</span>
+                            </div>
+                            <div class="promo-app-actions">
+                                <button type="button" onclick="togglePromo('${p.id}', ${p.activa})" class="btn-promo-mini" style="border: 1px solid ${p.activa ? 'var(--neon-green)' : '#555'}; color: ${p.activa ? 'var(--neon-green)' : '#888'};">${p.activa ? 'Activa' : 'Pausa'}</button>
+                                <button type="button" onclick="toggleEditarPromoApp('${p.id}')" class="btn-promo-mini" style="border: 1px solid var(--neon-cyan); color: var(--neon-cyan);" title="Editar promoción">✏️</button>
+                                <button type="button" onclick="eliminarPromo('${p.id}')" class="btn-promo-mini" style="border: 1px solid var(--neon-red); color: var(--neon-red);" title="Eliminar">🗑️</button>
+                            </div>
+                        </div>
+
+                        <!-- FORMULARIO PLEGABLE DE EDICIÓN DE PROMOCIÓN -->
+                        <div id="edit-promo-box-${p.id}" class="promo-app-edit-box">
+                            <label style="margin-top: 0;">Tipo de Promoción</label>
+                            <select id="edit-promo-tipo-${p.id}">
+                                <option value="General" ${p.tipo === 'General' ? 'selected' : ''}>📢 General (Tarjeta fija)</option>
+                                <option value="Flash" ${p.tipo === 'Flash' ? 'selected' : ''}>⚡ Oferta Flash (Marquesina roja)</option>
+                            </select>
+
+                            <label>Título</label>
+                            <input type="text" id="edit-promo-titulo-${p.id}" value="${escaparHTML(p.titulo)}">
+
+                            <label>Descripción / Fechas</label>
+                            <textarea id="edit-promo-desc-${p.id}" rows="3">${escaparHTML(p.descripcion)}</textarea>
+
+                            <div class="admin-grid-2" style="margin-top: 10px;">
+                                <button type="button" class="btn-action btn-save" onclick="guardarEdicionPromoApp('${p.id}')" style="margin-top: 0; padding: 10px; font-size: 0.88em;">
+                                    💾 Guardar Cambios
+                                </button>
+                                <button type="button" class="btn-action" onclick="toggleEditarPromoApp('${p.id}')" style="margin-top: 0; padding: 10px; font-size: 0.88em; background: #1c1f2e; color: #c5c6c7; border: 1px solid #444;">
+                                    Cancelar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                contenedor.innerHTML = '<p style="color: #8892b0; font-size: 0.85em;">Sin promociones.</p>';
+            }
+        }
+
+        // ================= GESTIÓN DE MESAS CON PERSIANA DESPLEGABLE =================
+        let listaMesasMemoria = [];
+        let idMesaSeleccionada = "";
+        let todasMesasVisibles = false;
+
+        function actualizarOpcionesSelectorMesas() {
+            const selector = document.getElementById('selector-mesa-editar');
+            if (!selector) return;
+
+            if (!listaMesasMemoria || listaMesasMemoria.length === 0) {
+                selector.innerHTML = '<option value="">No hay mesas registradas</option>';
+                return;
+            }
+
+            const opcionesHTML = listaMesasMemoria.map(m => {
+                const iconoEstado = m.estatus === 'Abierta' ? '🟢' : '🔴';
+                const capMax = m.capacidad_maxima || 7;
+                const jug = m.jugadores_actuales || 0;
+                return `<option value="${m.id}" ${String(m.id) === String(idMesaSeleccionada) ? 'selected' : ''}>
+                    ${iconoEstado} ${m.nombre} (${m.juego}) — ${jug}/${capMax} jug.
+                </option>`;
+            }).join('');
+
+            selector.innerHTML = `<option value="">👇 Elige qué mesa quieres editar...</option>` + opcionesHTML;
+        }
+
+        function seleccionarMesaEditar() {
+            const selector = document.getElementById('selector-mesa-editar');
+            idMesaSeleccionada = selector.value;
+
+            const contSeleccionada = document.getElementById('mesa-seleccionada-container');
+            const contTodas = document.getElementById('contenedor-mesas-admin');
+            const btnTodas = document.getElementById('btn-toggle-todas-mesas');
+
+            if (todasMesasVisibles) {
+                todasMesasVisibles = false;
+                contTodas.style.display = 'none';
+                contTodas.innerHTML = '';
+                btnTodas.innerHTML = `👁️ Ver todas las mesas en lista (${listaMesasMemoria.length})`;
+            }
+
+            if (!idMesaSeleccionada) {
+                contSeleccionada.style.display = 'none';
+                contSeleccionada.innerHTML = '';
+                return;
+            }
+
+            const mesa = listaMesasMemoria.find(m => String(m.id) === String(idMesaSeleccionada));
+            if (mesa) {
+                contSeleccionada.innerHTML = renderTarjetaMesaHTML(mesa, true);
+                contSeleccionada.style.display = 'block';
+            }
+        }
+
+        function toggleTodasMesasAdmin() {
+            const contTodas = document.getElementById('contenedor-mesas-admin');
+            const contSeleccionada = document.getElementById('mesa-seleccionada-container');
+            const selector = document.getElementById('selector-mesa-editar');
+            const btn = document.getElementById('btn-toggle-todas-mesas');
+
+            todasMesasVisibles = !todasMesasVisibles;
+
+            if (todasMesasVisibles) {
+                idMesaSeleccionada = "";
+                if (selector) selector.value = "";
+                contSeleccionada.style.display = 'none';
+                contSeleccionada.innerHTML = '';
+
+                contTodas.style.display = 'block';
+                btn.innerHTML = `🙈 Ocultar lista completa (${listaMesasMemoria.length})`;
+                contTodas.innerHTML = listaMesasMemoria.map(m => renderTarjetaMesaHTML(m, false)).join('');
+            } else {
+                contTodas.style.display = 'none';
+                contTodas.innerHTML = '';
+                btn.innerHTML = `👁️ Ver todas las mesas en lista (${listaMesasMemoria.length})`;
+            }
+        }
+
+        function renderTarjetaMesaHTML(m, esDestacada = false) {
+            const capMax = m.capacidad_maxima || 7;
+            const esTexas = (m.juego || '').toLowerCase().includes('texas') 
+                         || (m.juego || '').toLowerCase().includes('hold')
+                         || (m.juego || '').toLowerCase().includes('ultimate')
+                         || (m.nombre || '').toLowerCase().includes('texas')
+                         || (m.jackpot_esc_real && parseFloat(m.jackpot_esc_real) > 0);
+
+            return `
+            <div class="mesa-item ${esDestacada ? 'destacada-mesa' : ''}">
+                <div class="mesa-item-top">
+                    <span class="mesa-nombre">${m.nombre} (${m.juego})</span>
+                    <span id="badge-guardado-${m.id}" style="color: var(--neon-cyan); font-size: 0.8em; display: none; font-weight: bold;">⚡ Sincronizado</span>
+                </div>
+
+                <div class="admin-grid-2">
+                    <div>
+                        <label>Estatus</label>
+                        <select id="estatus-${m.id}" class="mesa-estatus-select ${m.estatus === 'Abierta' ? 'abierta' : 'cerrada'}" onchange="cambiarEstatus('${m.id}', this)">
+                            <option value="Abierta" ${m.estatus === 'Abierta' ? 'selected' : ''}>🟢 Abierta</option>
+                            <option value="Cerrada" ${m.estatus === 'Cerrada' ? 'selected' : ''}>🔴 Cerrada</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Jugadores Actuales</label>
+                        <div class="stepper-container">
+                            <button type="button" class="btn-step" onclick="cambiarJugadores('${m.id}', -1)">−</button>
+                            <div class="stepper-display" id="val-jugadores-${m.id}">${m.jugadores_actuales || 0}</div>
+                            <button type="button" class="btn-step" onclick="cambiarJugadores('${m.id}', 1)">+</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="admin-grid-3" style="margin-top: 6px;">
+                    <div>
+                        <label>Capacidad</label>
+                        <input type="number" id="capacidad-${m.id}" value="${capMax}" min="1" max="50">
+                    </div>
+                    <div>
+                        <label>Ap. Mínima ($)</label>
+                        <input type="number" step="any" id="apuesta-min-${m.id}" value="${m.apuesta_minima || 0}">
+                    </div>
+                    <div>
+                        <label>Ap. Máxima ($)</label>
+                        <input type="number" step="any" id="apuesta-max-${m.id}" value="${m.apuesta_maxima || 0}">
+                    </div>
+                </div>
+
+                <div style="margin-top: 6px;">
+                    <label>Crupier (dejar vacío para "En rotación")</label>
+                    <input type="text" id="crupier-${m.id}" value="${escaparHTML(m.crupier || '')}" placeholder="Nombre del crupier">
+                </div>
+
+                ${esTexas ? `
+                    <div class="box-triple-jackpot-admin">
+                        <span style="font-size: 0.78em; color: var(--neon-gold); font-weight: bold; text-transform: uppercase;">
+                            ★ 3 Acumulados Progresivos (Pantalla de Sala)
+                        </span>
+                        <div class="admin-grid-3" style="margin-top: 6px;">
+                            <div>
+                                <label style="color: #ffd700; font-size: 0.7em;">1. ESC REAL ($)</label>
+                                <input type="number" step="any" id="jackpot-real-${m.id}" value="${m.jackpot_esc_real || 0}" style="border-color: #ffd700; color: #ffd700; font-weight: bold;">
+                            </div>
+                            <div>
+                                <label style="color: #00f0ff; font-size: 0.7em;">2. ESC COL ($)</label>
+                                <input type="number" step="any" id="jackpot-col-${m.id}" value="${m.jackpot_esc_col || 0}" style="border-color: #00f0ff; color: #00f0ff; font-weight: bold;">
+                            </div>
+                            <div>
+                                <label style="color: #d9dadb; font-size: 0.7em;">3. POKER ($)</label>
+                                <input type="number" step="any" id="jackpot-poker-${m.id}" value="${m.jackpot_poker || 0}" style="border-color: #888; color: #fff; font-weight: bold;">
+                            </div>
+                        </div>
+                    </div>
+                ` : `
+                    <div style="margin-top: 6px;">
+                        <label>Jackpot Regular ($)</label>
+                        <input type="number" step="any" id="jackpot-${m.id}" value="${m.jackpot || 0}">
+                    </div>
+                `}
+
+                <div style="margin-top: 6px;">
+                    <label>Promo o Frase de Alerta</label>
+                    <input type="text" id="promo-${m.id}" value="${escaparHTML(m.promo_especial || '')}" placeholder="Frase especial">
+                </div>
+
+                <div style="margin-top: 8px;">
+                    <span style="font-size: 0.72em; color: #8892b0; text-transform: uppercase; font-weight: bold;">Frase rápida:</span>
+                    <div class="preset-badge-group">
+                        <button type="button" class="btn-preset fuego" onclick="aplicarPreset('${m.id}', '🔥 MESA CALIENTE')">🔥 Caliente</button>
+                        <button type="button" class="btn-preset fuerte" onclick="aplicarPreset('${m.id}', '⚡ APUESTAS FUERTES')">⚡ Fuertes</button>
+                        <button type="button" class="btn-preset ultimos" onclick="aplicarPreset('${m.id}', '🚨 ÚLTIMOS LUGARES')">🚨 Últimos</button>
+                        <button type="button" class="btn-preset limpiar" onclick="aplicarPreset('${m.id}', '')">✕</button>
+                    </div>
+                </div>
+
+                <div class="mesa-botones">
+                    <button class="btn-action btn-save" onclick="actualizarMesa('${m.id}')" style="margin-top: 0; padding: 10px; font-size: 0.9em;">
+                        💾 Guardar Cambios de Mesa / Acumulados
+                    </button>
+                    <button class="btn-del-item" onclick="eliminarMesa('${m.id}', '${escaparHTML(m.nombre)}')" title="Eliminar">
+                        🗑️
+                    </button>
+                </div>
+            </div>
+            `;
+        }
+
+        async function cambiarJugadores(id, delta) {
+            const display = document.getElementById(`val-jugadores-${id}`);
+            const capInput = document.getElementById(`capacidad-${id}`);
+            const maxCapacidad = capInput ? (parseInt(capInput.value) || 7) : 7;
+            
+            let nuevo = (parseInt(display.innerText) || 0) + delta;
+            if (nuevo < 0) nuevo = 0;
+            if (nuevo > maxCapacidad) nuevo = maxCapacidad;
+            display.innerText = nuevo;
+            mostrarAvisoEnVivo(id);
+
+            const item = listaMesasMemoria.find(x => String(x.id) === String(id));
+            if (item) item.jugadores_actuales = nuevo;
+            actualizarOpcionesSelectorMesas();
+
+            await client.from('mesas').update({ jugadores_actuales: nuevo }).eq('id', id);
+        }
+
+        async function cambiarEstatus(id, sel) {
+            sel.className = 'mesa-estatus-select ' + (sel.value === 'Abierta' ? 'abierta' : 'cerrada');
+            mostrarAvisoEnVivo(id);
+
+            const item = listaMesasMemoria.find(x => String(x.id) === String(id));
+            if (item) item.estatus = sel.value;
+            actualizarOpcionesSelectorMesas();
+
+            await client.from('mesas').update({ estatus: sel.value }).eq('id', id);
+        }
+
+        async function aplicarPreset(id, frase) {
+            document.getElementById(`promo-${id}`).value = frase;
+            mostrarAvisoEnVivo(id);
+
+            const item = listaMesasMemoria.find(x => String(x.id) === String(id));
+            if (item) item.promo_especial = frase;
+
+            await client.from('mesas').update({ promo_especial: frase }).eq('id', id);
+        }
+
+        function mostrarAvisoEnVivo(id) {
+            const badge = document.getElementById(`badge-guardado-${id}`);
+            if (badge) {
+                badge.style.display = 'inline';
+                setTimeout(() => badge.style.display = 'none', 1800);
+            }
+        }
+
+        async function crearMesa() {
+            const nombre = document.getElementById('nueva-mesa-nombre').value.trim();
+            const juego = document.getElementById('nueva-mesa-juego').value;
+            const capacidad = parseInt(document.getElementById('nueva-mesa-capacidad').value) || 7;
+            const apuesta_minima = parseFloat(document.getElementById('nueva-mesa-apuesta-min').value) || 0;
+            const apuesta_maxima = parseFloat(document.getElementById('nueva-mesa-apuesta-max').value) || 0;
+            const estatus = document.getElementById('nueva-mesa-estatus').value;
+            const crupier = document.getElementById('nueva-mesa-crupier').value.trim();
+
+            const esTexas = juego.toLowerCase().includes('texas') || juego.toLowerCase().includes('hold') || juego.toLowerCase().includes('ultimate') || nombre.toLowerCase().includes('texas');
+
+            let jackpot = 0;
+            let promo = '';
+            let jackpot_esc_real = 0;
+            let jackpot_esc_col = 0;
+            let jackpot_poker = 0;
+
+            if (esTexas) {
+                jackpot_esc_real = parseFloat(document.getElementById('nueva-mesa-esc-real').value) || 0;
+                jackpot_esc_col = parseFloat(document.getElementById('nueva-mesa-esc-col').value) || 0;
+                jackpot_poker = parseFloat(document.getElementById('nueva-mesa-poker').value) || 0;
+                promo = document.getElementById('nueva-mesa-promo-texas').value.trim();
+            } else {
+                jackpot = parseFloat(document.getElementById('nueva-mesa-jackpot').value) || 0;
+                promo = document.getElementById('nueva-mesa-promo').value.trim();
+            }
+
+            if (!nombre) {
+                alert("Por favor escribe el nombre de la mesa.");
+                return;
+            }
+
+            const { data, error } = await client.from('mesas').insert([{
+                nombre, 
+                juego, 
+                capacidad_maxima: capacidad, 
+                jugadores_actuales: 0,
+                apuesta_minima, 
+                apuesta_maxima,
+                estatus, 
+                crupier: crupier === '' ? null : crupier, 
+                jackpot, 
+                promo_especial: promo,
+                jackpot_esc_real,
+                jackpot_esc_col,
+                jackpot_poker
+            }]).select();
+
+            if (error) {
+                alert("Error al registrar mesa: " + error.message);
+            } else {
+                alert("¡Mesa registrada correctamente!");
+                document.getElementById('nueva-mesa-nombre').value = '';
+                document.getElementById('nueva-mesa-crupier').value = '';
+                if (data && data[0]) {
+                    idMesaSeleccionada = String(data[0].id);
+                }
+                cargarMesas();
+            }
+        }
+
+        async function actualizarMesa(id) {
+            try {
+                const crupierInput = document.getElementById(`crupier-${id}`);
+                const apuestaMinInput = document.getElementById(`apuesta-min-${id}`);
+                const apuestaMaxInput = document.getElementById(`apuesta-max-${id}`);
+                const capacidadInput = document.getElementById(`capacidad-${id}`);
+                const promoInput = document.getElementById(`promo-${id}`);
+                const jackpotInput = document.getElementById(`jackpot-${id}`);
+
+                const crupierTexto = crupierInput ? crupierInput.value.trim() : '';
+                const apuesta_minima = apuestaMinInput ? (parseFloat(apuestaMinInput.value) || 0) : 0;
+                const apuesta_maxima = apuestaMaxInput ? (parseFloat(apuestaMaxInput.value) || 0) : 0;
+                const capacidad_maxima = capacidadInput ? (parseInt(capacidadInput.value) || 7) : 7;
+                const promo_especial = promoInput ? promoInput.value.trim() : '';
+                const jackpot = jackpotInput ? (parseFloat(jackpotInput.value) || 0) : 0;
+
+                const updateData = {
+                    crupier: crupierTexto === '' ? null : crupierTexto,
+                    apuesta_minima,
+                    apuesta_maxima,
+                    capacidad_maxima,
+                    promo_especial
+                };
+
+                if (jackpotInput) {
+                    updateData.jackpot = jackpot;
+                }
+
+                const inpReal = document.getElementById(`jackpot-real-${id}`);
+                const inpCol = document.getElementById(`jackpot-col-${id}`);
+                const inpPoker = document.getElementById(`jackpot-poker-${id}`);
+
+                if (inpReal) updateData.jackpot_esc_real = parseFloat(inpReal.value) || 0;
+                if (inpCol) updateData.jackpot_esc_col = parseFloat(inpCol.value) || 0;
+                if (inpPoker) updateData.jackpot_poker = parseFloat(inpPoker.value) || 0;
+
+                const { error } = await client.from('mesas').update(updateData).eq('id', id);
+
+                if (error) {
+                    alert("Error de Supabase: " + error.message);
+                } else {
+                    const item = listaMesasMemoria.find(x => String(x.id) === String(id));
+                    if (item) Object.assign(item, updateData);
+                    actualizarOpcionesSelectorMesas();
+                    mostrarAvisoEnVivo(id);
+                }
+            } catch (err) {
+                alert("Error en el guardado: " + err.message);
+                console.error(err);
+            }
+        }
+
+        async function eliminarMesa(id, nombre) {
+            if (confirm(`¿Eliminar la ${nombre}?`)) {
+                await client.from('mesas').delete().eq('id', id);
+                if (String(idMesaSeleccionada) === String(id)) {
+                    idMesaSeleccionada = "";
+                    document.getElementById('mesa-seleccionada-container').style.display = 'none';
+                    document.getElementById('mesa-seleccionada-container').innerHTML = '';
+                }
+                cargarMesas();
+            }
+        }
+
+        async function cargarMesas() {
+            const { data: mesas, error } = await client.from('mesas').select('*').order('juego').order('nombre');
+            const selector = document.getElementById('selector-mesa-editar');
+            const contTodas = document.getElementById('contenedor-mesas-admin');
+            const contSeleccionada = document.getElementById('mesa-seleccionada-container');
+
+            if (error) {
+                if (selector) selector.innerHTML = `<option value="">Error al cargar mesas</option>`;
+                return;
+            }
+
+            listaMesasMemoria = mesas || [];
+            document.getElementById('mesas-contador-toggle').innerText = listaMesasMemoria.length;
+            actualizarOpcionesSelectorMesas();
+
+            if (todasMesasVisibles) {
+                contTodas.innerHTML = listaMesasMemoria.map(m => renderTarjetaMesaHTML(m, false)).join('');
+            } else if (idMesaSeleccionada) {
+                const mesaActiva = listaMesasMemoria.find(m => String(m.id) === String(idMesaSeleccionada));
+                if (mesaActiva) {
+                    contSeleccionada.innerHTML = renderTarjetaMesaHTML(mesaActiva, true);
+                    contSeleccionada.style.display = 'block';
+                } else {
+                    idMesaSeleccionada = "";
+                    contSeleccionada.style.display = 'none';
+                    contSeleccionada.innerHTML = '';
+                }
+            }
+        }
+
+        function iniciarCargaPanel() {
+            cambiarTipoJuegoNuevo();
+            cargarPromosDesdeSupabase();
+            cargarJugadoresVIP();
+            cargarPromociones();
+            cargarMesas();
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            verificarSesionActiva();
+        });
+    </script>
+</body>
+</html>
