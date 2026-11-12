@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Menú Lounge & Bar - CASINO BIGBOLA</title>
+    <title>Menú Big Bola Lounge - CASINO BIGBOLA</title>
 
     <meta name="theme-color" content="#0b0c10">
     <link rel="apple-touch-icon" href="logo.jpg">
@@ -13,11 +13,11 @@
             --bg-color: #0b0c10;
             --card-bg: #151722;
             --neon-cyan: #00f0ff;
-            --neon-gold: #d4af37;
             --neon-red: #ff003c;
+            --neon-gold: #d4af37;
             --neon-purple: #b026ff;
             --neon-green: #25D366;
-            --silver-metal: #c0c0c0;
+            --silver-metal: #d9dadb;
             --border-color: #2a2d3d;
         }
 
@@ -32,7 +32,7 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             margin: 0;
             padding: 12px;
-            padding-bottom: 140px; /* Espacio para barra de pedidos */
+            padding-bottom: 85px;
         }
 
         .container {
@@ -40,107 +40,122 @@
             margin: 0 auto;
         }
 
-        /* Barra Superior */
+        /* BARRA SUPERIOR DE REGRESO */
         .top-nav {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px 0 14px 0;
-            border-bottom: 1px solid var(--border-color);
-            margin-bottom: 14px;
+            margin-bottom: 10px;
         }
 
-        .btn-back {
+        .btn-volver {
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid var(--border-color);
-            color: white;
+            background: rgba(0, 240, 255, 0.12);
+            border: 1px solid var(--neon-cyan);
+            color: var(--neon-cyan);
             padding: 8px 14px;
-            border-radius: 8px;
-            text-decoration: none;
+            border-radius: 20px;
             font-size: 0.85em;
             font-weight: bold;
+            text-decoration: none;
+            transition: 0.2s;
         }
 
-        .lounge-title {
-            text-align: right;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+        .btn-volver:active {
+            transform: scale(0.96);
+            background: var(--neon-cyan);
+            color: black;
         }
 
-        .lounge-logo {
-            width: 44px;
-            height: 44px;
+        /* ENCABEZADO */
+        header {
+            text-align: center;
+            padding: 8px 0 14px 0;
+        }
+
+        header img {
+            width: 72px;
+            height: 72px;
             border-radius: 50%;
             object-fit: cover;
-            border: 1px solid var(--silver-metal);
-            box-shadow: 0 0 10px rgba(192, 192, 192, 0.4);
+            margin-bottom: 6px;
+            border: 2px solid var(--neon-gold);
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
         }
 
-        .lounge-title h1 {
+        header h1 {
             margin: 0;
-            font-size: 1.05em;
+            font-size: 1.4em;
             color: var(--silver-metal);
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
+        header p {
+            margin: 4px 0 0 0;
+            color: var(--neon-gold);
+            font-size: 0.88em;
+            font-weight: bold;
             letter-spacing: 1px;
             text-transform: uppercase;
         }
 
-        .lounge-title span {
-            font-size: 0.75em;
-            color: #8892b0;
-            display: block;
+        /* BUSCADOR RÁPIDO */
+        .search-wrapper {
+            position: relative;
+            margin-bottom: 12px;
         }
 
-        /* Banner Promoción */
-        .banner-bar {
-            background: linear-gradient(135deg, rgba(212,175,55,0.15), rgba(176,38,255,0.15));
-            border: 1px solid var(--neon-gold);
+        .search-wrapper input {
+            width: 100%;
+            padding: 12px 14px 12px 40px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
             border-radius: 12px;
-            padding: 12px 14px;
-            margin-bottom: 14px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
+            color: white;
+            font-size: 0.95em;
+            outline: none;
         }
 
-        .banner-bar .icon {
-            font-size: 1.8em;
+        .search-wrapper input:focus {
+            border-color: var(--neon-gold);
         }
 
-        .banner-bar h2 {
-            margin: 0;
-            font-size: 0.9em;
-            color: var(--neon-gold);
+        .search-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1em;
+            pointer-events: none;
         }
 
-        .banner-bar p {
-            margin: 3px 0 0 0;
-            font-size: 0.78em;
-            color: #c5c6c7;
-        }
-
-        /* Pestañas de Selección */
-        .category-tabs {
+        /* PESTAÑAS DE CATEGORÍAS (DESLIZABLES) */
+        .tabs-scroll {
             display: flex;
             gap: 8px;
             overflow-x: auto;
             padding-bottom: 8px;
-            margin-bottom: 14px;
+            margin-bottom: 16px;
             scrollbar-width: none;
+            position: sticky;
+            top: 0;
+            background: var(--bg-color);
+            padding-top: 6px;
+            z-index: 50;
         }
 
-        .category-tabs::-webkit-scrollbar {
+        .tabs-scroll::-webkit-scrollbar {
             display: none;
         }
 
         .tab-btn {
-            background: #151722;
-            color: #8892b0;
+            background: var(--card-bg);
             border: 1px solid var(--border-color);
-            padding: 10px 16px;
+            color: #c5c6c7;
+            padding: 8px 14px;
             border-radius: 20px;
             font-size: 0.82em;
             font-weight: bold;
@@ -150,348 +165,666 @@
         }
 
         .tab-btn.active {
-            background: rgba(0, 240, 255, 0.15);
-            color: var(--neon-cyan);
-            border-color: var(--neon-cyan);
-            box-shadow: 0 0 10px rgba(0, 240, 255, 0.25);
+            background: linear-gradient(90deg, rgba(212, 175, 55, 0.25), rgba(255, 102, 0, 0.2));
+            border-color: var(--neon-gold);
+            color: var(--neon-gold);
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.25);
         }
 
-        /* Ítems del Menú con Checkbox */
-        .menu-grid {
+        /* SECCIONES DEL MENÚ */
+        .menu-section {
+            margin-bottom: 24px;
+        }
+
+        .section-header {
             display: flex;
-            flex-direction: column;
-            gap: 10px;
+            align-items: center;
+            gap: 8px;
+            color: var(--neon-gold);
+            font-size: 1.15em;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.35);
+            padding-bottom: 6px;
+            margin: 0 0 12px 0;
         }
 
+        .sub-category-title {
+            color: var(--neon-cyan);
+            font-size: 0.9em;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin: 16px 0 8px 2px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* TARJETA DE PLATILLO O BEBIDA */
         .menu-item {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 12px;
-            padding: 12px 14px;
+            padding: 13px 14px;
+            margin-bottom: 10px;
             display: flex;
-            align-items: center;
+            justify-content: space-between;
+            align-items: flex-start;
             gap: 12px;
-            cursor: pointer;
-            transition: 0.2s;
-            user-select: none;
-        }
-
-        .menu-item.selected {
-            border-color: var(--neon-cyan);
-            background: rgba(0, 240, 255, 0.08);
-            box-shadow: 0 0 12px rgba(0, 240, 255, 0.2);
-        }
-
-        /* Checkbox Neón */
-        .custom-check {
-            width: 26px;
-            height: 26px;
-            border-radius: 8px;
-            border: 2px solid #555c70;
-            background: #0b0c10;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            transition: 0.2s;
-            font-size: 15px;
-            color: transparent;
-        }
-
-        .menu-item.selected .custom-check {
-            border-color: var(--neon-cyan);
-            background: var(--neon-cyan);
-            color: black;
-            font-weight: bold;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.35);
         }
 
         .item-info {
             flex: 1;
         }
 
-        .item-top {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            margin-bottom: 2px;
-        }
-
         .item-name {
-            font-weight: bold;
-            font-size: 0.95em;
+            font-weight: 800;
+            font-size: 0.98em;
             color: white;
+            margin: 0 0 4px 0;
+            line-height: 1.25;
         }
 
-        .item-badge {
-            font-size: 0.65em;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-weight: bold;
-            text-transform: uppercase;
-        }
-
-        .item-badge.pop {
-            background: rgba(255, 102, 0, 0.2);
-            color: #ff8800;
-            border: 1px solid #ff8800;
-        }
-
-        .item-badge.vip {
-            background: rgba(212, 175, 55, 0.2);
-            color: var(--neon-gold);
-            border: 1px solid var(--neon-gold);
+        .item-measure {
+            color: #8892b0;
+            font-weight: 600;
+            font-size: 0.85em;
         }
 
         .item-desc {
-            color: #8892b0;
-            font-size: 0.78em;
-            line-height: 1.3;
+            color: #aeb6cc;
+            font-size: 0.8em;
+            line-height: 1.38;
+            margin: 0;
         }
 
         .item-price {
-            text-align: right;
-            font-weight: bold;
+            color: var(--neon-gold);
+            font-weight: 900;
             font-size: 1.05em;
-            color: var(--neon-cyan);
             white-space: nowrap;
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            padding: 5px 10px;
+            border-radius: 8px;
         }
 
-        /* BARRA INFERIOR FLOTANTE DE PEDIDOS & MESERO */
-        .bottom-action-panel {
-            position: fixed;
-            bottom: 12px;
-            left: 12px;
-            right: 12px;
-            max-width: 600px;
-            margin: 0 auto;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            z-index: 1000;
+        /* PIE LEGAL Y BOTÓN VOLVER */
+        .legal-disclaimer {
+            text-align: center;
+            color: #6c758d;
+            font-size: 0.7em;
+            line-height: 1.4;
+            margin-top: 25px;
+            padding: 12px;
+            border-top: 1px solid var(--border-color);
+            text-transform: uppercase;
         }
 
-        /* Botón de Enviar Pedido (Aparece al marcar checks) */
-        .btn-enviar-pedido {
-            display: none;
-            align-items: center;
-            justify-content: space-between;
-            background: linear-gradient(90deg, #128C7E, #25D366);
-            color: white;
-            padding: 14px 18px;
+        .floating-back-bottom {
+            display: block;
+            width: 100%;
+            text-align: center;
+            padding: 14px;
+            margin-top: 16px;
+            background: linear-gradient(90deg, #0070f3, var(--neon-cyan));
+            color: black;
+            font-weight: bold;
             border-radius: 12px;
             text-decoration: none;
-            font-weight: bold;
-            font-size: 0.92em;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.8), 0 0 15px rgba(37, 211, 102, 0.4);
-            border: 1px solid #25D366;
-            transition: 0.2s;
-            cursor: pointer;
-        }
-
-        .btn-enviar-pedido:active {
-            transform: scale(0.98);
-        }
-
-        /* Botón Directo: Necesito un mesero */
-        .btn-llamar-mesero {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            background: #151722;
-            border: 1px solid var(--neon-gold);
-            color: var(--neon-gold);
-            padding: 12px;
-            border-radius: 10px;
-            font-size: 0.88em;
-            font-weight: bold;
-            text-decoration: none;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-            transition: 0.2s;
-        }
-
-        .btn-llamar-mesero:active {
-            background: rgba(212, 175, 55, 0.2);
-            transform: scale(0.98);
+            font-size: 0.95em;
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        
+
         <div class="top-nav">
-            <a href="index.html" class="btn-back">⬅ Volver a Mesas</a>
-            <div class="lounge-title">
-                <img src="logo.jpg" alt="Casino BigBola" class="lounge-logo" onerror="this.src='logo.png'">
-                <div>
-                    <h1>CASINO BIGBOLA</h1>
-                    <span>Bar & Lounge Service</span>
+            <a href="index.html" class="btn-volver">
+                <span>←</span> Volver a Mesas
+            </a>
+            <span style="font-size: 0.75em; color: #8892b0; font-weight: bold;">SERVICIO EN SALA</span>
+        </div>
+
+        <header>
+            <img src="logo.jpg" alt="Casino BigBola" onerror="this.src='logo.png'">
+            <h1>CASINO BIGBOLA</h1>
+            <p>★ Menú Big Bola Lounge ★</p>
+        </header>
+
+        <!-- BUSCADOR -->
+        <div class="search-wrapper">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="buscador-menu" oninput="filtrarMenu()" placeholder="Buscar platillo, bebida o marca...">
+        </div>
+
+        <!-- FILTROS POR CATEGORÍA -->
+        <div class="tabs-scroll">
+            <button class="tab-btn active" onclick="seleccionarCategoria('todos', this)">📋 Todo</button>
+            <button class="tab-btn" onclick="seleccionarCategoria('snacks', this)">🍔 Snacks</button>
+            <button class="tab-btn" onclick="seleccionarCategoria('sopas', this)">🍲 Sopas</button>
+            <button class="tab-btn" onclick="seleccionarCategoria('ensaladas', this)">🥗 Ensaladas</button>
+            <button class="tab-btn" onclick="seleccionarCategoria('principales', this)">🍽️ Platos Principales</button>
+            <button class="tab-btn" onclick="seleccionarCategoria('cervezas', this)">🍺 Cervezas</button>
+            <button class="tab-btn" onclick="seleccionarCategoria('sin-alcohol', this)">🥤 Sin Alcohol</button>
+            <button class="tab-btn" onclick="seleccionarCategoria('cafes', this)">☕ Cafés</button>
+            <button class="tab-btn" onclick="seleccionarCategoria('destilados', this)">🥃 Destilados & Vinos</button>
+        </div>
+
+        <!-- ==================== 1. SNACKS ==================== -->
+        <section class="menu-section" data-categoria="snacks">
+            <h2 class="section-header"><span>🍔</span> Snacks</h2>
+
+            <div class="menu-item">
+                <div class="item-info">
+                    <h3 class="item-name">BONELESS</h3>
+                    <p class="item-desc">Jugosos boneless de pollo (270 grs) marinados en la salsa de su elección BBQ / Tasty / Mango habanero (60 ml), acompañado de aderezo ranch (60 ml) y bastones de zanahoria (80 grs).</p>
                 </div>
+                <div class="item-price">$130.00</div>
             </div>
+
+            <div class="menu-item">
+                <div class="item-info">
+                    <h3 class="item-name">BIG DOG JUMBO</h3>
+                    <p class="item-desc">Salchicha de res jumbo (1 pza) montada sobre pan (1 pza), con queso gouda gratinado (80 grs), mermelada de tocino y cebolla caramelizada (80 grs), cátsup (2 pzas), mostaza (2 pzas), acompañado de papas gajo (150 grs).</p>
+                </div>
+                <div class="item-price">$125.00</div>
+            </div>
+
+            <div class="menu-item">
+                <div class="item-info">
+                    <h3 class="item-name">TORTA DE MILANESA O JAMÓN</h3>
+                    <p class="item-desc">Milanesa de res (100 grs) o jamón de cerdo (80 grs), con aderezo chipotle (30 ml), queso oaxaca (80 grs), jitomate guaje (40 grs), cebolla morada (30 grs), aguacate (60 grs), frijoles refritos (40 grs), lechuga y papas a la francesa (150 grs).</p>
+                </div>
+                <div class="item-price">$130.00</div>
+            </div>
+
+            <div class="menu-item">
+                <div class="item-info">
+                    <h3 class="item-name">CLUB SANDWICH</h3>
+                    <p class="item-desc">El tradicional de Big Bola con jamón (40 grs), queso gouda (40 grs), pollo (50 grs), tocino (20 grs), lechuga sangría (10 grs), jitomate (20 grs) y acompañado de papas a la francesa (150 grs) y chiles nachos (30 grs).</p>
+                </div>
+                <div class="item-price">$140.00</div>
+            </div>
+
+            <div class="menu-item">
+                <div class="item-info">
+                    <h3 class="item-name">HAMBURGUESA CON QUESO</h3>
+                    <p class="item-desc">Carne 100% res (150 grs), acompañada de tocino (20 grs), jitomate (20 grs), cebolla caramelizada (100 grs), aderezo BBQ (20 grs), montado sobre pan (1 pz.), con guarnición de papas a la francesa (150 grs) y chiles nachos (30 grs).</p>
+                </div>
+                <div class="item-price">$150.00</div>
+            </div>
+
+            <div class="menu-item">
+                <div class="item-info">
+                    <h3 class="item-name">PIZZA JAMÓN SERRANO O PEPPERONI</h3>
+                    <p class="item-desc">1 pieza de pizza con masa artesanal (235 grs), con salsa de tomate casera (90 ml), queso mozzarella gratinado (100 grs), con rebanadas de pepperoni (60 grs) o láminas de jamón serrano (60 grs) y albahaca (5 grs).</p>
+                </div>
+                <div class="item-price">$150.00</div>
+            </div>
+        </section>
+
+        <!-- ==================== 2. SOPAS ==================== -->
+        <section class="menu-section" data-categoria="sopas">
+            <h2 class="section-header"><span>🍲</span> Sopas</h2>
+
+            <div class="menu-item">
+                <div class="item-info">
+                    <h3 class="item-name">CALDO XÓCHITL</h3>
+                    <p class="item-desc">Calientito caldo de pollo (200 ml), acompañado de arroz rojo (40 grs), pollo deshebrado (40 grs), zanahoria (50 grs), calabaza (50 grs), aguacate (20 grs), cilantro (10 grs), cebolla blanca (20 grs), limón (1 pz.) y chile serrano (10 grs).</p>
+                </div>
+                <div class="item-price">$70.00</div>
+            </div>
+
+            <div class="menu-item">
+                <div class="item-info">
+                    <h3 class="item-name">SOPA AZTECA</h3>
+                    <p class="item-desc">Caldillo de chile guajillo (200 ml), con juliana de tortillas de maíz (30 grs), chicharrón seco (15 grs), queso panela en cubos (30 grs), crema (20 grs), aros de chile pasilla (5 grs), cubos de aguacate (20 grs).</p>
+                </div>
+                <div class="item-price">$70.00</div>
+            </div>
+        </section>
+
+        <!-- ==================== 3. ENSALADAS ==================== -->
+        <section class="menu-section" data-categoria="ensaladas">
+            <h2 class="section-header"><span>🥗</span> Ensaladas</h2>
+
+            <div class="menu-item">
+                <div class="item-info">
+                    <h3 class="item-name">ENSALADA JIPEZA</h3>
+                    <p class="item-desc">Bastones de jícama (100 grs), pepino (100 grs), zanahoria (100 grs), acompañados de limón (20 grs) y chile piquín (20 grs).</p>
+                </div>
+                <div class="item-price">$55.00</div>
+            </div>
+
+            <div class="menu-item">
+                <div class="item-info">
+                    <h3 class="item-name">ENSALADA TERIYAKI</h3>
+                    <p class="item-desc">Jugosa pechuga de pollo (120 grs), marinada en salsa Teriyaki (60 ml), montada sobre un mix de lechuga (50 grs), espinacas (10 grs), cacahuates (20 grs), nuez (20 grs), arándanos (10 grs), amaranto (5 grs), germen de alfalfa (10 grs), champiñones (20 grs), acompañado de aderezo de Teriyaki de la casa (40 ml).</p>
+                </div>
+                <div class="item-price">$85.00</div>
+            </div>
+        </section>
+
+        <!-- ==================== 4. PLATOS PRINCIPALES ==================== -->
+        <section class="menu-section" data-categoria="principales">
+            <h2 class="section-header"><span>🍽️</span> Platos Principales</h2>
+
+            <div class="menu-item">
+                <div class="item-info">
+                    <h3 class="item-name">TACOS DE ARRACHERA</h3>
+                    <p class="item-desc">Arrachera marinada (160 grs), cebolla morada (100 grs), montado sobre tortillas de maíz (60 grs), gratinado con queso gouda (60 grs), acompañado de salsa tatemada (60 grs) y chiles toreados (60 grs).</p>
+                </div>
+                <div class="item-price">$140.00</div>
+            </div>
+
+            <div class="menu-item">
+                <div class="item-info">
+                    <h3 class="item-name">ALAMBRE DE RES O POLLO</h3>
+                    <p class="item-desc">Fajitas de pollo o arrachera (160 grs), con pimiento morrón rojo (40 grs), morrón verde (40 grs), cebolla morada (100 grs), tocino (40 grs), queso gouda gratinado (80 grs), acompañado de tortillas de harina (3 pzs) y salsa del día (60 ml).</p>
+                </div>
+                <div class="item-price">$140.00</div>
+            </div>
+
+            <div class="menu-item">
+                <div class="item-info">
+                    <h3 class="item-name">ENCHILADAS</h3>
+                    <p class="item-desc">Platillo elaborado con tortillas de maíz (4 pzas.), rellenas de pechuga de pollo deshebrado (100 grs) y bañadas con la salsa de su preferencia: verdes o mole (200 ml), con queso canasto (60 grs), aguacate (50 grs) y crema (30 ml).</p>
+                </div>
+                <div class="item-price">$115.00</div>
+            </div>
+
+            <div class="menu-item">
+                <div class="item-info">
+                    <h3 class="item-name">TOSTADAS DE TINGA</h3>
+                    <p class="item-desc">Tostadas de tinga (200 grs) (2 pzas.), acompañados con crema (30 grs), frijoles (40 grs), queso canasto (40 grs), lechuga romana (80 grs), aguacate (30 grs), salsa del día (60 grs).</p>
+                </div>
+                <div class="item-price">$90.00</div>
+            </div>
+
+            <div class="menu-item">
+                <div class="item-info">
+                    <h3 class="item-name">FLAUTAS DE POLLO</h3>
+                    <p class="item-desc">Flautas de pollo (3 pzas.), montadas sobre cama de lechuga (30 grs), crema (30 grs), queso canasto (30 grs), cebolla morada (30 grs), jitomate (20 grs) y aguacate (50 grs).</p>
+                </div>
+                <div class="item-price">$130.00</div>
+            </div>
+        </section>
+
+        <!-- ==================== 5. CERVEZAS ==================== -->
+        <section class="menu-section" data-categoria="cervezas">
+            <h2 class="section-header"><span>🍺</span> Cervezas & Preparados</h2>
+
+            <div class="menu-item">
+                <div class="item-info"><h3 class="item-name">Corona <span class="item-measure">(355 ml)</span></h3></div>
+                <div class="item-price">$45.00</div>
+            </div>
+            <div class="menu-item">
+                <div class="item-info"><h3 class="item-name">Victoria <span class="item-measure">(355 ml)</span></h3></div>
+                <div class="item-price">$45.00</div>
+            </div>
+            <div class="menu-item">
+                <div class="item-info"><h3 class="item-name">Negra Modelo <span class="item-measure">(355 ml)</span></h3></div>
+                <div class="item-price">$45.00</div>
+            </div>
+            <div class="menu-item">
+                <div class="item-info"><h3 class="item-name">Modelo Especial <span class="item-measure">(355 ml)</span></h3></div>
+                <div class="item-price">$45.00</div>
+            </div>
+            <div class="menu-item">
+                <div class="item-info"><h3 class="item-name">Tecate Light <span class="item-measure">(355 ml)</span></h3></div>
+                <div class="item-price">$45.00</div>
+            </div>
+            <div class="menu-item">
+                <div class="item-info"><h3 class="item-name">Michelob Ultra <span class="item-measure">(355 ml)</span></h3></div>
+                <div class="item-price">$45.00</div>
+            </div>
+            <div class="menu-item">
+                <div class="item-info">
+                    <h3 class="item-name">Vaso Cubano Michemix <span class="item-measure">(90 ml)</span></h3>
+                    <p class="item-desc">Vaso escarchado con salsas negras (45 ml) y jugo de limón (45 ml).</p>
+                </div>
+                <div class="item-price">$15.00</div>
+            </div>
+            <div class="menu-item">
+                <div class="item-info">
+                    <h3 class="item-name">Vaso Chelado <span class="item-measure">(43 ml)</span></h3>
+                    <p class="item-desc">Vaso escarchado con jugo de limón (30 grs) y sal (5 grs).</p>
+                </div>
+                <div class="item-price">$10.00</div>
+            </div>
+            <div class="menu-item">
+                <div class="item-info"><h3 class="item-name">Clamato mezclador <span class="item-measure">(120 ml)</span></h3></div>
+                <div class="item-price">$15.00</div>
+            </div>
+        </section>
+
+        <!-- ==================== 6. BEBIDAS SIN ALCOHOL ==================== -->
+        <section class="menu-section" data-categoria="sin-alcohol">
+            <h2 class="section-header"><span>🥤</span> Bebidas sin Alcohol</h2>
+
+            <div class="menu-item">
+                <div class="item-info"><h3 class="item-name">Botella con agua <span class="item-measure">(355 ml)</span></h3></div>
+                <div class="item-price">$20.00</div>
+            </div>
+            <div class="menu-item">
+                <div class="item-info"><h3 class="item-name">Refresco de lata <span class="item-measure">(355 ml)</span></h3></div>
+                <div class="item-price">$30.00</div>
+            </div>
+            <div class="menu-item">
+                <div class="item-info"><h3 class="item-name">Agua mineral lata <span class="item-measure">(355 ml)</span></h3></div>
+                <div class="item-price">$30.00</div>
+            </div>
+            <div class="menu-item">
+                <div class="item-info"><h3 class="item-name">Té de limón o Manzanilla o Verde <span class="item-measure">(230 ml)</span></h3></div>
+                <div class="item-price">$30.00</div>
+            </div>
+            <div class="menu-item">
+                <div class="item-info"><h3 class="item-name">Naranjada Natural <span class="item-measure">(355 ml)</span></h3></div>
+                <div class="item-price">$40.00</div>
+            </div>
+            <div class="menu-item">
+                <div class="item-info">
+                    <h3 class="item-name">Naranjada Mineral <span class="item-measure">(355 ml)</span></h3>
+                    <p class="item-desc">Agua mineral, jarabe natural, concentrado de jugo de naranja.</p>
+                </div>
+                <div class="item-price">$40.00</div>
+            </div>
+            <div class="menu-item">
+                <div class="item-info"><h3 class="item-name">Limonada Natural <span class="item-measure">(355 ml)</span></h3></div>
+                <div class="item-price">$40.00</div>
+            </div>
+            <div class="menu-item">
+                <div class="item-info">
+                    <h3 class="item-name">Limonada Mineral <span class="item-measure">(355 ml)</span></h3>
+                    <p class="item-desc">Agua mineral, jarabe natural, concentrado de jugo de limón.</p>
+                </div>
+                <div class="item-price">$40.00</div>
+            </div>
+            <div class="menu-item">
+                <div class="item-info"><h3 class="item-name">Red Bull <span class="item-measure">(230 ml)</span></h3></div>
+                <div class="item-price">$45.00</div>
+            </div>
+            <div class="menu-item">
+                <div class="item-info">
+                    <h3 class="item-name">Piñada <span class="item-measure">(355 ml)</span></h3>
+                    <p class="item-desc">Jugo de piña (90 ml), Carnation (60 ml), Calahua (90 ml).</p>
+                </div>
+                <div class="item-price">$40.00</div>
+            </div>
+            <div class="menu-item">
+                <div class="item-info">
+                    <h3 class="item-name">Rusa <span class="item-measure">(355 ml)</span></h3>
+                    <p class="item-desc">Agua mineral (355 ml) con concentrado de jugo de limón, escarchado con sal.</p>
+                </div>
+                <div class="item-price">$40.00</div>
+            </div>
+            <div class="menu-item">
+                <div class="item-info"><h3 class="item-name">Vaso con Clamato <span class="item-measure">(230 ml)</span></h3></div>
+                <div class="item-price">$25.00</div>
+            </div>
+        </section>
+
+        <!-- ==================== 7. CAFÉS ==================== -->
+        <section class="menu-section" data-categoria="cafes">
+            <h2 class="section-header"><span>☕</span> Cafés & Calientes</h2>
+
+            <div class="menu-item">
+                <div class="item-info"><h3 class="item-name">Espresso <span class="item-measure">(67.25 ml)</span></h3></div>
+                <div class="item-price">$45.00</div>
+            </div>
+            <div class="menu-item">
+                <div class="item-info"><h3 class="item-name">Espresso Cortado <span class="item-measure">(67.25 ml)</span></h3></div>
+                <div class="item-price">$50.00</div>
+            </div>
+            <div class="menu-item">
+                <div class="item-info"><h3 class="item-name">Capuchino <span class="item-measure">(203 ml)</span></h3></div>
+                <div class="item-price">$45.00</div>
+            </div>
+            <div class="menu-item">
+                <div class="item-info"><h3 class="item-name">Latte <span class="item-measure">(203 ml)</span></h3></div>
+                <div class="item-price">$45.00</div>
+            </div>
+            <div class="menu-item">
+                <div class="item-info"><h3 class="item-name">Mocaccino <span class="item-measure">(203 ml)</span></h3></div>
+                <div class="item-price">$45.00</div>
+            </div>
+            <div class="menu-item">
+                <div class="item-info"><h3 class="item-name">Chocolate Caliente <span class="item-measure">(203 ml)</span></h3></div>
+                <div class="item-price">$45.00</div>
+            </div>
+        </section>
+
+        <!-- ==================== 8. DESTILADOS, VINOS Y DIGESTIVOS ==================== -->
+        <section class="menu-section" data-categoria="destilados">
+            <h2 class="section-header"><span>🥃</span> Destilados, Vinos & Digestivos</h2>
+
+            <!-- TEQUILAS -->
+            <div class="sub-category-title">🌵 Tequilas</div>
+            <div class="menu-item">
+                <div class="item-info"><h3 class="item-name">Cazadores <span class="item-measure">(43 ml)</span></h3></div>
+                <div class="item-price">$85.00</div>
+            </div>
+            <div class="menu-item">
+                <div class="item-info"><h3 class="item-name">Herradura Reposado <span class="item-measure">(43 ml)</span></h3></div>
+                <div class="item-price">$100.00</div>
+            </div>
+            <div class="menu-item">
+                <div class="item-info"><h3 class="item-name">Herradura Blanco <span class="item-measure">(43 ml)</span></h3></div>
+                <div class="item-price">$85.00</div>
+            </div>
+            <div class="menu-item">
+                <div class="item-info"><h3 class="item-name">Cuervo Tradicional <span class="item-measure">(43 ml)</span></h3></div>
+                <div class="item-price">$85.00</div>
+            </div>
+            <div class="menu-item">
+                <div class="item-info"><h3 class="item-name">Don Julio Blanco <span class="item-measure">(43 ml)</span></h3></div>
+                <div class="item-price">$95.00</div>
+            </div>
+            <div class="menu-item">
+                <div class="item-info"><h3 class="item-name">Don Julio Reposado <span class="item-measure">(43 ml)</span></h3></div>
+                <div class="item-price">$100.00</div>
+            </div>
+
+            <!-- WHISKY -->
+            <div class="sub-category-title">🥃 Whisky</div>
+            <div class="menu-item">
+                <div class="item-info"><h3 class="item-name">Chivas Regal <span class="item-measure">(43 ml)</span></h3></div>
+                <div class="item-price">$100.00</div>
+            </div>
+            <div class="menu-item">
+                <div class="item-info"><h3 class="item-name">Etiqueta Roja <span class="item-measure">(43 ml)</span></h3></div>
+                <div class="item-price">$95.00</div>
+            </div>
+            <div class="menu-item">
+                <div class="item-info"><h3 class="item-name">Etiqueta Negra <span class="item-measure">(43 ml)</span></h3></div>
+                <div class="item-price">$125.00</div>
+            </div>
+            <div class="menu-item">
+                <div class="item-info"><h3 class="item-name">Buchanan's <span class="item-measure">(43 ml)</span></h3></div>
+                <div class="item-price">$110.00</div>
+            </div>
+            <div class="menu-item">
+                <div class="item-info"><h3 class="item-name">J&amp;B <span class="item-measure">(43 ml)</span></h3></div>
+                <div class="item-price">$85.00</div>
+            </div>
+
+            <!-- VODKA -->
+            <div class="sub-category-title">❄️ Vodka</div>
+            <div class="menu-item">
+                <div class="item-info"><h3 class="item-name">Absolut Azul <span class="item-measure">(43 ml)</span></h3></div>
+                <div class="item-price">$80.00</div>
+            </div>
+            <div class="menu-item">
+                <div class="item-info"><h3 class="item-name">Stolichnaya <span class="item-measure">(43 ml)</span></h3></div>
+                <div class="item-price">$80.00</div>
+            </div>
+            <div class="menu-item">
+                <div class="item-info"><h3 class="item-name">Smirnoff <span class="item-measure">(43 ml)</span></h3></div>
+                <div class="item-price">$70.00</div>
+            </div>
+
+            <!-- BRANDY -->
+            <div class="sub-category-title">🍇 Brandy</div>
+            <div class="menu-item">
+                <div class="item-info"><h3 class="item-name">Fundador <span class="item-measure">(43 ml)</span></h3></div>
+                <div class="item-price">$65.00</div>
+            </div>
+            <div class="menu-item">
+                <div class="item-info"><h3 class="item-name">Terry <span class="item-measure">(43 ml)</span></h3></div>
+                <div class="item-price">$80.00</div>
+            </div>
+            <div class="menu-item">
+                <div class="item-info"><h3 class="item-name">Don Pedro <span class="item-measure">(43 ml)</span></h3></div>
+                <div class="item-price">$60.00</div>
+            </div>
+            <div class="menu-item">
+                <div class="item-info"><h3 class="item-name">Torres 10 <span class="item-measure">(43 ml)</span></h3></div>
+                <div class="item-price">$75.00</div>
+            </div>
+
+            <!-- RON -->
+            <div class="sub-category-title">🏝️ Ron</div>
+            <div class="menu-item">
+                <div class="item-info"><h3 class="item-name">Bacardí Blanco <span class="item-measure">(43 ml)</span></h3></div>
+                <div class="item-price">$60.00</div>
+            </div>
+            <div class="menu-item">
+                <div class="item-info"><h3 class="item-name">Bacardí Añejo <span class="item-measure">(43 ml)</span></h3></div>
+                <div class="item-price">$65.00</div>
+            </div>
+            <div class="menu-item">
+                <div class="item-info"><h3 class="item-name">Appleton State <span class="item-measure">(43 ml)</span></h3></div>
+                <div class="item-price">$70.00</div>
+            </div>
+
+            <!-- COGNAC & GINEBRA -->
+            <div class="sub-category-title">👑 Cognac &amp; Ginebra</div>
+            <div class="menu-item">
+                <div class="item-info"><h3 class="item-name">Martell Medallón <span class="item-measure">(43 ml)</span></h3></div>
+                <div class="item-price">$140.00</div>
+            </div>
+            <div class="menu-item">
+                <div class="item-info"><h3 class="item-name">Hennessy VSOP <span class="item-measure">(43 ml)</span></h3></div>
+                <div class="item-price">$145.00</div>
+            </div>
+            <div class="menu-item">
+                <div class="item-info"><h3 class="item-name">Beefeater Ginebra <span class="item-measure">(43 ml)</span></h3></div>
+                <div class="item-price">$65.00</div>
+            </div>
+
+            <!-- VINOS -->
+            <div class="sub-category-title">🍷 Vinos</div>
+            <div class="menu-item">
+                <div class="item-info"><h3 class="item-name">Cune Crianza <span class="item-measure">(150 ml)</span></h3></div>
+                <div class="item-price">$130.00</div>
+            </div>
+            <div class="menu-item">
+                <div class="item-info"><h3 class="item-name">Blanc de Blancs <span class="item-measure">(150 ml)</span></h3></div>
+                <div class="item-price">$130.00</div>
+            </div>
+
+            <!-- DIGESTIVOS -->
+            <div class="sub-category-title">🍸 Digestivos</div>
+            <div class="menu-item">
+                <div class="item-info"><h3 class="item-name">Anís Chinchón Seco <span class="item-measure">(43 ml)</span></h3></div>
+                <div class="item-price">$60.00</div>
+            </div>
+            <div class="menu-item">
+                <div class="item-info"><h3 class="item-name">Anís Chinchón Dulce <span class="item-measure">(43 ml)</span></h3></div>
+                <div class="item-price">$60.00</div>
+            </div>
+            <div class="menu-item">
+                <div class="item-info"><h3 class="item-name">Licor 43 <span class="item-measure">(43 ml)</span></h3></div>
+                <div class="item-price">$70.00</div>
+            </div>
+            <div class="menu-item">
+                <div class="item-info"><h3 class="item-name">Baileys <span class="item-measure">(43 ml)</span></h3></div>
+                <div class="item-price">$70.00</div>
+            </div>
+            <div class="menu-item">
+                <div class="item-info"><h3 class="item-name">Kahlúa <span class="item-measure">(43 ml)</span></h3></div>
+                <div class="item-price">$60.00</div>
+            </div>
+            <div class="menu-item">
+                <div class="item-info"><h3 class="item-name">Midori <span class="item-measure">(43 ml)</span></h3></div>
+                <div class="item-price">$70.00</div>
+            </div>
+        </section>
+
+        <!-- AVISO LEGAL DE SALUD -->
+        <div class="legal-disclaimer">
+            El consumo de bebidas alcohólicas y/o energizantes es nocivo para la salud y es responsabilidad de quien las consume.
         </div>
 
-        <div class="banner-bar">
-            <span class="icon">🍸</span>
-            <div>
-                <h2>Bebidas de Cortesía para Jugadores</h2>
-                <p>Nacionales y cervezas incluidas para jugadores activos en mesas de juego.</p>
-            </div>
-        </div>
-
-        <!-- Pestañas de Categoría -->
-        <div class="category-tabs">
-            <button class="tab-btn active" onclick="filtrarCategoria('cocteles', this)">🍸 Coctelería & Tragos</button>
-            <button class="tab-btn" onclick="filtrarCategoria('snacks', this)">🍔 Snacks & Cocina</button>
-            <button class="tab-btn" onclick="filtrarCategoria('botellas', this)">🍾 Botellas VIP</button>
-            <button class="tab-btn" onclick="filtrarCategoria('sin-alcohol', this)">☕ Cafetería & Bebidas</button>
-        </div>
-
-        <!-- Listado de Alimentos y Bebidas -->
-        <div id="contenedor-menu" class="menu-grid"></div>
-
-    </div>
-
-    <!-- PANEL INFERIOR FIJO: PEDIDOS SELECCIONADOS + BOTÓN MESERO -->
-    <div class="bottom-action-panel">
-        
-        <!-- Botón que se enciende cuando hay productos con check -->
-        <a href="#" id="btn-enviar-pedido-wa" target="_blank" class="btn-enviar-pedido">
-            <div style="display: flex; align-items: center; gap: 8px;">
-                <span>🛒</span>
-                <span id="txt-resumen-pedido">Pedir 0 productos</span>
-            </div>
-            <div style="display: flex; align-items: center; gap: 6px;">
-                <span id="txt-total-pedido" style="color: #ffeb3b; font-size: 1.1em;">$0</span>
-                <span>➔</span>
-            </div>
-        </a>
-
-        <!-- Botón directo para solicitar mesero -->
-        <a href="https://wa.me/522282311773?text=Hola,%20necesito%20un%20mesero%20en%20la%20mesa." target="_blank" class="btn-llamar-mesero">
-            <span>🛎️</span>
-            <span>Necesito un mesero</span>
+        <a href="index.html" class="floating-back-bottom">
+            ← Volver a Mesas Abiertas
         </a>
 
     </div>
 
     <script>
-        const NUMERO_WHATSAPP_CASINO = "522282311773";
+        let categoriaActual = 'todos';
 
-        // CATÁLOGO DE PRODUCTOS
-        const platillos = [
-            // COCTELES
-            { id: 1, cat: 'cocteles', nombre: 'Jackpot Martini Especial', desc: 'Ginebra Bombay, vermut seco, aceitunas marinadas y toque cítrico.', precio: 140, tag: 'pop' },
-            { id: 2, cat: 'cocteles', nombre: 'Texas Red Bull & Vodka', desc: 'Vodka premium con lata de Red Bull Energy y hielo frappé.', precio: 160, tag: 'pop' },
-            { id: 3, cat: 'cocteles', nombre: 'Margarita Ruleta de Oro', desc: 'Tequila reposado, licor de naranja, jugo de limón fresco y sal negra.', precio: 130, tag: '' },
-            { id: 4, cat: 'cocteles', nombre: 'Mojito Cubano Clásico', desc: 'Ron blanco, hierbabuena fresca macerada y toque de soda.', precio: 120, tag: '' },
-            { id: 5, cat: 'cocteles', nombre: 'Whisky Black Label (Copa)', desc: 'Johnnie Walker Black Label servido en las rocas.', precio: 160, tag: 'vip' },
-            { id: 6, cat: 'cocteles', nombre: 'Cerveza Corona / Victoria (355ml)', desc: 'Bien fría con limón y sal o clamato preparado.', precio: 65, tag: '' },
+        function seleccionarCategoria(cat, btn) {
+            categoriaActual = cat;
 
-            // SNACKS
-            { id: 7, cat: 'snacks', nombre: 'Hamburguesa Casino Royale', desc: 'Carne Angus 200g, queso cheddar, tocino crujiente y papas gajo.', precio: 195, tag: 'pop' },
-            { id: 8, cat: 'snacks', nombre: 'Alitas Hot Poker (10 pzas)', desc: 'Salsa Buffalo picante, Mango Habanero o BBQ con aderezo Blue Cheese.', precio: 180, tag: 'pop' },
-            { id: 9, cat: 'snacks', nombre: 'Nachos Tex-Mex Suprema', desc: 'Totopos con arrachera, frijoles refritos, guacamole y queso fundido.', precio: 175, tag: '' },
-            { id: 10, cat: 'snacks', nombre: 'Dedos de Queso Mozzarella', desc: '6 piezas empanizadas doradas con salsa marinara casera.', precio: 135, tag: '' },
-            { id: 11, cat: 'snacks', nombre: 'Tacos de Arrachera al Grill (3)', desc: 'Tortilla recién hecha con arrachera marinada y cebollitas.', precio: 165, tag: '' },
-
-            // BOTELLAS VIP
-            { id: 12, cat: 'botellas', nombre: 'Don Julio 70 Cristalino', desc: 'Servicio VIP con 4 mezcladores a elegir y botana seca.', precio: 2200, tag: 'vip' },
-            { id: 13, cat: 'botellas', nombre: 'Buchanan’s 12 Años', desc: 'Servicio con hielera, vasos escarchados y 4 refrescos de cortesía.', precio: 1950, tag: 'vip' },
-            { id: 14, cat: 'botellas', nombre: 'Champagne Moët & Chandon Brut', desc: 'Para celebrar tus mejores jugadas. Servido en hielera con luz LED.', precio: 2800, tag: 'vip' },
-
-            // SIN ALCOHOL
-            { id: 15, cat: 'sin-alcohol', nombre: 'Red Bull Energy Drink (Lata)', desc: 'Regular, Sugarfree o Tropical.', precio: 75, tag: '' },
-            { id: 16, cat: 'sin-alcohol', nombre: 'Café Espresso Doble / Americano', desc: 'Granos de altura recién molidos.', precio: 45, tag: '' },
-            { id: 17, cat: 'sin-alcohol', nombre: 'Limonada / Naranjada Mineral', desc: 'Natural o mineral endulzada al gusto.', precio: 50, tag: '' }
-        ];
-
-        // MEMORIA DE SELECCIONES (Mantiene los checks activos al cambiar de pestaña)
-        const pedidoActual = new Map();
-        let categoriaActiva = 'cocteles';
-
-        function toggleSeleccion(id) {
-            const item = platillos.find(p => p.id === id);
-            if (!item) return;
-
-            if (pedidoActual.has(id)) {
-                pedidoActual.delete(id);
-            } else {
-                pedidoActual.set(id, item);
-            }
-
-            renderMenu(categoriaActiva);
-            actualizarBarraPedido();
-        }
-
-        function actualizarBarraPedido() {
-            const btnPedido = document.getElementById('btn-enviar-pedido-wa');
-            const txtResumen = document.getElementById('txt-resumen-pedido');
-            const txtTotal = document.getElementById('txt-total-pedido');
-
-            const totalItems = pedidoActual.size;
-
-            if (totalItems === 0) {
-                btnPedido.style.display = 'none';
-                return;
-            }
-
-            let totalCuenta = 0;
-            let listaTexto = "";
-
-            pedidoActual.forEach(item => {
-                totalCuenta += item.precio;
-                listaTexto += `• 1x ${item.nombre} ($${item.precio})\n`;
-            });
-
-            txtResumen.innerText = `Pedir ${totalItems} producto${totalItems > 1 ? 's' : ''}`;
-            txtTotal.innerText = `$${totalCuenta}`;
-            btnPedido.style.display = 'flex';
-
-            // MENSAJE ESTRUCTURADO PARA WHATSAPP
-            const mensajeWa = `*PEDIDO PARA MESA - CASINO BIGBOLA* 🎰🍽️\n\n` +
-                              `Hola, voy en camino / estoy en la mesa y quiero ordenar lo siguiente para que lo tengan preparado:\n\n` +
-                              `${listaTexto}\n` +
-                              `*Total Estimado: $${totalCuenta}*\n\n` +
-                              `Por favor confírmenme cuando esté listo. ¡Muchas gracias!`;
-
-            btnPedido.href = `https://wa.me/${NUMERO_WHATSAPP_CASINO}?text=${encodeURIComponent(mensajeWa)}`;
-        }
-
-        function renderMenu(filtro) {
-            categoriaActiva = filtro;
-            const cont = document.getElementById('contenedor-menu');
-            const items = platillos.filter(p => p.cat === filtro);
-
-            cont.innerHTML = items.map(i => {
-                const isSelected = pedidoActual.has(i.id);
-                const badgeHtml = i.tag === 'pop' 
-                    ? '<span class="item-badge pop">★ Popular</span>' 
-                    : (i.tag === 'vip' ? '<span class="item-badge vip">★ VIP</span>' : '');
-
-                return `
-                    <div class="menu-item ${isSelected ? 'selected' : ''}" onclick="toggleSeleccion(${i.id})">
-                        <div class="custom-check">✓</div>
-                        <div class="item-info">
-                            <div class="item-top">
-                                <span class="item-name">${i.nombre}</span>
-                                ${badgeHtml}
-                            </div>
-                            <span class="item-desc">${i.desc}</span>
-                        </div>
-                        <div class="item-price">$${i.precio}</div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function filtrarCategoria(categoria, btn) {
+            // Actualizar botón activo
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-            renderMenu(categoria);
+
+            // Limpiar búsqueda al cambiar pestaña
+            document.getElementById('buscador-menu').value = '';
+            filtrarMenu();
         }
 
-        renderMenu('cocteles');
+        function filtrarMenu() {
+            const texto = (document.getElementById('buscador-menu').value || '')
+                .toLowerCase()
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "");
+
+            const secciones = document.querySelectorAll('.menu-section');
+
+            secciones.forEach(sec => {
+                const catSeccion = sec.getAttribute('data-categoria');
+                const coincideCategoria = (categoriaActual === 'todos' || categoriaActual === catSeccion);
+
+                if (!coincideCategoria) {
+                    sec.style.display = 'none';
+                    return;
+                }
+
+                const items = sec.querySelectorAll('.menu-item');
+                let visiblesEnSeccion = 0;
+
+                items.forEach(item => {
+                    const contenido = item.innerText
+                        .toLowerCase()
+                        .normalize("NFD")
+                        .replace(/[\u0300-\u036f]/g, "");
+
+                    if (contenido.includes(texto)) {
+                        item.style.display = 'flex';
+                        visiblesEnSeccion++;
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+
+                // Ocultar subcategorías vacías si hay búsqueda
+                const subtitulos = sec.querySelectorAll('.sub-category-title');
+                subtitulos.forEach(sub => {
+                    sub.style.display = texto.length > 0 ? 'none' : 'flex';
+                });
+
+                sec.style.display = visiblesEnSeccion > 0 ? 'block' : 'none';
+            });
+        }
     </script>
 </body>
 </html>
