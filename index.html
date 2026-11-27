@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CASINO BIGBOLA - Mesas Abiertas & Premios Acumulados</title>
+    <title>MESAS JEV - Mesas Abiertas & Premios Acumulados</title>
 
     <meta name="theme-color" content="#0b0c10">
     <link rel="manifest" href="manifest.json">
@@ -703,8 +703,8 @@
                 <span>📲</span> Instalar App
             </button>
 
-            <img src="logo.jpg" alt="Casino BigBola" onerror="this.src='logo.png'">
-            <h1>CASINO BIGBOLA</h1>
+            <img src="logo.jpg" alt="MESAS JEV" onerror="this.src='logo.png'">
+            <h1>MESAS JEV</h1>
             <p>Mesas Abiertas & Premios Acumulados</p>
 
             <!-- CONTADOR DE VISITAS -->
@@ -814,7 +814,7 @@
         <div class="modal-box" onclick="event.stopPropagation()">
             <div style="font-size: 1.8em; margin-bottom: 4px;">🎰</div>
             <h3>Escanea para Entrar</h3>
-            <p>Apunta con la cámara de tu celular para abrir la app de <strong>CASINO BIGBOLA</strong>.</p>
+            <p>Apunta con la cámara de tu celular para abrir la app de <strong>MESAS JEV</strong>.</p>
             <div class="qr-wrapper"><div id="contenedor-qr"></div></div>
             <button class="btn-cerrar-modal" onclick="cerrarModalQR()">Cerrar Código QR</button>
         </div>
@@ -880,7 +880,7 @@
             document.getElementById('vip-resultado-box').style.display = 'none';
             document.getElementById('vip-resultado-error').style.display = 'none';
 
-            const msgWa = encodeURIComponent("Hola, me gustaría consultar mi saldo de Bonus Back acumulado en CASINO BIGBOLA 🎰.");
+            const msgWa = encodeURIComponent("Hola, me gustaría consultar mi saldo de Bonus Back acumulado en MESAS JEV 🎰.");
             document.getElementById('link-wa-consulta-directa').href = `https://wa.me/${NUMERO_WHATSAPP_CASINO}?text=${msgWa}`;
         }
 
@@ -1034,11 +1034,11 @@
 
         async function compartirApp() {
             const urlApp = window.location.origin || "https://casino-three-rho.vercel.app";
-            const textoCompartir = `🎰 *CASINO BIGBOLA*\n\n¡Consulta las mesas abiertas y premios acumulados de hoy!\n\n👉 ${urlApp}`;
+            const textoCompartir = `🎰 *MESAS JEV*\n\n¡Consulta las mesas abiertas y premios acumulados de hoy!\n\n👉 ${urlApp}`;
 
             if (navigator.share) {
                 try {
-                    await navigator.share({ title: 'CASINO BIGBOLA', text: textoCompartir, url: urlApp });
+                    await navigator.share({ title: 'MESAS JEV', text: textoCompartir, url: urlApp });
                     return;
                 } catch (err) {
                     if (err.name === 'AbortError') return;
@@ -1130,7 +1130,7 @@
 
                 const promoTexto = (m.promo_especial || '').toUpperCase();
                 const esHot = promoTexto.includes('CALIENTE') || promoTexto.includes('FUERTE') || promoTexto.includes('ÚLTIMOS');
-                const urlWaMesa = `https://wa.me/${NUMERO_WHATSAPP_CASINO}?text=${encodeURIComponent(`Hola, voy en camino a Casino BigBola. ¿Me pueden apartar un lugar en la mesa "${m.nombre}" (${m.juego})? ¡Gracias!`)}`;
+                const urlWaMesa = `https://wa.me/${NUMERO_WHATSAPP_CASINO}?text=${encodeURIComponent(`Hola, voy en camino a MESAS JEV. ¿Me pueden apartar un lugar en la mesa "${m.nombre}" (${m.juego})? ¡Gracias!`)}`;
 
                 const tipoJuego = obtenerTipoJuego(m.juego);
                 const fotoJuego = resolverFotoJuego(m.juego);
